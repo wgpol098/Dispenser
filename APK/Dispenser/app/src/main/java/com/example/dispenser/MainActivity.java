@@ -31,44 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void fdbutton(View v)
     {
-        HttpURLConnection dataBaseConnection = null;
-
-        try{
-            URL dataBaseURL = new URL("https://api.github.com/");
-
-            dataBaseConnection = (HttpsURLConnection) dataBaseURL.openConnection();
-            dataBaseConnection.setRequestProperty("User-Agent", "my-rest-app-v0.1");
-
-            if (dataBaseConnection.getResponseCode() == 200)
-            {
-                dataBaseConnection.setRequestMethod("POST");
-                // Create the data
-                String myData = "message=Hello";
-
-                // Enable writing
-                dataBaseConnection.setDoOutput(true);
-
-                // Write the data
-                dataBaseConnection.getOutputStream().write(myData.getBytes());
-                // Success
-                // Further processing here
-            }
-            else {
-                // Error handling code goes here
-            }
-        }
-        catch (MalformedURLException e)
-        {
-            //bad  URL, tell the user
-        }
-        catch (IOException e)
-        {
-            //network error/ tell the user
-        }
-        finally
-        {
-            dataBaseConnection.disconnect();
-        }
+        Intent intent = new Intent(this,MainMenuActivity.class);
+        startActivity(intent);
     }
     Button dbutton;
     @Override
