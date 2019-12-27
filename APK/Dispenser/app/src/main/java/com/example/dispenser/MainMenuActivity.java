@@ -41,21 +41,25 @@ public class MainMenuActivity extends AppCompatActivity {
 
                 try
                 {
-                    URL ASPNETURL = new URL("http://panda.fizyka.umk.pl");
+                    URL ASPNETURL = new URL("http:/google.com");
                     ASPNETConnection = (HttpURLConnection) ASPNETURL.openConnection();
                     ASPNETConnection.setRequestProperty("User-Agent", "my-rest-app-v0.1");
 
                     if (ASPNETConnection.getResponseCode() == 200)
                     {
-                        DialogFragment dialog = new MyDialog("ODP","Message");
+                        DialogFragment dialog = new MyDialog("Sukces","Działa!");
                         dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                    }
+                    else
+                    {
+                        //Connection not successfull
                     }
 
                 }
                 catch (MalformedURLException e)
                 {
                     //bad  URL, tell the user
-                    DialogFragment dialog = new MyDialog("Eloszka","Message");
+                    DialogFragment dialog = new MyDialog("Błąd","Zły adres URL");
                     dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
                 }
                 catch (IOException e)
