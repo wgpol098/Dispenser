@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApplication1.API.Domain.Models;
 
-namespace WebApplication1.Domain.Services
+namespace WebApplication1.API.Domain.Services
 {
-    public interface IDispenserInterface
+    public interface IDispenserService
     {
         Task<IEnumerable<Dispenser>> ListAsync();
     }
