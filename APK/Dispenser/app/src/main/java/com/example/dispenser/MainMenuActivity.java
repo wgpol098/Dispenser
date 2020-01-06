@@ -41,7 +41,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
                 try
                 {
-                    URL ASPNETURL = new URL("http:/google.com");
+                    URL ASPNETURL = new URL("aktualnyAdresIP/api/Dispenser/Post");
                     ASPNETConnection = (HttpURLConnection) ASPNETURL.openConnection();
                     ASPNETConnection.setRequestProperty("User-Agent", "my-rest-app-v0.1");
 
@@ -53,6 +53,8 @@ public class MainMenuActivity extends AppCompatActivity {
                     else
                     {
                         //Connection not successfull
+                        DialogFragment dialog = new MyDialog("Błąd","Połączenie nie powiodło się");
+                        dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
                     }
 
                 }

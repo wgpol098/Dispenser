@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="84dp"
         android:onClick="fGetButton"
-        android:text="Get"
+        android:text="POST"
         app:layout_constraintStart_toStartOf="@+id/HistoryButton"
         app:layout_constraintTop_toBottomOf="@+id/HistoryButton" />
 </androidx.constraintlayout.widget.ConstraintLayout>
