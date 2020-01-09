@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,12 +39,12 @@ public class MainMenuActivity extends AppCompatActivity {
             @Override
             public void run() {
                 HttpURLConnection ASPNETConnection = null;
-
                 try
                 {
-                    URL ASPNETURL = new URL("aktualnyAdresIP/api/Dispenser/Post");
+                    URL ASPNETURL = new URL("http://google.pl");
+                    //URL ASPNETURL = new URL("aktualnyAdresIP/api/Dispenser/Post");
                     ASPNETConnection = (HttpURLConnection) ASPNETURL.openConnection();
-                    ASPNETConnection.setRequestProperty("User-Agent", "my-rest-app-v0.1");
+                    //ASPNETConnection.setRequestProperty("User-Agent", "my-rest-app-v0.1");
 
                     if (ASPNETConnection.getResponseCode() == 200)
                     {
@@ -72,7 +73,7 @@ public class MainMenuActivity extends AppCompatActivity {
                 }
                 finally
                 {
-                    ASPNETConnection.disconnect();
+                    if(ASPNETConnection != null) ASPNETConnection.disconnect();
                 }
 /*
                     ASPNETConnection = (HttpsURLConnection) ASPNETURL.openConnection();
