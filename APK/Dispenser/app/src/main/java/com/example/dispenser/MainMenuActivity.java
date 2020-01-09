@@ -9,14 +9,18 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.renderscript.ScriptGroup;
+import android.util.JsonReader;
 import android.view.View;
 import android.widget.Button;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -41,15 +45,19 @@ public class MainMenuActivity extends AppCompatActivity {
                 HttpURLConnection ASPNETConnection = null;
                 try
                 {
-                    URL ASPNETURL = new URL("http://google.pl");
+                    URL ASPNETURL = new URL("http://192.168.137.1/Api/Dispenser/Post");
                     //URL ASPNETURL = new URL("aktualnyAdresIP/api/Dispenser/Post");
                     ASPNETConnection = (HttpURLConnection) ASPNETURL.openConnection();
-                    //ASPNETConnection.setRequestProperty("User-Agent", "my-rest-app-v0.1");
+
+                    //InputStream responseBody = ASPNETConnection.getInputStream();
+                    //InputStreamReader responseBodyReader = new InputStreamReader(responseBody, "UTF-8");
+                    //JsonReader jsonReader = new JsonReader(responseBodyReader);
 
                     if (ASPNETConnection.getResponseCode() == 200)
                     {
-                        DialogFragment dialog = new MyDialog("Sukces","Działa!");
+                        DialogFragment dialog = new MyDialog("Sukces","Działa");
                         dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+
                     }
                     else
                     {
