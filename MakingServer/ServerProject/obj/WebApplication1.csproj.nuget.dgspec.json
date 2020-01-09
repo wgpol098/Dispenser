@@ -1,24 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Programowanie\\ProbaCora\\Disp\\LocalServer\\WebApplication1.csproj": {}
+    "C:\\Users\\pwawr\\Documents\\Dispenser\\LocalServer\\WebApplication1.csproj": {}
   },
   "projects": {
-    "D:\\Programowanie\\ProbaCora\\Disp\\LocalServer\\WebApplication1.csproj": {
+    "C:\\Users\\pwawr\\Documents\\Dispenser\\LocalServer\\WebApplication1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Programowanie\\ProbaCora\\Disp\\LocalServer\\WebApplication1.csproj",
+        "projectUniqueName": "C:\\Users\\pwawr\\Documents\\Dispenser\\LocalServer\\WebApplication1.csproj",
         "projectName": "WebApplication1",
-        "projectPath": "D:\\Programowanie\\ProbaCora\\Disp\\LocalServer\\WebApplication1.csproj",
-        "packagesPath": "C:\\Users\\Dorthion\\.nuget\\packages\\",
-        "outputPath": "D:\\Programowanie\\ProbaCora\\Disp\\LocalServer\\obj\\",
+        "projectPath": "C:\\Users\\pwawr\\Documents\\Dispenser\\LocalServer\\WebApplication1.csproj",
+        "packagesPath": "C:\\Users\\pwawr\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\pwawr\\Documents\\Dispenser\\LocalServer\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Dorthion\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\pwawr\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
