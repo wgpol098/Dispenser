@@ -27,6 +27,7 @@ np.
 
 Ścieżka do Managera IIS: C:\Windows\System32\inetsrv
 Aplikacja: iis.exe
+
 ------------------
 
 SQL Server
@@ -42,3 +43,10 @@ Przechodzimy do /var/BD
 Następnie komenda: mysqld_safe
 
 mysqld -u root -p - przejście do gui bazy danych
+
+------------------
+
+nginx
+
+Lokalizacja: /etc/nginx/sites-available/default - plik konfiguracyjny nginx
+nginx -t - sprawdzanie czy dana konfiguracja jest poprawna
