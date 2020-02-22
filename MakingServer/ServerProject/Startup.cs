@@ -11,6 +11,7 @@ using WebApplication1.API.Persistence.Repositories;
 using WebApplication1.API.Domain.Services;
 using WebApplication1.API.Services;
 using Microsoft.OpenApi.Models;
+using AutoMapper;
 
 namespace WebApplication1.API
 {
@@ -38,6 +39,8 @@ namespace WebApplication1.API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
             });
             services.AddMvc(option => option.EnableEndpointRouting = false);
+            services.AddAutoMapper(typeof(Startup));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

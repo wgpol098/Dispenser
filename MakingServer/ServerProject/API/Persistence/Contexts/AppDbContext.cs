@@ -20,8 +20,8 @@ namespace WebApplication1.API.Persistence.Contexts
 
             builder.Entity<Dispenser>().HasData
             (
-                new Dispenser { Id = 100, Name = "Fruits and Vegetables", TurnDiode = false },
-                new Dispenser { Id = 101, Name = "Dairy", TurnDiode = true}
+                new Dispenser { Id = 100, Name = "Cos", TurnDiode = false },
+                new Dispenser { Id = 101, Name = "Tam", TurnDiode = true}
             );
         }
     }

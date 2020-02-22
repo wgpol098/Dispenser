@@ -17,5 +17,25 @@ namespace WebApplication1.API.Persistence.Repositories
         {
             return await _context.Dispensers.ToListAsync();
         }
+
+        public async Task AddAsync(Dispenser dispenser)
+        {
+            await _context.Dispensers.AddAsync(dispenser);
+        }
+
+        public async Task<Dispenser> FindByIdAsync(int id)
+        {
+            return await _context.Dispensers.FindAsync(id);
+        }
+
+        public void Update(Dispenser dispenser)
+        {
+            _context.Dispensers.Update(dispenser);
+        }
+
+        public void Remove(Dispenser dispenser)
+        {
+            _context.Dispensers.Remove(dispenser);
+        }
     }
 }
