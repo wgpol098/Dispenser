@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WebApplication1</name>
+    </assembly>
+    <members>
+        <member name="T:WebApplication1.Controllers.DispenserController">
+            <summary>
+            afsd
+            </summary>
+        </member>
+        <member name="M:WebApplication1.Controllers.DispenserController.Post">
+            <summary>
+            Cos to na pewno jest POST
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:WebApplication1.Controllers.DispenserController.Get">
+            <summary>
+            XDDDDD Get
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
