@@ -19,9 +19,15 @@ namespace WebApplication1.API.Persistence.Repositories
             return await _context.Dispensers.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<Dispenser> GetByLoginAsync(string login)
+        public async Task<IEnumerable<Dispenser>> GetOneDispenserAsync(string login, string password)
         {
-            return await _context.Dispensers.FirstOrDefaultAsync(x => x.Login == login);
+            var acc = await _context.Accounts.FirstOrDefaultAsync(x => x.Login == login);
+            if (acc == null || acc.Password != password)
+                return null;
+
+            //First or default! Takes 1 now, more later.
+            List<Dispenser> disp = new List<Dispenser> { await _context.Dispensers.FirstOrDefaultAsync(x => x.Id == acc.DispenserId) };
+            return disp;
         }
 
         public async Task<IEnumerable<Dispenser>> ListAsync()

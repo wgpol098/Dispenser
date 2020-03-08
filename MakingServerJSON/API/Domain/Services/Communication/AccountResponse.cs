@@ -2,14 +2,14 @@
 
 namespace WebApplication1.API.Domain.Services.Communication
 {
-    public class DispenserResponse : BaseResponse<Dispenser>
+    public class AccountResponse : BaseResponse<Account>
     {
         /// <summary>
         /// Creates a success response.
         /// </summary>
-        /// <param name="dispenser">Saved dispenser.</param>
+        /// <param name="dispenser">Saved account.</param>
         /// <returns>Response.</returns>
-        public DispenserResponse(Dispenser dispenser) : base(dispenser)
+        public AccountResponse(Account dispenser) : base(dispenser)
         { }
 
         /// <summary>
@@ -17,7 +17,7 @@ namespace WebApplication1.API.Domain.Services.Communication
         /// </summary>
         /// <param name="message">Error message.</param>
         /// <returns>Response.</returns>
-        public DispenserResponse(string message) : base(message)
+        public AccountResponse(string message) : base(message)
         { }
     }
 }

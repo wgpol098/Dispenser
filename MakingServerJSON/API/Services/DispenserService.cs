@@ -24,9 +24,9 @@ namespace WebApplication1.API.Services
             return await _dispenserRepository.ListAsync();
         }
 
-        public async Task<Dispenser> GetByLoginAndPassword(string login, string password)
+        public async Task<IEnumerable<Dispenser>> GetByLoginAndPassword(string login, string password)
         {
-            return await _dispenserRepository.GetByLoginAsync(login);//.GetByLoginAndPassword(login, password);// .GetByIdAsync(x => x.id == id);
+            return await _dispenserRepository.GetOneDispenserAsync(login, password);
         }
 
         public async Task<DispenserResponse> SaveAsync(Dispenser dispenser)

@@ -11,6 +11,6 @@ namespace WebApplication1.API.Domain.Services
         Task<DispenserResponse> SaveAsync(Dispenser dispenser);
         Task<DispenserResponse> UpdateAsync(int id, Dispenser dispenser);
         Task<DispenserResponse> DeleteAsync(int id);
-        Task<Dispenser> GetByLoginAndPassword(string login, string password);
+        Task<IEnumerable<Dispenser>> GetByLoginAndPassword(string login, string password);
     }
 }

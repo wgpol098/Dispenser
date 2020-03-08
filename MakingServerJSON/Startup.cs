@@ -38,9 +38,7 @@ namespace WebApplication1.API
             services.AddAutoMapper(typeof(Startup));
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DispDatabaseConnection")));
-            //services.AddDbContext<AppDbContext>(options => options.UseSqlite(Configuration.GetConnectionString("Data Source=DISPENSER.db")));
-            //var connection = "Server=localhost;Port=3306;Database=DISPENSER;Password=Tibia1234;"; //User Id=CosTuWstawicChyba;
-            //services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connection));
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

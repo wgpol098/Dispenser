@@ -31,17 +31,6 @@ namespace WebApplication1.API.Controllers
             return resources;
         }
 
-        [HttpGet("{login}/{password}")]
-        public async Task<Dispenser> GetByLoginAndPassword(string login, string password)
-        {
-            var disp = await _DispenserService.GetByLoginAndPassword(login,password);
-
-            if (disp.Password != password)
-                return null;
-
-            return  disp;
-        }
-
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] SaveDispenserResource resource)
         {
@@ -49,12 +38,13 @@ namespace WebApplication1.API.Controllers
                 return BadRequest(ModelState.GetErrorMessages());
 
             var dispenser = _mapper.Map<SaveDispenserResource, Dispenser>(resource);
+
             var result = await _DispenserService.SaveAsync(dispenser);
 
             if (!result.Success)
                 return BadRequest(result.Message);
 
-            var dispenserResource = _mapper.Map<Dispenser, DispenserResources>(result.Dispensers);
+            var dispenserResource = _mapper.Map<Dispenser, DispenserResources>(result.Resource);
             return Ok(dispenserResource);
         }
 
@@ -70,7 +60,7 @@ namespace WebApplication1.API.Controllers
             if (!result.Success)
                 return BadRequest(result.Message);
 
-            var dispenserResource = _mapper.Map<Dispenser, DispenserResources>(result.Dispensers);
+            var dispenserResource = _mapper.Map<Dispenser, DispenserResources>(result.Resource);
             return Ok(dispenserResource);
         }
 
@@ -82,54 +72,8 @@ namespace WebApplication1.API.Controllers
             if (!result.Success)
                 return BadRequest(result.Message);
 
-            var dispenserResource = _mapper.Map<Dispenser, DispenserResources>(result.Dispensers);
+            var dispenserResource = _mapper.Map<Dispenser, DispenserResources>(result.Resource);
             return Ok(dispenserResource);
         }
-
-        //[Route("/api/Post/")]
-        //public ActionResult Post()
-        //{
-        //    string s = System.IO.File.ReadAllText(@"Test.txt");
-        //    int temp = Convert.ToInt32(s);
-        //        if (temp == 0)
-        //            temp = 1;
-        //        else temp = 0;
-        //        System.IO.File.WriteAllText(@"Test.txt", temp.ToString());
-        //    return Content(temp.ToString());
-        //}
-
-        //[Route("/api/Get/")]
-        //public ActionResult Get()
-        //{
-        //    string s = System.IO.File.ReadAllText(@"Test.txt");
-        //    int temp = Convert.ToInt32(s);
-        //    return Content(temp.ToString());
-        //}
-
-        //[Route("/api/Display/")]
-        //public bool TestGet()
-        //{
-        //    return true;
-        //}
-
-        //[Route("/api/GetInt/")]
-        //public int Get2()
-        //{
-        //    string s = System.IO.File.ReadAllText(@"Test.txt");
-        //    int temp = Convert.ToInt32(s);
-        //    return temp;
-        //}
-
-        //[Route("/api/PostInt/")]
-        //public int Post2()
-        //{
-        //    string s = System.IO.File.ReadAllText(@"Test.txt");
-        //    int temp = Convert.ToInt32(s);
-        //    if (temp == 0)
-        //        temp = 1;
-        //    else temp = 0;
-        //    System.IO.File.WriteAllText(@"Test.txt", temp.ToString());
-        //    return temp;
-        //}
     }
 }

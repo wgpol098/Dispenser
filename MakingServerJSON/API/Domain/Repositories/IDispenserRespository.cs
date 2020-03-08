@@ -9,7 +9,7 @@ namespace WebApplication1.API.Domain.Repositories
         Task<IEnumerable<Dispenser>> ListAsync();
         Task AddAsync(Dispenser dispenser);
         Task<Dispenser> FindByIdAsync(int id);
-        Task<Dispenser> GetByLoginAsync(string login);
+        Task<IEnumerable<Dispenser>> GetOneDispenserAsync(string login, string password);
         void Update(Dispenser dispenser);
         Task<bool> Remove(Dispenser category);
     }
