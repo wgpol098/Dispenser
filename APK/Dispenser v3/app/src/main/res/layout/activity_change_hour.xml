@@ -10,34 +10,72 @@
         android:id="@+id/HoursTextBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginBottom="72dp"
+        android:layout_marginStart="88dp"
+        android:layout_marginLeft="88dp"
+        android:layout_marginTop="50dp"
         android:ems="10"
+        android:hint="Hour"
         android:inputType="numberDecimal"
-        app:layout_constraintBottom_toTopOf="@+id/MinutesTextBox"
-        app:layout_constraintEnd_toEndOf="@+id/MinutesTextBox" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/MinutesTextBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:ems="10"
+        android:hint="Minutes"
         android:inputType="numberDecimal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/HoursTextBox"
+        app:layout_constraintTop_toBottomOf="@+id/HoursTextBox" />
+
+    <EditText
+        android:id="@+id/CountTextBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="21dp"
+        android:ems="10"
+        android:hint="Count"
+        android:inputType="numberDecimal"
+        app:layout_constraintStart_toStartOf="@+id/MinutesTextBox"
+        app:layout_constraintTop_toBottomOf="@+id/MinutesTextBox" />
+
+    <EditText
+        android:id="@+id/PeriodicityTextBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="21dp"
+        android:layout_marginEnd="3dp"
+        android:layout_marginRight="3dp"
+        android:ems="10"
+        android:hint="Periodicity"
+        android:inputType="numberDecimal"
+        app:layout_constraintEnd_toEndOf="@+id/CountTextBox"
+        app:layout_constraintTop_toBottomOf="@+id/CountTextBox" />
+
+    <EditText
+        android:id="@+id/DescriptionTextBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:ems="10"
+        android:hint="Description"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="@+id/PeriodicityTextBox"
+        app:layout_constraintTop_toBottomOf="@+id/PeriodicityTextBox" />
 
     <Button
         android:id="@+id/OkButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="111dp"
+        android:layout_marginBottom="48dp"
         android:onClick="fOkButton"
         android:text="OK"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/MinutesTextBox" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

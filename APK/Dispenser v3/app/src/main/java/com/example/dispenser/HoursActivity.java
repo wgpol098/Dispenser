@@ -32,9 +32,15 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
         JSONObject hour3 = new JSONObject();
         try
         {
-            hour1.put("godzina","12:45");
-            hour2.put("godzina","13:45");
-            hour3.put("godzina","18:45");
+            hour1.put("hour",12);
+            hour1.put("minutes",45);
+            hour1.put("description","Apap");
+            hour2.put("hour",14);
+            hour2.put("minutes",45);
+            hour2.put("description","Nerłokol");
+            hour3.put("hour",18);
+            hour3.put("minutes",45);
+            hour3.put("description","Eutanazol");
         }
         catch (JSONException e)
         {
@@ -52,16 +58,23 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setOrientation(linearLayout.VERTICAL);
 
+        DialogFragment dialog = new MyDialog("Bład",jsonArray.toString());
+        dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+
         for(int i=0;i<jsonArray.length();i++)
         {
             JSONObject tmp=null;
-            String str="";
+            String str1="";
+            String str2="";
+            String str3="";
             try
             {
                 tmp = jsonArray.getJSONObject(i);
                 if(tmp!=null)
                 {
-                    str = tmp.getString("godzina");
+                    str1 = tmp.getString("hour");
+                    str2 = tmp.getString("minutes");
+                    str3 = tmp.getString("description");
                 }
             }
             catch (JSONException e)
@@ -70,7 +83,7 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
             }
 
             Button button = new Button(this);
-            button.setText(str);
+            button.setText(str1 + ":" + str2);
             button.setTextSize(20);
             button.setGravity(Gravity.CENTER);
             button.setOnClickListener(this);
