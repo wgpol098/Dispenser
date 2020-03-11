@@ -19,7 +19,7 @@ import org.json.JSONObject;
 public class HoursActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener{
 
 
-    JSONArray hoursArray;
+    //JSONArray hoursArray;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,12 +35,15 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
             hour1.put("hour",12);
             hour1.put("minutes",45);
             hour1.put("description","Apap");
+            hour1.put("id",5435);
             hour2.put("hour",14);
             hour2.put("minutes",45);
             hour2.put("description","Nerłokol");
+            hour2.put("id",54352);
             hour3.put("hour",18);
             hour3.put("minutes",45);
             hour3.put("description","Eutanazol");
+            hour3.put("id",5123);
         }
         catch (JSONException e)
         {
@@ -53,12 +56,10 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
         jsonArray.put(hour2);
         jsonArray.put(hour3);
 
-        hoursArray = jsonArray;
-
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setOrientation(linearLayout.VERTICAL);
 
-        DialogFragment dialog = new MyDialog("Bład",jsonArray.toString());
+        DialogFragment dialog = new MyDialog("Wysyłam IdDispenser a odbieram GET:",jsonArray.toString());
         dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
 
         for(int i=0;i<jsonArray.length();i++)
@@ -67,6 +68,7 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
             String str1="";
             String str2="";
             String str3="";
+            int IdDrug=-2;
             try
             {
                 tmp = jsonArray.getJSONObject(i);
@@ -75,6 +77,7 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
                     str1 = tmp.getString("hour");
                     str2 = tmp.getString("minutes");
                     str3 = tmp.getString("description");
+                    IdDrug = Integer.parseInt(tmp.getString("id"));
                 }
             }
             catch (JSONException e)
@@ -83,7 +86,8 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
             }
 
             Button button = new Button(this);
-            button.setText(str1 + ":" + str2);
+            button.setText(str1 + ":" + str2 + " - " + str3);
+            button.setId(IdDrug);
             button.setTextSize(20);
             button.setGravity(Gravity.CENTER);
             button.setOnClickListener(this);
@@ -95,6 +99,7 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
         //Dodanie na końcu buttona do dodawania godzin
         Button button = new Button(this);
         button.setText("Add");
+        button.setId(-1);
         button.setTextSize(20);
         button.setGravity(Gravity.CENTER);
         button.setOnClickListener(this);
@@ -109,15 +114,27 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
     {
         Button  tmp = (Button) v;
         Intent intent = new Intent(this,ChangeHourActivity.class);
-        intent.putExtra("hour",tmp.getText());
+        intent.putExtra("IdDrug",tmp.getId());
         startActivity(intent);
     }
 
     @Override
     public boolean onLongClick(View v)
     {
-        DialogFragment dialog = new MyDialog("Bład","Usunięcie danych");
+        DialogFragment dialog = new MyDialog("Wysyłam IdRekordu DELETE","I usuniesz dane");
         dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+
+        //Tworzenie jsona, który muszę wysłać na serwer, żeby usunął dane
+        Button tmp = (Button) v;
+        JSONObject json = new JSONObject();
+        try
+        {
+            json.put("IdDrug",tmp.getId());
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
         return true;
     }
 }
