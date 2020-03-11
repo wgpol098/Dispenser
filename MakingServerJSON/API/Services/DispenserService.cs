@@ -75,7 +75,7 @@ namespace WebApplication1.API.Services
 
             try
             {
-                _dispenserRepository.Remove(existingDispenser);
+                await _dispenserRepository.Remove(existingDispenser);
                 await _unitOfWork.CompleteAsync();
 
                 return new DispenserResponse(existingDispenser);

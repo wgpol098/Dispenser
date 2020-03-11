@@ -9,6 +9,5 @@ namespace WebApplication1.API.Resources
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public bool TurnDiode { get; set; }
     }
 }

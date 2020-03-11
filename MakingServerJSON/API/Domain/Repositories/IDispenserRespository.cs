@@ -11,6 +11,6 @@ namespace WebApplication1.API.Domain.Repositories
         Task<Dispenser> FindByIdAsync(int id);
         Task<IEnumerable<Dispenser>> GetOneDispenserAsync(string login, string password);
         void Update(Dispenser dispenser);
-        Task<bool> Remove(Dispenser category);
+        Task<bool> Remove(Dispenser dispenser);
     }
 }
