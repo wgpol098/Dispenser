@@ -9,6 +9,8 @@ namespace WebApplication1.API.Mapping
         public ModelToResourceProfile()
         {
             CreateMap<Dispenser, DispenserResources>();
+            CreateMap<Plan, ServResourcesToDisp>();
+           
         }
     }
 }
