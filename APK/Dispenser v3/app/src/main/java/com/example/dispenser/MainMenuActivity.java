@@ -5,10 +5,13 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.renderscript.ScriptGroup;
 import android.util.JsonReader;
 import android.view.View;
@@ -26,32 +29,15 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class MainMenuActivity extends AppCompatActivity {
 
-    Button hisButton;
-    Button hourButton;
-    Button getButton;
-
     private String userName;
     private String password;
     private String dispenserID;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
-        hisButton = findViewById(R.id.HistoryButton);
-        hourButton = findViewById(R.id.HoursButton);
-        getButton =  findViewById(R.id.GetButton);
-
-        Bundle b = getIntent().getExtras();
-        if(b!=null)
-        {
-            userName = b.getString("userName");
-            password = b.getString("password");
-            dispenserID = b.getString("dispenserID");
-
-            DialogFragment dialog = new MyDialog("Sukces",userName+" "+password+" "+dispenserID);
-            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-        }
     }
 
     //@Override
@@ -71,6 +57,18 @@ public class MainMenuActivity extends AppCompatActivity {
         Intent intent = new Intent(this,HoursActivity.class);
         startActivity(intent);
     }
+
+    public void fLogOutButton(View v)
+    {
+        SharedPreferences sharedpref = this.getSharedPreferences("LoginPreferences",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpref.edit();
+        editor.putString("login","");
+        editor.putString("password","");
+        editor.putInt("IdDispenser",-1);
+        editor.commit();
+        finish();
+    }
+
     public void fGetButton(View v)
     {
         AsyncTask.execute(new Runnable() {

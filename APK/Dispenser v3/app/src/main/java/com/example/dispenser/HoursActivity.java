@@ -3,13 +3,16 @@ package com.example.dispenser;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -25,8 +28,21 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hours);
 
+        //Dane, które wysyłam na serwer
+        SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences", Context.MODE_PRIVATE);
+        int dispenserID = sharedPref.getInt("IdDispenser",-1);
+        JSONObject json = new JSONObject();
 
-        //Takie do testowania
+        try
+        {
+            json.put("IdDispenser",dispenserID);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
+        //Dane które otrzymuję od serwera
         JSONObject hour1 = new JSONObject();
         JSONObject hour2 = new JSONObject();
         JSONObject hour3 = new JSONObject();
@@ -36,10 +52,12 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
             hour1.put("minutes",45);
             hour1.put("description","Apap");
             hour1.put("id",5435);
+
             hour2.put("hour",14);
             hour2.put("minutes",45);
             hour2.put("description","Nerłokol");
             hour2.put("id",54352);
+
             hour3.put("hour",18);
             hour3.put("minutes",45);
             hour3.put("description","Eutanazol");

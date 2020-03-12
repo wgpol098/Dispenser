@@ -23,7 +23,7 @@ public class ChangeHourActivity extends AppCompatActivity {
         setContentView(R.layout.activity_change_hour);
 
         Bundle b = getIntent().getExtras();
-        IdDrug = b.getInt("IdDrug");
+        if(b!=null) IdDrug = b.getInt("IdDrug");
         int hour=0;
         int minutes=0;
         String description="";
@@ -31,9 +31,20 @@ public class ChangeHourActivity extends AppCompatActivity {
         int periodicity=0;
 
         JSONObject json = new JSONObject();
-        if(IdDrug > 0) {
+        if(IdDrug > 0)
+        {
+            //Dane, które wysyłam na serwer
+            JSONObject zap = new JSONObject();
+            try
+            {
+                zap.put("IdDrug",IdDrug);
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
 
-            //Odczytywanie danych z zapytania
+            //JSON, który odczytuję z serwera
             json = new JSONObject();
             try
             {
@@ -114,6 +125,7 @@ public class ChangeHourActivity extends AppCompatActivity {
             //Wywala jak nic nie wpiszesz
             if(IdDrug!=-1)
             {
+                //Tworzenie jsona do wysłania do serwera
                 JSONObject json = new JSONObject();
                 try
                 {
@@ -135,6 +147,7 @@ public class ChangeHourActivity extends AppCompatActivity {
             //Dodawanie danych
             else
             {
+                //Tworzenie jsona do wysłania danych na serwer
                 JSONObject json = new JSONObject();
                 try
                 {

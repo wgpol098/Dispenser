@@ -3,6 +3,8 @@ package com.example.dispenser;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -22,6 +24,20 @@ public class HistoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history);
+
+        //Tworzenie json, który jest wysyłany do serwera
+        SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences", Context.MODE_PRIVATE);
+        int dispenserID = sharedPref.getInt("IdDispenser",-1);
+
+        JSONObject json = new JSONObject();
+        try
+        {
+            json.put("IdDispenser",dispenserID);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
 
         //Tworzenie jsona do testowania danych
         JSONObject hour1 = new JSONObject();
@@ -97,7 +113,6 @@ public class HistoryActivity extends AppCompatActivity {
                 linearLayout.addView(tv);
             }
         }
-
 
         this.setContentView(linearLayout, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
