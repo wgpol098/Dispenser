@@ -35,13 +35,19 @@ MySQL Server
 Database: Dispenser
 Password: Tibia1234 albo Tibia123
 Port: 3306
-Tabela: Logowanie
-Komórki: DispenserID, Login, Password, STATUS
+root@localhost
+baza danych póki co testowa: test
+tabela poki co testowe: testowa
+pola w niej: (klucz głowny to id)id smallint unsigned not null auto_increment, name varchar(20) not null
+
 
 Uruchamianie serwera:
 service mysql start
+Przejście do gui bazy danych:
+mysql -u root -p
 
-mysql -u root -p - przejście do gui bazy danych
+
+
 
 ------------------
 
