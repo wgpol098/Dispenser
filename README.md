@@ -30,7 +30,7 @@ Aplikacja: iis.exe
 
 ------------------
 
-SQL Server
+MySQL Server
 
 Database: Dispenser
 Password: Tibia1234 albo Tibia123
@@ -39,8 +39,7 @@ Tabela: Logowanie
 Komórki: DispenserID, Login, Password, STATUS
 
 Uruchamianie serwera:
-Przechodzimy do /var/BD
-Następnie komenda: mysqld_safe
+service mysql start
 
 mysqld -u root -p - przejście do gui bazy danych
 
