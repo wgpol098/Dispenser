@@ -33,7 +33,7 @@ Aplikacja: iis.exe
 MySQL Server
 
 Database: Dispenser
-Password: Tibia1234 albo Tibia123
+Password: Tibia1234
 Port: 3306
 root@localhost
 baza danych póki co testowa: test
