@@ -41,7 +41,7 @@ Komórki: DispenserID, Login, Password, STATUS
 Uruchamianie serwera:
 service mysql start
 
-mysqld -u root -p - przejście do gui bazy danych
+mysql -u root -p - przejście do gui bazy danych
 
 ------------------
 
