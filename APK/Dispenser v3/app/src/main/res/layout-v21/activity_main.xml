@@ -11,24 +11,22 @@
         android:id="@+id/DiodaButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="69dp"
-        android:layout_marginLeft="69dp"
-        android:layout_marginEnd="77dp"
-        android:layout_marginRight="77dp"
+        android:layout_marginStart="147dp"
+        android:layout_marginLeft="147dp"
+        android:layout_marginTop="77dp"
         android:onClick="fdbutton"
         android:text="Włącz"
         android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="@+id/LoginTextBox"
-        app:layout_constraintStart_toStartOf="@+id/Title"
-        app:layout_constraintTop_toBottomOf="@+id/Title" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/LogInButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="47dp"
-        android:background="@android:color/transparent"
         android:textColor="@color/white"
+        android:background="@android:color/transparent"
         android:onClick="fLogInButton"
         android:text="Log In"
         app:layout_constraintBottom_toTopOf="@+id/SignInButton"
@@ -51,7 +49,7 @@
         android:id="@+id/LoginTextBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="29dp"
+        android:layout_marginTop="223dp"
         android:backgroundTint="@color/white"
         android:textColor="@color/white"
         android:textColorHint="@color/whitehint"
@@ -60,7 +58,7 @@
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/DiodaButton" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/PasswordTextBox"

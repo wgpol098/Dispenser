@@ -26,6 +26,7 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_hours);
 
         //Dane, które wysyłam na serwer
@@ -76,6 +77,7 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
 
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setOrientation(linearLayout.VERTICAL);
+        linearLayout.setBackgroundResource(R.drawable.bg_gradient);
 
         DialogFragment dialog = new MyDialog("Wysyłam IdDispenser a odbieram GET:",jsonArray.toString());
         dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
@@ -107,6 +109,7 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
             button.setText(str1 + ":" + str2 + " - " + str3);
             button.setId(IdDrug);
             button.setTextSize(20);
+            //button.setBackgroundResource(R.color.zxing_transparent);
             button.setGravity(Gravity.CENTER);
             button.setOnClickListener(this);
             button.setOnLongClickListener(this);

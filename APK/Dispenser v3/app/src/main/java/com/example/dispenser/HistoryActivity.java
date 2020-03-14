@@ -6,6 +6,7 @@ import androidx.fragment.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ public class HistoryActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_history);
 
         //Tworzenie json, który jest wysyłany do serwera
@@ -73,6 +75,8 @@ public class HistoryActivity extends AppCompatActivity {
 
         LinearLayout linearLayout = new LinearLayout(this);
         linearLayout.setOrientation(linearLayout.VERTICAL);
+        linearLayout.setBackgroundResource(R.drawable.bg_gradient);
+        linearLayout.setPadding(20,40,20,20);
 
         DialogFragment dialog = new MyDialog("Wysyłam IdDispensera, a odbieram GET:",jsonArray.toString());
         dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
@@ -104,11 +108,20 @@ public class HistoryActivity extends AppCompatActivity {
                 TextView tv = new TextView(this);
                 tv.setText(i+1 + ": " + datetime + ", " + nr_window + ", " + description + ", " + flag);
                 tv.setTextSize(20);
+                tv.setPadding(0,20,0,20);
                 tv.setGravity(Gravity.CENTER_HORIZONTAL);
 
-                if(flag==1) tv.setBackgroundColor(Color.GREEN);
-                else if(flag==0) tv.setBackgroundColor(Color.RED);
-                else tv.setBackgroundColor(Color.YELLOW);
+                //Tworzenie gradientu do tła
+                GradientDrawable shape = new GradientDrawable();
+                shape.setShape(GradientDrawable.RECTANGLE);
+                shape.setColor(Color.RED);
+                shape.setCornerRadius(30);
+
+                if(flag==1) shape.setColor(Color.GREEN);
+                else if(flag==0) shape.setColor(Color.RED);
+                else shape.setColor(Color.YELLOW);
+
+                tv.setBackgroundDrawable(shape);
 
                 linearLayout.addView(tv);
             }

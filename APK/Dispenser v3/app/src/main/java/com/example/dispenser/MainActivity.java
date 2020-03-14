@@ -10,6 +10,9 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Checkable;
@@ -42,7 +45,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
+
+        //Definicja animacji
 
         SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences",Context.MODE_PRIVATE);
         String login = sharedPref.getString("login", "");
@@ -71,12 +77,21 @@ public class MainActivity extends AppCompatActivity {
 
     public void fSignInButton(View v)
     {
+        //Animacja po kliknięcu na przycisk
+        final Animation myAnim = AnimationUtils.loadAnimation(this, R.anim.milkshake);
+        v.startAnimation(myAnim);
+
+        //Otwieranie nowej aktywności
         Intent intent = new Intent(this,SignInActivity.class);
         startActivity(intent);
     }
 
     public void fLogInButton(View v)
     {
+        //Animacja po kliknięcu na przycisk
+        final Animation myAnim = AnimationUtils.loadAnimation(this, R.anim.milkshake);
+        v.startAnimation(myAnim);
+
         //Odczytywanie danych z textboxów
 
         EditText l = findViewById(R.id.LoginTextBox);
@@ -128,22 +143,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        if(authorization==1)
-        {
-            MainMenuActivity csa = new MainMenuActivity();
-            Intent intent = new Intent(this,MainMenuActivity.class);
-//            intent.putExtra("userName",login);
-//            intent.putExtra("password",password);
-//            intent.putExtra("dispenserID",dispenserID);
-            startActivity(intent);
-        }
-        //Tutaj dodaj opcję, że zły login albo hasło
-        else
-        {
-            MyDialog dialog = new MyDialog("Błąd","Zły login lub hasło");
-            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-        }
-
         //Zapamiętywanie loginu, password i IdDispensera
         CheckBox ch = findViewById(R.id.RememberCheckBox);
 
@@ -155,6 +154,19 @@ public class MainActivity extends AppCompatActivity {
             editor.putString("password",password);
             editor.putInt("IdDispenser",dispenserID);
             editor.commit();
+        }
+
+        if(authorization==1)
+        {
+            MainMenuActivity csa = new MainMenuActivity();
+            Intent intent = new Intent(this,MainMenuActivity.class);
+            startActivity(intent);
+        }
+        //Tutaj dodaj opcję, że zły login albo hasło
+        else
+        {
+            MyDialog dialog = new MyDialog("Błąd","Zły login lub hasło");
+            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
         }
     }
 }
