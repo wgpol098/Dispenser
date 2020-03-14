@@ -36,9 +36,23 @@ Database: Dispenser
 Password: Tibia1234
 Port: 3306
 root@localhost
-baza danych póki co testowa: test
-tabela poki co testowe: testowa
-pola w niej: (klucz głowny to id)id smallint unsigned not null auto_increment, name varchar(20) not null
+baza danych póki co: test
+TABELE:
+
+History:
+		    public int Id , 
+        public int DispenserId , 
+        public DateTime DateAndTime , 
+        public int Nr_Okienka , 
+        public string Opis , 
+        public int Flaga 
+		
+Plans:
+		    public int Id , 
+        public int DispenserId , 
+        public DateTime DateAndTime , 
+        public int Nr_Okienka , 
+        public string Opis
 
 
 Uruchamianie serwera:
