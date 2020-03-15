@@ -31,6 +31,7 @@ public class QrScannerActivity extends AppCompatActivity implements BarcodeReade
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
         setContentView(R.layout.activity_qr_scanner);
 
         barcodeReader = (BarcodeReader) getSupportFragmentManager().findFragmentById(R.id.barcode_scanner);

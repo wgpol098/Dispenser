@@ -11,13 +11,12 @@
         android:id="@+id/HistoryButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="149dp"
-        android:layout_marginLeft="149dp"
-        android:layout_marginTop="115dp"
-        android:textColor="@color/white"
+        android:layout_marginTop="117dp"
         android:background="@android:color/transparent"
         android:onClick="fHistoryButton"
-        android:text="Historia"
+        android:text="@string/history"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -25,11 +24,11 @@
         android:id="@+id/HoursButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="23dp"
-        android:textColor="@color/white"
+        android:layout_marginTop="24dp"
         android:background="@android:color/transparent"
         android:onClick="fHoursButton"
-        android:text="Godziny"
+        android:text="@string/hours"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="@+id/HistoryButton"
         app:layout_constraintTop_toBottomOf="@+id/HistoryButton" />
 
@@ -37,23 +36,35 @@
         android:id="@+id/GetButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="84dp"
-        android:textColor="@color/white"
+        android:layout_marginTop="16dp"
         android:background="@android:color/transparent"
         android:onClick="fGetButton"
         android:text="POST"
-        app:layout_constraintStart_toStartOf="@+id/HistoryButton"
-        app:layout_constraintTop_toBottomOf="@+id/HistoryButton" />
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="@+id/HoursButton"
+        app:layout_constraintTop_toBottomOf="@+id/HoursButton" />
 
     <Button
         android:id="@+id/LogOutButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:onClick="fLogOutButton"
-        android:textColor="@color/white"
+        android:layout_marginTop="26dp"
         android:background="@android:color/transparent"
-        android:text="Log Out"
-        app:layout_constraintStart_toStartOf="@+id/GetButton"
+        android:onClick="fLogOutButton"
+        android:text="@string/logout"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="@+id/SettingButton"
+        app:layout_constraintTop_toBottomOf="@+id/SettingButton" />
+
+    <Button
+        android:id="@+id/SettingButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:background="@android:color/transparent"
+        android:onClick="fSettingsButton"
+        android:text="@string/settings"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="@+id/GetButton"
         app:layout_constraintTop_toBottomOf="@+id/GetButton" />
 </androidx.constraintlayout.widget.ConstraintLayout>

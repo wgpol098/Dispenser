@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login">Login</string>
+    <string name="password">Hasło</string>
+    <string name="email">E-mail</string>
+    <string name="DispenserID">Id Dispensera</string>
+    <string name="hour">Godzina</string>
+    <string name="minutes">Minuty</string>
+    <string name="count">Ilość</string>
+    <string name="periodicity">Okresowość</string>
+    <string name="description">Opis</string>
+    <string name="remember_me">Zapamiętaj mnie</string>
+    <string name="log_in">Zaloguj</string>
+    <string name="sign_in">Zarejestruj</string>
+    <string name="scan_qr">Skanuj QR</string>
+    <string name="add">Dodaj</string>
+    <string name="hours">Godziny</string>
+    <string name="history">Historia</string>
+    <string name="settings">Ustawienia</string>
+    <string name="logout">Wyloguj</string>
+</resources>

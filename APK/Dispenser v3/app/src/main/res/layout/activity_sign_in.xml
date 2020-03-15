@@ -15,11 +15,11 @@
         android:layout_marginEnd="86dp"
         android:layout_marginRight="86dp"
         android:backgroundTint="@color/white"
+        android:ems="10"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress"
         android:textColor="@color/white"
         android:textColorHint="@color/whitehint"
-        android:ems="10"
-        android:hint="Email"
-        android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -31,11 +31,11 @@
         android:layout_marginEnd="2dp"
         android:layout_marginRight="2dp"
         android:backgroundTint="@color/white"
+        android:ems="10"
+        android:hint="@string/password"
+        android:inputType="textPassword"
         android:textColor="@color/white"
         android:textColorHint="@color/whitehint"
-        android:ems="10"
-        android:hint="Password"
-        android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="@+id/EmailTextBox"
         app:layout_constraintTop_toBottomOf="@+id/EmailTextBox" />
 
@@ -45,11 +45,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="35dp"
         android:backgroundTint="@color/white"
+        android:ems="10"
+        android:hint="@string/DispenserID"
+        android:inputType="textPersonName"
         android:textColor="@color/white"
         android:textColorHint="@color/whitehint"
-        android:ems="10"
-        android:hint="DispenserID"
-        android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="@+id/PasswordTextBox"
         app:layout_constraintTop_toBottomOf="@+id/PasswordTextBox" />
 
@@ -58,10 +58,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="46dp"
-        android:textColor="@color/white"
         android:background="@android:color/transparent"
         android:onClick="fSignInButton"
-        android:text="Sign In"
+        android:text="@string/sign_in"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/DispenserIDTextBox" />
@@ -72,10 +72,10 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="33dp"
         android:layout_marginRight="33dp"
-        android:textColor="@color/white"
         android:background="@android:color/transparent"
         android:onClick="fScanButton"
-        android:text="Scan QR"
+        android:text="@string/scan_qr"
+        android:textColor="@color/white"
         app:layout_constraintBaseline_toBaselineOf="@+id/SignInButton"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

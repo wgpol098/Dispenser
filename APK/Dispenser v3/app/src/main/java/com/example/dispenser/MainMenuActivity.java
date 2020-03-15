@@ -47,6 +47,11 @@ public class MainMenuActivity extends AppCompatActivity {
         finish();
     }
 
+    public void fSettingsButton(View v)
+    {
+        Intent intent = new Intent(this,SettingActivity.class);
+        startActivity(intent);
+    }
     public void fHistoryButton(View v)
     {
         Intent intent = new Intent(this,HistoryActivity.class);

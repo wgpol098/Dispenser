@@ -15,11 +15,11 @@
         android:layout_marginLeft="88dp"
         android:layout_marginTop="50dp"
         android:backgroundTint="@color/white"
+        android:ems="10"
+        android:hint="@string/hour"
+        android:inputType="numberDecimal"
         android:textColor="@color/white"
         android:textColorHint="@color/whitehint"
-        android:ems="10"
-        android:hint="Hour"
-        android:inputType="numberDecimal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -29,11 +29,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:backgroundTint="@color/white"
+        android:ems="10"
+        android:hint="@string/minutes"
+        android:inputType="numberDecimal"
         android:textColor="@color/white"
         android:textColorHint="@color/whitehint"
-        android:ems="10"
-        android:hint="Minutes"
-        android:inputType="numberDecimal"
         app:layout_constraintStart_toStartOf="@+id/HoursTextBox"
         app:layout_constraintTop_toBottomOf="@+id/HoursTextBox" />
 
@@ -45,11 +45,11 @@
         android:layout_marginLeft="3dp"
         android:layout_marginTop="21dp"
         android:backgroundTint="@color/white"
+        android:ems="10"
+        android:hint="@string/count"
+        android:inputType="numberDecimal"
         android:textColor="@color/white"
         android:textColorHint="@color/whitehint"
-        android:ems="10"
-        android:hint="Count"
-        android:inputType="numberDecimal"
         app:layout_constraintStart_toStartOf="@+id/MinutesTextBox"
         app:layout_constraintTop_toBottomOf="@+id/MinutesTextBox" />
 
@@ -61,11 +61,11 @@
         android:layout_marginEnd="3dp"
         android:layout_marginRight="3dp"
         android:backgroundTint="@color/white"
+        android:ems="10"
+        android:hint="@string/periodicity"
+        android:inputType="numberDecimal"
         android:textColor="@color/white"
         android:textColorHint="@color/whitehint"
-        android:ems="10"
-        android:hint="Periodicity"
-        android:inputType="numberDecimal"
         app:layout_constraintEnd_toEndOf="@+id/CountTextBox"
         app:layout_constraintTop_toBottomOf="@+id/CountTextBox" />
 
@@ -75,11 +75,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
         android:backgroundTint="@color/white"
+        android:ems="10"
+        android:hint="@string/description"
+        android:inputType="textPersonName"
         android:textColor="@color/white"
         android:textColorHint="@color/whitehint"
-        android:ems="10"
-        android:hint="Description"
-        android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="@+id/PeriodicityTextBox"
         app:layout_constraintTop_toBottomOf="@+id/PeriodicityTextBox" />
 

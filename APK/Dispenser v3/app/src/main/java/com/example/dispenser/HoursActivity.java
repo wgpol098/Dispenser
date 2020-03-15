@@ -119,7 +119,7 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
 
         //Dodanie na końcu buttona do dodawania godzin
         Button button = new Button(this);
-        button.setText("Add");
+        button.setText(getString(R.string.add));
         button.setId(-1);
         button.setTextSize(20);
         button.setGravity(Gravity.CENTER);

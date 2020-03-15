@@ -48,8 +48,6 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
 
-        //Definicja animacji
-
         SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences",Context.MODE_PRIVATE);
         String login = sharedPref.getString("login", "");
         String password = sharedPref.getString("password","");
@@ -62,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             //JSON do sprawdzenia połączenia z serwerem (dodaj)
+            //To będzie ten sam JSON, który jest uzywany przy logowaniu się w aplikacji
 
 
             Intent intent = new Intent(this,MainMenuActivity.class);
@@ -119,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         JSONObject json = new JSONObject();
         try
         {
-            json.put("authorization",1);
+            json.put("Authorization",1);
             json.put("IdDispenser",1234);
         }
         catch (JSONException e)
@@ -129,7 +128,8 @@ public class MainActivity extends AppCompatActivity {
 
         //Odczytywanie jsona od serwera
         //authorization == 1 to git
-        //inna liczba to jakiś błąd
+        //authorization == -1 to złe hasło
+        //authorization == 0 zły login
         int authorization=-1;
         int dispenserID=-1;
 
