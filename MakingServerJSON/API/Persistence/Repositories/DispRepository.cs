@@ -24,7 +24,7 @@ namespace WebApplication1.API.Persistence.Repositories
                 DispenserId = dispenser.DispenserId,
                 Nr_Okienka = dispenser.Nr_Okienka,
                 Flaga = dispenser.Flaga,
-                Datetime = dispenser.dateTime,
+                DateAndTime = dispenser.dateTime,
                 Opis = plan.Opis
             };
             await _context.History.AddAsync(historia);

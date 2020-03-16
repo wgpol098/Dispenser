@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace WebApplication1.API.Domain.Models
+namespace WebApplication1.API.Resources
 {
-    public class Historia
+    public class AndroidSendToAppByIdDispHistory
     {
-        public int Id { get; set; }
-        public int DispenserId { get; set; }
         public DateTime DateAndTime { get; set; }
         public int Nr_Okienka { get; set; }
         public string Opis { get; set; }

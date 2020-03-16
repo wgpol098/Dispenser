@@ -54,8 +54,8 @@ namespace WebApplication1.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState.GetErrorMessages());
 
-            var category = _mapper.Map<SaveDispenserResource, Dispenser>(resource);
-            var result = await _DispenserService.UpdateAsync(id, category);
+            var mapp = _mapper.Map<SaveDispenserResource, Dispenser>(resource);
+            var result = await _DispenserService.UpdateAsync(id, mapp);
 
             if (!result.Success)
                 return BadRequest(result.Message);

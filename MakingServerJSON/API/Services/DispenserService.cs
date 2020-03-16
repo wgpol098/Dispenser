@@ -44,14 +44,14 @@ namespace WebApplication1.API.Services
             }
         }
 
-        public async Task<DispenserResponse> UpdateAsync(int id, Dispenser category)
+        public async Task<DispenserResponse> UpdateAsync(int id, Dispenser disp)
         {
             var existingDispenser = await _dispenserRepository.FindByIdAsync(id);
 
             if (existingDispenser == null)
                 return new DispenserResponse("Dispensera nie odnaleziono.");
 
-            existingDispenser.Name = category.Name;
+           // existingDispenser.Name = disp.Name;
 
             try
             {

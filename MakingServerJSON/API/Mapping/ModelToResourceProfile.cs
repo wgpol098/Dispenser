@@ -10,7 +10,9 @@ namespace WebApplication1.API.Mapping
         {
             CreateMap<Dispenser, DispenserResources>();
             CreateMap<Plan, ServResourcesToDisp>();
-           
+            //CreateMap<Plan, AndroidSendToAppByIdDisp>();
+            //CreateMap<Plan, AndroidSendToAppByIdRecord>();
+
         }
     }
 }

@@ -9,7 +9,7 @@ namespace WebApplication1.API.Domain.Models
     {
         public int Id { get; set; }
         public int DispenserId { get; set; }
-        public DateTime dateTime { get; set; }
+        public DateTime DateAndTime { get; set; }
         public int Nr_Okienka { get; set; }
         public string Opis{ get; set; }
     }
