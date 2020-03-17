@@ -14,7 +14,10 @@ namespace WebApplication1.API.Domain.Repositories
         Task<AndroidSendToAppByIdRecord> ListAllRecordsInPlansByIdRecordAsync(int androidSendIdDispenser);
         Task AddAsync(Plan dispenser);
         Task<Dispenser> ReturnDispenserFromTable(int idDispenser);
-        Task<Dispenser> FindDispenser(int id);
+        Task<Dispenser> FindDispenserAsync(int id);
+        Task<Plan> FindPlanAsync(int idRecord);
+        Task<bool> Remove(int existingPlan);
+        Task<bool> Update(AndroidSendPostUpdate existingPlan);
         void UpdateOkienka(Dispenser existingDispenser);
     }
 }

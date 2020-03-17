@@ -21,9 +21,14 @@ namespace WebApplication1.API.Persistence.Repositories
             await _context.Plans.AddAsync(dispenser);
         }
 
-        public async Task<Dispenser> FindDispenser(int id)
+        public async Task<Dispenser> FindDispenserAsync(int id)
         {
             return await _context.Dispensers.FindAsync(id);
+        }
+
+        public async Task<Plan> FindPlanAsync(int id)
+        {
+            return await _context.Plans.FindAsync(id);
         }
 
         public async Task<IEnumerable<AndroidSendToAppByIdDisp>> ListAllRecordsForDispenserAsync(int androidSendIdDispenser)
@@ -97,9 +102,130 @@ namespace WebApplication1.API.Persistence.Repositories
             return temp2;
         }
 
+        public async Task<bool> Remove(int existingPlan)
+        {
+            Plan plan = await _context.Plans.FirstOrDefaultAsync(q => q.Id == existingPlan);
+            Dispenser FindDispenserOkienka = await _context.Dispensers.FirstOrDefaultAsync(q => q.DispenserId == plan.DispenserId);
+
+            var FoundPlans = await _context.Plans.Where(q => q.DispenserId == plan.DispenserId).ToListAsync();
+            FoundPlans = FoundPlans.Where(q => q.Opis == plan.Opis).ToList();
+
+            //Próba wykasowania
+            try
+            {
+                System.Text.StringBuilder temp = new System.Text.StringBuilder(FindDispenserOkienka.Nr_Okienka);
+                foreach (var q in FoundPlans)
+                {
+                    if (q.Nr_Okienka != -1)
+                        temp[q.Nr_Okienka - 1] = '0';
+                }
+                string str = temp.ToString();
+                FindDispenserOkienka.Nr_Okienka = str;
+
+                foreach (var q in FoundPlans)
+                {
+                    _context.Plans.Remove(q);
+                }
+
+                await _context.SaveChangesAsync();
+                UpdateOkienka(FindDispenserOkienka);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public async Task<Dispenser> ReturnDispenserFromTable(int idDispenser)
         {
             return await _context.Dispensers.FirstOrDefaultAsync(q => q.DispenserId == idDispenser);
+        }
+
+        public async Task<bool> Update(AndroidSendPostUpdate existingPlan)
+        {
+            DateTime dateAndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
+                existingPlan.Hour, existingPlan.Minutes, 0);
+
+            if (existingPlan.Hour < DateTime.Now.Hour)
+                dateAndTime.AddDays(1);
+
+            var FindPlan = await _context.Plans.FirstOrDefaultAsync(q => q.Id == existingPlan.IdRecord);
+
+            //Nowy lub update
+            Dispenser FindDispenserOkienka = 
+                await _context.Dispensers.FirstOrDefaultAsync(q => q.DispenserId == existingPlan.IdDispenser);
+
+            //Próba wykasowania
+            try
+            {
+                var result = await Remove(existingPlan.IdRecord);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            try
+            {
+                bool SprawdzCzyWolne = false;
+
+                for (int i = 0; i < existingPlan.Count; i++)
+                {
+                    for (int j = 0; j < FindDispenserOkienka.Nr_Okienka.Length; j++)
+                    {
+                        if (FindDispenserOkienka.Nr_Okienka[j] == '0')
+                        {
+                            System.Text.StringBuilder temp = new System.Text.StringBuilder(FindDispenserOkienka.Nr_Okienka);
+                            temp[j] = '1';
+                            string str = temp.ToString();
+                            Plan plan = new Plan()
+                            {
+                                DateAndTime = dateAndTime,
+                                DispenserId = existingPlan.IdDispenser,
+                                Opis = existingPlan.Opis,
+                                Nr_Okienka = j + 1
+                            };
+
+                            await AddAsync(plan);
+
+                            FindDispenserOkienka.Nr_Okienka = str;
+
+                            UpdateOkienka(FindDispenserOkienka);
+
+                            dateAndTime = dateAndTime.AddHours(existingPlan.Periodicity);
+                            SprawdzCzyWolne = true;
+                            break;
+                        }
+                    }
+
+                    if (SprawdzCzyWolne == false)
+                    {
+                        Plan plan = new Plan()
+                        {
+                            DateAndTime = dateAndTime,
+                            DispenserId = existingPlan.IdDispenser,
+                            Opis = existingPlan.Opis,
+                            Nr_Okienka = -1
+                        };
+
+                        await AddAsync(plan);
+
+                        dateAndTime.AddHours(existingPlan.Periodicity);
+                    }
+
+                    SprawdzCzyWolne = false;
+                }
+
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public void UpdateOkienka(Dispenser existingDispenser)

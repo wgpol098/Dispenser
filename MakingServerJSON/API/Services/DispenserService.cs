@@ -51,7 +51,6 @@ namespace WebApplication1.API.Services
             if (existingDispenser == null)
                 return new DispenserResponse("Dispensera nie odnaleziono.");
 
-           // existingDispenser.Name = disp.Name;
 
             try
             {

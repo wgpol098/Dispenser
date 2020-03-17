@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.API.Domain.Models;
 using WebApplication1.API.Domain.Services;
@@ -28,9 +26,6 @@ namespace WebApplication1.API.Controllers
         [HttpGet("GetPlan")]
         public async Task<IEnumerable<AndroidSendToAppByIdDisp>> GetByIdDispenser([FromBody] AndroidSendIdDispenser androidSendIdDispenser){
             var disp = await _androidService.ListPlansAsync(androidSendIdDispenser.IdDispenser);
-            //Można potem przerobić na mapę, jeżeli zdecydujemy się na te same pola modeli
-            //var resources = _mapper.Map<IEnumerable<Plan>, IEnumerable<AndroidSendToAppByIdDisp>>(disp);
-
             return disp;
         }
 
@@ -38,7 +33,6 @@ namespace WebApplication1.API.Controllers
         public async Task<AndroidSendToAppByIdRecord> GetByIdRecord([FromBody] AndroidSendIdRecord androidSendIdRecord)
         {
             var disp = await _androidService.ListPlansByRecAsync(androidSendIdRecord.IdRecord);
-
             return disp;
         }
 
@@ -46,7 +40,6 @@ namespace WebApplication1.API.Controllers
         public async Task<IEnumerable<AndroidSendToAppByIdDispHistory>> GetByIdDispenserHistory([FromBody] AndroidSendIdDispenser androidSendIdDispenser)
         {
             var disp = await _androidService.ListHistoryAsync(androidSendIdDispenser.IdDispenser);
-
             return disp;
         }
 
@@ -109,7 +102,7 @@ namespace WebApplication1.API.Controllers
 
                         await _androidService.SaveAsync(plan);
 
-                        dateAndTime.AddHours(androidSendPost.Periodicity);
+                        dateAndTime = dateAndTime.AddHours(androidSendPost.Periodicity);
                     }
 
                     SprawdzCzyWolne = false;
@@ -121,36 +114,35 @@ namespace WebApplication1.API.Controllers
             }
             return Ok();
         }
-        /*
+        
         //UPDATE
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAsync(int id, [FromBody] SaveDispenserResource resource)
+        [HttpPut]
+        public async Task<IActionResult> PutAsync([FromBody] AndroidSendPostUpdate resource)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState.GetErrorMessages());
 
-            var mapp = _mapper.Map<SaveDispenserResource, Dispenser>(resource);
-            var result = await _androidService.UpdateAsync(id, mapp);
+            var result = await _androidService.UpdateAsync(resource);
 
-            if (!result.Success)
-                return BadRequest(result.Message);
+            if (!result)
+                return BadRequest();
 
-            var dispenserResource = _mapper.Map<Dispenser, DispenserResources>(result.Resource);
-            return Ok(dispenserResource);
+            return Ok();
         }
 
         //DELETE
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAsync([FromBody] AndroidSendIdRecord androidSendIdRecord)
         {
-            var result = await _androidService.DeleteAsync(id);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.GetErrorMessages());
 
-            if (!result.Success)
-                return BadRequest(result.Message);
+            var result = await _androidService.DeleteAsync(androidSendIdRecord);
 
-            var dispenserResource = _mapper.Map<Dispenser, DispenserResources>(result.Resource);
-            return Ok(dispenserResource);
-        }*/
+            if (!result)
+                return BadRequest();
+
+            return Ok();
+        }
     }
 }
-// Zrobić PUT i DELETE, metodę POST można na pewno skrócić (Ale to potem)

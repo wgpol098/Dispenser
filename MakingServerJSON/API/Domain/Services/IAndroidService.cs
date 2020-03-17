@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApplication1.API.Domain.Models;
 using WebApplication1.API.Domain.Services.Communication;
@@ -16,5 +14,7 @@ namespace WebApplication1.API.Domain.Services
         Task<AndroidResponse> SaveAsync(Plan dispenser);
         Task<Dispenser> FindOkienka(int idDispenser);
         Task<DispenserResponse> UpdateDispenserOkienkaAsync(string v, int id);
+        Task<bool> UpdateAsync(AndroidSendPostUpdate resource);
+        Task<bool> DeleteAsync(AndroidSendIdRecord androidSendIdRecord);
     }
 }

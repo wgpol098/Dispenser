@@ -21,6 +21,21 @@ namespace WebApplication1.API.Services
             _unitOfWork = unitOfWork;
         }
 
+        public async Task<bool> DeleteAsync(AndroidSendIdRecord androidSendIdRecord)
+        {
+            try
+            {
+                await _androidRepository.Remove(androidSendIdRecord.IdRecord);
+                await _unitOfWork.CompleteAsync();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public async Task<Dispenser> FindOkienka(int idDispenser)
         {
             return await _androidRepository.ReturnDispenserFromTable(idDispenser);
@@ -52,13 +67,28 @@ namespace WebApplication1.API.Services
             }
             catch (Exception ex)
             {
-                return new AndroidResponse($"An error occurred when saving the dispenser: {ex.Message}");
+                return new AndroidResponse($"An error occurred when saving the plan: {ex.Message}");
+            }
+        }
+
+        public async Task<bool> UpdateAsync(AndroidSendPostUpdate resource)
+        {
+            try
+            {
+                var result = await _androidRepository.Update(resource);
+                await _unitOfWork.CompleteAsync();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
         public async Task<DispenserResponse> UpdateDispenserOkienkaAsync(string v, int id)
         {
-            var existingDispenser = await _androidRepository.FindDispenser(id);
+            var existingDispenser = await _androidRepository.FindDispenserAsync(id);
 
             if (existingDispenser == null)
                 return new DispenserResponse("Dispensera nie odnaleziono.");
