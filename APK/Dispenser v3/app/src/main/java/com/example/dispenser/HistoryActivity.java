@@ -1,5 +1,6 @@
 package com.example.dispenser;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
@@ -7,7 +8,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.JsonReader;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -18,6 +22,21 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
+import static org.apache.http.params.CoreProtocolPNames.USER_AGENT;
 
 public class HistoryActivity extends AppCompatActivity {
 
@@ -31,15 +50,101 @@ public class HistoryActivity extends AppCompatActivity {
         SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences", Context.MODE_PRIVATE);
         int dispenserID = sharedPref.getInt("IdDispenser",-1);
 
-        JSONObject json = new JSONObject();
+        final JSONObject json = new JSONObject();
         try
         {
-            json.put("IdDispenser",dispenserID);
+            json.put("idDispenser",5);
         }
         catch (JSONException e)
         {
             e.printStackTrace();
         }
+
+        AsyncTask.execute(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void run() {
+                HttpURLConnection ASPNETConnection = null;
+                try
+                {
+                    URL ASPNETURL = new URL("http://panda.fizyka.umk.pl:9092/api/Android/GetHistory/");
+                    ASPNETConnection = (HttpURLConnection) ASPNETURL.openConnection();
+                    ASPNETConnection.setRequestProperty("Content-Type","application/json");
+                    ASPNETConnection.setRequestProperty("accept", "application/json");
+                    ASPNETConnection.setRequestProperty("Content",json.toString());
+//                    ASPNETConnection.setDoOutput(true);
+//                    DataOutputStream wr = new DataOutputStream(ASPNETConnection.getOutputStream());
+//                    wr.writeBytes(json.toString());
+//                    wr.flush();
+//                    wr.close();
+                    ASPNETConnection.setRequestMethod("GET");
+                    //ASPNETConnection.setRequestMethod("GET");
+
+//                    ASPNETConnection.setDoInput(true);
+//                    InputStream responseBody = ASPNETConnection.getInputStream();
+//                    InputStreamReader responseBodyReader = new InputStreamReader(responseBody, "UTF-8");
+//                    JsonReader jsonReader = new JsonReader(responseBodyReader);
+//
+//                    StringBuilder textBuilder = new StringBuilder();
+//                    try (Reader reader = new BufferedReader(new InputStreamReader
+//                            (responseBody, Charset.forName(StandardCharsets.UTF_8.name())))) {
+//                        int c = 0;
+//                        while ((c = reader.read()) != -1) {
+//                            textBuilder.append((char) c);
+//                        }
+//                    }
+
+////ASPNETConnection.setRequestMethod("GET");
+//                    if(ASPNETConnection!=null)
+//                    {
+//                        //ASPNETConnection.setRequestMethod("GET");
+//                        ASPNETConnection.setRequestProperty("User-Agent", USER_AGENT);
+//                        ASPNETConnection.setRequestProperty("Accept", "application/json");
+//                        ASPNETConnection.setRequestProperty("Content-Type","application/json");
+//                        ASPNETConnection.setDoOutput(true);
+//
+//                        ASPNETConnection.getOutputStream().write(json.toString().getBytes());
+//                        DialogFragment dialog1 = new MyDialog("Błąd",json.toString().getBytes().toString());
+//                        dialog1.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+//                    }
+
+
+
+                    if (ASPNETConnection.getResponseCode() == 200)
+                    {
+                        DialogFragment dialog = new MyDialog("Błąd",String.valueOf(ASPNETConnection.getResponseCode()));
+                        dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                    }
+                    else
+                    {
+                        //Connection not successfull
+                        DialogFragment dialog = new MyDialog("Błąd",String.valueOf(ASPNETConnection.getErrorStream()));
+                        dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                    }
+
+                }
+                catch (MalformedURLException e)
+                {
+                    //bad  URL, tell the user
+                    DialogFragment dialog = new MyDialog("Błąd","Zły adres URL");
+                    dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                }
+                catch (IOException e)
+                {
+                    //network error/ tell the user
+                    DialogFragment dialog = new MyDialog("Błąd","Aplikacja nie ma dostępu do internetu!");
+                    dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                }
+                finally
+                {
+                    if(ASPNETConnection != null) ASPNETConnection.disconnect();
+                }
+            }
+        });
+
+        //Odczytywanie jsona z serwera
+        DialogFragment dialog = new MyDialog("Błąd","Aplikacja nie ma dostępu do internetu!");
+        dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
 
         //Tworzenie jsona do testowania danych
         JSONObject hour1 = new JSONObject();
@@ -78,8 +183,8 @@ public class HistoryActivity extends AppCompatActivity {
         linearLayout.setBackgroundResource(R.drawable.bg_gradient);
         linearLayout.setPadding(20,40,20,20);
 
-        DialogFragment dialog = new MyDialog("Wysyłam IdDispensera, a odbieram GET:",jsonArray.toString());
-        dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+//        dialog = new MyDialog("Wysyłam IdDispensera, a odbieram GET:",jsonArray.toString());
+//        dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
 
         for(int i=0;i<jsonArray.length();i++)
         {

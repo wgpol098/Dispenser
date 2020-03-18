@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -18,6 +19,12 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class HoursActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener{
 
@@ -147,15 +154,65 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
 
         //Tworzenie jsona, który muszę wysłać na serwer, żeby usunął dane
         Button tmp = (Button) v;
-        JSONObject json = new JSONObject();
+        final JSONObject json = new JSONObject();
         try
         {
-            json.put("IdDrug",tmp.getId());
+            json.put("idRecord",208);
         }
         catch (JSONException e)
         {
             e.printStackTrace();
         }
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                HttpURLConnection ASPNETConnection = null;
+                try
+                {
+                    URL ASPNETURL = new URL("http://panda.fizyka.umk.pl:9092/api/Android");
+                    ASPNETConnection = (HttpURLConnection) ASPNETURL.openConnection();
+                    ASPNETConnection.setRequestProperty("Content-Type","application/json");
+                    ASPNETConnection.setRequestProperty("accept", "application/json");
+                    ASPNETConnection.setDoOutput(true);
+                    ASPNETConnection.setRequestMethod("DELETE");
+                    DataOutputStream wr = new DataOutputStream(ASPNETConnection.getOutputStream());
+                    wr.writeBytes(json.toString());
+                    wr.flush();
+                    wr.close();
+
+
+                    if (ASPNETConnection.getResponseCode() == 200)
+                    {
+                        DialogFragment dialog = new MyDialog("Dodano",String.valueOf(ASPNETConnection.getResponseCode()));
+                        dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                    }
+                    else
+                    {
+                        //Connection not successfull
+                        DialogFragment dialog = new MyDialog("Błąd",String.valueOf(ASPNETConnection.getResponseCode()));
+                        dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                    }
+
+                }
+                catch (MalformedURLException e)
+                {
+                    //bad  URL, tell the user
+                    DialogFragment dialog = new MyDialog("Błąd","Zły adres URL");
+                    dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                }
+                catch (IOException e)
+                {
+                    //network error/ tell the user
+                    DialogFragment dialog = new MyDialog("Błąd","Aplikacja nie ma dostępu do internetu!");
+                    dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                }
+                finally
+                {
+                    if(ASPNETConnection != null) ASPNETConnection.disconnect();
+                }
+            }
+        });
         return true;
     }
 }

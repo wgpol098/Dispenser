@@ -3,14 +3,24 @@ package com.example.dispenser;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
+import android.bluetooth.le.AdvertisingSetParameters;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Calendar;
 
 public class ChangeHourActivity extends AppCompatActivity {
@@ -114,6 +124,9 @@ public class ChangeHourActivity extends AppCompatActivity {
         int tmpcount = Integer.parseInt(c.getText().toString());
         int tmpperiodicity = Integer.parseInt(p.getText().toString());
 
+        SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences", Context.MODE_PRIVATE);
+        int dispenserID = sharedPref.getInt("IdDispenser",-1);
+
 
         if(tmphour>23 || tmphour<0 || tmpminutes>59 || tmpminutes < 0)
         {
@@ -127,46 +140,114 @@ public class ChangeHourActivity extends AppCompatActivity {
             if(IdDrug!=-1)
             {
                 //Tworzenie jsona do wysłania do serwera
-                JSONObject json = new JSONObject();
+                final JSONObject json = new JSONObject();
                 try
                 {
-                    json.put("IdDrug",IdDrug);
+                    json.put("idRecord",410);
                     json.put("hour",tmphour);
                     json.put("minutes",tmpminutes);
                     json.put("count",tmpcount);
                     json.put("periodicity",tmpperiodicity);
-                    json.put("description",tmpdescription);
+                    json.put("opis",tmpdescription);
+                    json.put("idDispenser",dispenserID);
                 }
                 catch (JSONException e)
                 {
                     e.printStackTrace();
                 }
+
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        HttpURLConnection ASPNETConnection = null;
+                        try
+                        {
+                            URL ASPNETURL = new URL("http://panda.fizyka.umk.pl:9092/api/Android");
+                            ASPNETConnection = (HttpURLConnection) ASPNETURL.openConnection();
+                            ASPNETConnection.setRequestProperty("Content-Type","application/json");
+                            ASPNETConnection.setRequestProperty("accept", "application/json");
+                            ASPNETConnection.setDoOutput(true);
+                            ASPNETConnection.setRequestMethod("PUT");
+                            DataOutputStream wr = new DataOutputStream(ASPNETConnection.getOutputStream());
+                            wr.writeBytes(json.toString());
+                            wr.flush();
+                            wr.close();
+
+
+                            if (ASPNETConnection.getResponseCode() == 200)
+                            {
+                                DialogFragment dialog = new MyDialog("Dodano",String.valueOf(ASPNETConnection.getResponseCode()));
+                                dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                            }
+                            else
+                            {
+                                //Connection not successfull
+                                DialogFragment dialog = new MyDialog("Błąd",String.valueOf(ASPNETConnection.getResponseCode()));
+                                dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                            }
+
+                        }
+                        catch (MalformedURLException e)
+                        {
+                            //bad  URL, tell the user
+                            DialogFragment dialog = new MyDialog("Błąd","Zły adres URL");
+                            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                        }
+                        catch (IOException e)
+                        {
+                            //network error/ tell the user
+                            DialogFragment dialog = new MyDialog("Błąd","Aplikacja nie ma dostępu do internetu!");
+                            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                        }
+                        finally
+                        {
+                            if(ASPNETConnection != null) ASPNETConnection.disconnect();
+                        }
+                    }
+                });
 
                 DialogFragment dialog = new MyDialog("Wysyłam UPDATE",json.toString());
                 dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
             }
             //Dodawanie danych
+            //To już prawie elegancko zrobione jest ogarnij json i będzie giciorek
             else
             {
                 //Tworzenie jsona do wysłania danych na serwer
-                JSONObject json = new JSONObject();
+                final JSONObject json = new JSONObject();
                 try
                 {
                     json.put("hour",tmphour);
                     json.put("minutes",tmpminutes);
                     json.put("count",tmpcount);
                     json.put("periodicity",tmpperiodicity);
-                    json.put("description",tmpdescription);
+                    json.put("opis",tmpdescription);
+                    json.put("idDispenser",dispenserID);
                 }
                 catch (JSONException e)
                 {
                     e.printStackTrace();
                 }
 
-                DialogFragment dialog = new MyDialog("Wysyłam ADD",json.toString());
-                dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                //Wysyłanie zapytania do serwera
+                Connections connect = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Android","POST",json,false);
+
+                //To wywala jak klikniesz drugi raz
+                connect.Connect();
+
+                //Czytanie odpowiedzi połączenia
+                if(connect.getResponseCode()==200)
+                {
+                    Toast toast = Toast.makeText(this,R.string.add_hour,Toast.LENGTH_LONG);
+                    toast.show();
+                    finish();
+                }
+                else
+                {
+                    DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connect.Error());
+                    dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                }
             }
-            //finish();
         }
     }
 }

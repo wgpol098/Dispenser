@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         try
         {
             json.put("Authorization",1);
-            json.put("IdDispenser",1234);
+            json.put("IdDispenser",5);
         }
         catch (JSONException e)
         {
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
         try
         {
-            authorization = json.getInt("authorization");
+            authorization = json.getInt("Authorization");
             dispenserID = json.getInt("IdDispenser");
         }
         catch (JSONException e)

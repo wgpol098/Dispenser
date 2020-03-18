@@ -2,6 +2,7 @@ package com.example.dispenser;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
 import androidx.fragment.app.DialogFragment;
 
@@ -15,6 +16,7 @@ public class MyDialog extends DialogFragment
         Title=Title_;
         Message=Message_;
     }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
