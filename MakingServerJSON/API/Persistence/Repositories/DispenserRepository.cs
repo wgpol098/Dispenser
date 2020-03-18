@@ -25,8 +25,8 @@ namespace WebApplication1.API.Persistence.Repositories
             if (acc == null || acc.Password != password)
                 return null;
 
-            //First or default! Takes 1 now, more later.
             List<Dispenser> disp = new List<Dispenser> { await _context.Dispensers.FirstOrDefaultAsync(x => x.Id == acc.DispenserId) };
+
             return disp;
         }
 

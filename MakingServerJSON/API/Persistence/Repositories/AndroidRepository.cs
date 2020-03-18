@@ -155,7 +155,7 @@ namespace WebApplication1.API.Persistence.Repositories
 
             //Nowy lub update
             Dispenser FindDispenserOkienka = 
-                await _context.Dispensers.FirstOrDefaultAsync(q => q.DispenserId == existingPlan.IdDispenser);
+                await _context.Dispensers.FirstOrDefaultAsync(q => q.DispenserId == FindPlan.DispenserId);
 
             //Próba wykasowania
             try
@@ -183,8 +183,8 @@ namespace WebApplication1.API.Persistence.Repositories
                             Plan plan = new Plan()
                             {
                                 DateAndTime = dateAndTime,
-                                DispenserId = existingPlan.IdDispenser,
-                                Opis = existingPlan.Opis,
+                                DispenserId = FindPlan.DispenserId,
+                                Opis = existingPlan.Description,
                                 Nr_Okienka = j + 1
                             };
 
@@ -205,8 +205,8 @@ namespace WebApplication1.API.Persistence.Repositories
                         Plan plan = new Plan()
                         {
                             DateAndTime = dateAndTime,
-                            DispenserId = existingPlan.IdDispenser,
-                            Opis = existingPlan.Opis,
+                            DispenserId = FindPlan.DispenserId,
+                            Opis = existingPlan.Description,
                             Nr_Okienka = -1
                         };
 

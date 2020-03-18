@@ -6,14 +6,14 @@ using WebApplication1.API.Domain.Models;
 
 namespace WebApplication1.API.Domain.Services.Communication
 {
-    public class DispResponse : BaseResponse<Plan>
+    public class DispResponse : BaseResponse<Historia>
     {
         /// <summary>
         /// Creates a success response.
         /// </summary>
         /// <param name="dispenser">Saved dispenser.</param>
         /// <returns>Response.</returns>
-        public DispResponse(Plan dispenser) : base(dispenser)
+        public DispResponse(Historia dispenser) : base(dispenser)
         { }
 
         /// <summary>

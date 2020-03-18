@@ -16,57 +16,40 @@ namespace WebApplication1.API.Persistence.Repositories
         {
         }
 
-        public async Task AddAsync(DispSendToServer dispenser)
+        public async Task AddHistoryAsync(Historia hist)
         {
-            Plan plan = await _context.Plans.FirstOrDefaultAsync(q => q.DispenserId == dispenser.DispenserId);
+            var plans = await _context.Plans.Where(q => q.DispenserId == hist.DispenserId).ToListAsync();
+
             Historia historia = new Historia()
             {
-                DispenserId = dispenser.DispenserId,
-                Nr_Okienka = dispenser.Nr_Okienka,
-                Flaga = dispenser.Flaga,
-                DateAndTime = dispenser.dateTime,
-                Opis = plan.Opis
+                DispenserId = hist.DispenserId,
+                Nr_Okienka = hist.Nr_Okienka,
+                Flaga = hist.Flaga,
+                DateAndTime = hist.DateAndTime,
+                Opis = plans.FirstOrDefault(q => q.Nr_Okienka == hist.Nr_Okienka).Opis
             };
-            await _context.History.AddAsync(historia);
-        }
-
-        public async Task<IEnumerable<Plan>> ListAllDatesAsync(DispSendToServer dispSendToServer)
-        {
-            return await _context.Plans.Where(q => q.DispenserId == dispSendToServer.DispenserId).ToListAsync();
-        }
-
-        public async Task<Plan> FindByIdAsync(int id)
-        {
-            return await _context.Plans.FindAsync(id);
-        }
-
-        //REMOVE TABELA PLANS
-        public async Task<bool> RemoveAsync(Plan d)
-        {
-            if (d == null)
-                return false;
-
-            _context.Plans.Remove(d);
 
             try
             {
+                await _context.History.AddAsync(historia);
+
+                foreach(var q in plans)
+                {
+                    if(q.DateAndTime < DateTime.Now)
+                        _context.Plans.Remove(q);
+                }
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
             {
-                return false;
+                return;
             }
-            return true;
         }
 
-        public async Task<IEnumerable<Plan>> FindAllRecordsInPlans()
+        public async Task<IEnumerable<Plan>> ListAllDatesAsync(DispSendToServerGET dispSendToServer)
         {
-            return await _context.Plans.ToListAsync();
-        }
-
-        public async Task<IEnumerable<Historia>> FindAllRecordsInHistory()
-        {
-            return await _context.History.ToListAsync();
+            return await _context.Plans.Where(q => q.DispenserId == dispSendToServer.DispenserId).ToListAsync();
         }
     }
 }

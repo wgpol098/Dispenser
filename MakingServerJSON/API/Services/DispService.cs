@@ -20,52 +20,31 @@ namespace WebApplication1.API.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<Historia>> ListAllRecordsFromHistory()
+        public async Task<IEnumerable<Plan>> ListDatesAsync(DispSendToServerGET dispSendToServer)
         {
-            return await _dispRepository.FindAllRecordsInHistory();
-        }
-
-        public async Task<IEnumerable<Plan>> ListAllRecordsFromPlans()
-        {
-            return await _dispRepository.FindAllRecordsInPlans();
-        }
-
-        public async Task<IEnumerable<Plan>> ListDatesAsync(DispSendToServer dispSendToServer)
-        {
-            //var existingDispenser = await _dispRepository.FindByIdAsync(dispSendToServer.DispenserId);
-
-            //if (existingDispenser == null)
-            //    return null;
-
             try
             {
-                await _dispRepository.AddAsync(dispSendToServer);
-                //await _dispRepository.RemoveAsync();
-                await _unitOfWork.CompleteAsync();
-
                 return await _dispRepository.ListAllDatesAsync(dispSendToServer);
             }
             catch (Exception)
             {
                 return null;
             }
-            
         }
 
-        public async Task<bool> RemoveRecords(IEnumerable<Plan> disp)
+        public async Task<DispResponse> SaveHistoryRecordAsync(Historia disp)
         {
             try
             {
-                foreach (var d in disp)
-                    await _dispRepository.RemoveAsync(d);
+                await _dispRepository.AddHistoryAsync(disp);
+                await _unitOfWork.CompleteAsync();
+
+                return new DispResponse(disp);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return new DispResponse($"An error occurred when saving the record of Historia: {ex.Message}");
             }
-            return true;
         }
     }
 }
-
-//Oddzielić dodawanie rekordów na 2 metody, który zaczyna się od controllera (tak samo z remove)
