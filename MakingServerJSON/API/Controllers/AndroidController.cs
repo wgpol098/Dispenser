@@ -23,20 +23,20 @@ namespace WebApplication1.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet("GetPlan")]
+        [HttpPost("GetPlan")]
         public async Task<IEnumerable<AndroidSendToAppByIdDisp>> GetByIdDispenser([FromBody] AndroidSendIdDispenser androidSendIdDispenser){
             var disp = await _androidService.ListPlansAsync(androidSendIdDispenser.IdDispenser);
             return disp;
         }
 
-        [HttpGet("GetPlanRecord")]
+        [HttpPost("GetPlanRecord")]
         public async Task<AndroidSendToAppByIdRecord> GetByIdRecord([FromBody] AndroidSendIdRecord androidSendIdRecord)
         {
             var disp = await _androidService.ListPlansByRecAsync(androidSendIdRecord.IdRecord);
             return disp;
         }
 
-        [HttpGet("GetHistory")]
+        [HttpPost("GetHistory")]
         public async Task<IEnumerable<AndroidSendToAppByIdDispHistory>> GetByIdDispenserHistory([FromBody] AndroidSendIdDispenser androidSendIdDispenser)
         {
             var disp = await _androidService.ListHistoryAsync(androidSendIdDispenser.IdDispenser);
