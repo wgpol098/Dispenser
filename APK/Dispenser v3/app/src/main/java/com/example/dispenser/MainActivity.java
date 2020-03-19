@@ -63,14 +63,14 @@ public class MainActivity extends AppCompatActivity {
             //To będzie ten sam JSON, który jest uzywany przy logowaniu się w aplikacji
 
 
-            Intent intent = new Intent(this,MainMenuActivity.class);
+            Intent intent = new Intent(this,DispenserMenuActivity.class);
             startActivity(intent);
         }
     }
 
     public void fdbutton(View v)
     {
-            Intent intent = new Intent(this,MainMenuActivity.class);
+            Intent intent = new Intent(this,DispenserMenuActivity.class);
             startActivity(intent);
     }
 
@@ -158,8 +158,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(authorization==1)
         {
-            MainMenuActivity csa = new MainMenuActivity();
-            Intent intent = new Intent(this,MainMenuActivity.class);
+            Intent intent = new Intent(this,DispenserMenuActivity.class);
             startActivity(intent);
         }
         //Tutaj dodaj opcję, że zły login albo hasło

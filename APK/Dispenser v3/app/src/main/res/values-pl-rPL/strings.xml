@@ -23,4 +23,6 @@
     <string name="server_not_responding">Serwer nie odpowiada!</string>
     <string name="no_internet">Brak połączenia z internetem!</string>
     <string name="undefinied_error">Niezidentyfikowany błąd!</string>
+    <string name="update_hour">Godzina zaktualizowana pomyślnie!</string>
+    <string name="delete_hour">Godzina usunięta pomyślnie!</string>
 </resources>

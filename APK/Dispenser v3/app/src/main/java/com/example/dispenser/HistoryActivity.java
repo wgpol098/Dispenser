@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -35,6 +36,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static org.apache.http.params.CoreProtocolPNames.USER_AGENT;
 
@@ -47,144 +51,44 @@ public class HistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_history);
 
         //Tworzenie json, który jest wysyłany do serwera
-        SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences", Context.MODE_PRIVATE);
-        int dispenserID = sharedPref.getInt("IdDispenser",-1);
+        Bundle b = getIntent().getExtras();
+        int dispenserID = b.getInt("IdDispenser");
 
+        //Tworzenie jsona do wysłania metody
         final JSONObject json = new JSONObject();
         try
         {
-            json.put("idDispenser",5);
+            json.put("idDispenser",dispenserID);
         }
         catch (JSONException e)
         {
             e.printStackTrace();
         }
 
-        AsyncTask.execute(new Runnable() {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void run() {
-                HttpURLConnection ASPNETConnection = null;
-                try
-                {
-                    URL ASPNETURL = new URL("http://panda.fizyka.umk.pl:9092/api/Android/GetHistory/");
-                    ASPNETConnection = (HttpURLConnection) ASPNETURL.openConnection();
-                    ASPNETConnection.setRequestProperty("Content-Type","application/json");
-                    ASPNETConnection.setRequestProperty("accept", "application/json");
-                    ASPNETConnection.setRequestProperty("Content",json.toString());
-//                    ASPNETConnection.setDoOutput(true);
-//                    DataOutputStream wr = new DataOutputStream(ASPNETConnection.getOutputStream());
-//                    wr.writeBytes(json.toString());
-//                    wr.flush();
-//                    wr.close();
-                    ASPNETConnection.setRequestMethod("GET");
-                    //ASPNETConnection.setRequestMethod("GET");
+        //Wysyłanie zapytania do serwera
+        Connections connection = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Android/GetHistory","POST",json,true);
+        connection.Connect();
 
-//                    ASPNETConnection.setDoInput(true);
-//                    InputStream responseBody = ASPNETConnection.getInputStream();
-//                    InputStreamReader responseBodyReader = new InputStreamReader(responseBody, "UTF-8");
-//                    JsonReader jsonReader = new JsonReader(responseBodyReader);
-//
-//                    StringBuilder textBuilder = new StringBuilder();
-//                    try (Reader reader = new BufferedReader(new InputStreamReader
-//                            (responseBody, Charset.forName(StandardCharsets.UTF_8.name())))) {
-//                        int c = 0;
-//                        while ((c = reader.read()) != -1) {
-//                            textBuilder.append((char) c);
-//                        }
-//                    }
-
-////ASPNETConnection.setRequestMethod("GET");
-//                    if(ASPNETConnection!=null)
-//                    {
-//                        //ASPNETConnection.setRequestMethod("GET");
-//                        ASPNETConnection.setRequestProperty("User-Agent", USER_AGENT);
-//                        ASPNETConnection.setRequestProperty("Accept", "application/json");
-//                        ASPNETConnection.setRequestProperty("Content-Type","application/json");
-//                        ASPNETConnection.setDoOutput(true);
-//
-//                        ASPNETConnection.getOutputStream().write(json.toString().getBytes());
-//                        DialogFragment dialog1 = new MyDialog("Błąd",json.toString().getBytes().toString());
-//                        dialog1.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-//                    }
-
-
-
-                    if (ASPNETConnection.getResponseCode() == 200)
-                    {
-                        DialogFragment dialog = new MyDialog("Błąd",String.valueOf(ASPNETConnection.getResponseCode()));
-                        dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-                    }
-                    else
-                    {
-                        //Connection not successfull
-                        DialogFragment dialog = new MyDialog("Błąd",String.valueOf(ASPNETConnection.getErrorStream()));
-                        dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-                    }
-
-                }
-                catch (MalformedURLException e)
-                {
-                    //bad  URL, tell the user
-                    DialogFragment dialog = new MyDialog("Błąd","Zły adres URL");
-                    dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-                }
-                catch (IOException e)
-                {
-                    //network error/ tell the user
-                    DialogFragment dialog = new MyDialog("Błąd","Aplikacja nie ma dostępu do internetu!");
-                    dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-                }
-                finally
-                {
-                    if(ASPNETConnection != null) ASPNETConnection.disconnect();
-                }
-            }
-        });
-
-        //Odczytywanie jsona z serwera
-        DialogFragment dialog = new MyDialog("Błąd","Aplikacja nie ma dostępu do internetu!");
-        dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-
-        //Tworzenie jsona do testowania danych
-        JSONObject hour1 = new JSONObject();
-        JSONObject hour2 = new JSONObject();
-        JSONObject hour3 = new JSONObject();
-        try
+        JSONArray jsonArray = null;
+        //Jeśli błąd to nie czytam odpowiedzi od serwera
+        if(connection.getResponseCode()!=200)
         {
-            hour1.put("datetime","2020-03-02-13:45");
-            hour1.put("nr_window",4);
-            hour1.put("description","Eutanazol");
-            hour1.put("flag",1);
-
-            hour2.put("datetime","2022-03-04-13:45");
-            hour2.put("nr_window",3);
-            hour2.put("description","Apap");
-            hour2.put("flag",0);
-
-            hour3.put("datetime","2022-03-05-13:45");
-            hour3.put("nr_window",3);
-            hour3.put("description","Apap");
-            hour3.put("flag",-1);
+            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connection.Error());
+            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+            finish();
         }
-        catch (JSONException e)
+        //Jeśli wszystko poszło i serwer działa to trzeba odczytać odpowiedź
+        else
         {
-            e.printStackTrace();
+            jsonArray = connection.JsonArrayAnswer();
         }
 
-        JSONArray jsonArray = new JSONArray();
 
-        jsonArray.put(hour1);
-        jsonArray.put(hour2);
-        jsonArray.put(hour3);
-
-        LinearLayout linearLayout = new LinearLayout(this);
+        LinearLayout linearLayout = findViewById(R.id.linearLayout);
+        ScrollView scroll = findViewById(R.id.scrollView);
         linearLayout.setOrientation(linearLayout.VERTICAL);
-        linearLayout.setBackgroundResource(R.drawable.bg_gradient);
+        scroll.setBackgroundResource(R.drawable.bg_gradient);
         linearLayout.setPadding(20,40,20,20);
-
-//        dialog = new MyDialog("Wysyłam IdDispensera, a odbieram GET:",jsonArray.toString());
-//        dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
 
         for(int i=0;i<jsonArray.length();i++)
         {
@@ -198,10 +102,10 @@ public class HistoryActivity extends AppCompatActivity {
                  tmp = jsonArray.getJSONObject(i);
                  if(tmp!=null)
                  {
-                     datetime = tmp.getString("datetime");
-                     nr_window = tmp.getInt("nr_window");
-                     description = tmp.getString("description");
-                     flag = tmp.getInt("flag");
+                     datetime = tmp.getString("dateAndTime");
+                     nr_window = tmp.getInt("nr_Okienka");
+                     description = tmp.getString("opis");
+                     flag = tmp.getInt("flaga");
                  }
             }
             catch (JSONException e)
@@ -210,8 +114,19 @@ public class HistoryActivity extends AppCompatActivity {
             }
             if(tmp!=null)
             {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+                Date date=null;
+                try {
+                    date = dateFormat.parse(datetime);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                //datetime = date.getDay() + "-" + date.getMonth() + "-" + date.getYear();
+
+                //Tworzenie textView do wypisywania danych
                 TextView tv = new TextView(this);
-                tv.setText(i+1 + ": " + datetime + ", " + nr_window + ", " + description + ", " + flag);
+                tv.setText(i+1 + ": " + date + ", " + description);
                 tv.setTextSize(20);
                 tv.setPadding(0,20,0,20);
                 tv.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -227,12 +142,8 @@ public class HistoryActivity extends AppCompatActivity {
                 else shape.setColor(Color.YELLOW);
 
                 tv.setBackgroundDrawable(shape);
-
                 linearLayout.addView(tv);
             }
         }
-
-        this.setContentView(linearLayout, new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
     }
 }

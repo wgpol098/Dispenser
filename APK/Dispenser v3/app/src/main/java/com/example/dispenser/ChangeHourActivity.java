@@ -25,7 +25,8 @@ import java.util.Calendar;
 
 public class ChangeHourActivity extends AppCompatActivity {
 
-    int IdDrug;
+    int IdRecord;
+    int IdDispenser;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -34,7 +35,8 @@ public class ChangeHourActivity extends AppCompatActivity {
         setContentView(R.layout.activity_change_hour);
 
         Bundle b = getIntent().getExtras();
-        if(b!=null) IdDrug = b.getInt("IdDrug");
+        if(b!=null) IdRecord = b.getInt("idRecord");
+        if(b!=null) IdDispenser = b.getInt("IdDispenser");
         int hour=0;
         int minutes=0;
         String description="";
@@ -42,39 +44,38 @@ public class ChangeHourActivity extends AppCompatActivity {
         int periodicity=0;
 
         JSONObject json = new JSONObject();
-        if(IdDrug > 0)
+        if(IdRecord > 0)
         {
             //Dane, które wysyłam na serwer
             JSONObject zap = new JSONObject();
             try
             {
-                zap.put("IdDrug",IdDrug);
+                zap.put("idRecord",IdRecord);
             }
             catch (JSONException e)
             {
                 e.printStackTrace();
             }
 
-            //JSON, który odczytuję z serwera
-            json = new JSONObject();
-            try
-            {
-                json.put("hour", 12);
-                json.put("minutes", 33);
-                json.put("description", "Eutanazol");
-                json.put("count", 3);
-                json.put("periodicity", 1);
+            //Wysyłanie zapytania na serwer
+            Connections connection = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Android/GetPlanRecord","POST",zap,true);
+            connection.Connect();
 
-                DialogFragment dialog = new MyDialog("Wysyłam IdRekordu odbieram GET:", json.toString());
+            //Jeśli błąd to nie czytam odpowiedzi od serwera
+            if(connection.getResponseCode()!=200)
+            {
+                DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connection.Error());
                 dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-
+                finish();
             }
-            catch (JSONException e)
+            //Jeśli wszystko poszło i serwer działa to trzeba odczytać odpowiedź
+            else
             {
-                e.printStackTrace();
+                json = connection.JsonAnswer();
             }
         }
-        if(IdDrug!=-1)
+        //Wyciąganie danych z Jsona jesli jest to update
+        if(IdRecord!=-1)
         {
             try
             {
@@ -89,6 +90,7 @@ public class ChangeHourActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+        //Jesli jest to dodawanie danych
         else
         {
             Calendar rightNow = Calendar.getInstance();
@@ -96,6 +98,7 @@ public class ChangeHourActivity extends AppCompatActivity {
             minutes = rightNow.get(Calendar.MINUTE);
         }
 
+        //Wpisywanie danych wyciągniętych z jsona do kontrolek
         EditText h = findViewById(R.id.HoursTextBox);
         EditText m = findViewById(R.id.MinutesTextBox);
         EditText c = findViewById(R.id.CountTextBox);
@@ -106,7 +109,6 @@ public class ChangeHourActivity extends AppCompatActivity {
         c.setText(Integer.toString(count));
         p.setText(Integer.toString(periodicity));
         d.setText(description);
-
     }
 
     public void fOkButton(View v)
@@ -124,105 +126,68 @@ public class ChangeHourActivity extends AppCompatActivity {
         int tmpcount = Integer.parseInt(c.getText().toString());
         int tmpperiodicity = Integer.parseInt(p.getText().toString());
 
-        SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences", Context.MODE_PRIVATE);
-        int dispenserID = sharedPref.getInt("IdDispenser",-1);
-
-
-        if(tmphour>23 || tmphour<0 || tmpminutes>59 || tmpminutes < 0)
+        if(tmphour>23 || tmphour<0 || tmpminutes>59 || tmpminutes < 0 )
         {
-            DialogFragment dialog = new MyDialog("Bład","Co Ty mnie tu za godzinę podajesz");
+            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),"Co Ty mnie tu za godzinę podajesz");
             dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
         }
         else
         {
-            //Updatowanie danych
-            //Wywala jak nic nie wpiszesz
-            if(IdDrug!=-1)
+            //Tworzenie jsona do wysyłania danych
+            final JSONObject json = new JSONObject();
+            try
             {
-                //Tworzenie jsona do wysłania do serwera
-                final JSONObject json = new JSONObject();
+                json.put("hour",tmphour);
+                json.put("minutes",tmpminutes);
+                json.put("count",tmpcount);
+                json.put("periodicity",tmpperiodicity);
+
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+
+            //Updatowanie danych ---- Metoda PUT
+            //Wywala jak nic nie wpiszesz
+            if(IdRecord>0)
+            {
+                //Dodawanie idRecord do Jsona
                 try
                 {
-                    json.put("idRecord",410);
-                    json.put("hour",tmphour);
-                    json.put("minutes",tmpminutes);
-                    json.put("count",tmpcount);
-                    json.put("periodicity",tmpperiodicity);
-                    json.put("opis",tmpdescription);
-                    json.put("idDispenser",dispenserID);
+                    json.put("idRecord",IdRecord);
+                    json.put("description",tmpdescription);
                 }
                 catch (JSONException e)
                 {
                     e.printStackTrace();
                 }
 
-                AsyncTask.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        HttpURLConnection ASPNETConnection = null;
-                        try
-                        {
-                            URL ASPNETURL = new URL("http://panda.fizyka.umk.pl:9092/api/Android");
-                            ASPNETConnection = (HttpURLConnection) ASPNETURL.openConnection();
-                            ASPNETConnection.setRequestProperty("Content-Type","application/json");
-                            ASPNETConnection.setRequestProperty("accept", "application/json");
-                            ASPNETConnection.setDoOutput(true);
-                            ASPNETConnection.setRequestMethod("PUT");
-                            DataOutputStream wr = new DataOutputStream(ASPNETConnection.getOutputStream());
-                            wr.writeBytes(json.toString());
-                            wr.flush();
-                            wr.close();
+                Connections connect = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Android","PUT",json,false);
+                connect.Connect();
 
-
-                            if (ASPNETConnection.getResponseCode() == 200)
-                            {
-                                DialogFragment dialog = new MyDialog("Dodano",String.valueOf(ASPNETConnection.getResponseCode()));
-                                dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-                            }
-                            else
-                            {
-                                //Connection not successfull
-                                DialogFragment dialog = new MyDialog("Błąd",String.valueOf(ASPNETConnection.getResponseCode()));
-                                dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-                            }
-
-                        }
-                        catch (MalformedURLException e)
-                        {
-                            //bad  URL, tell the user
-                            DialogFragment dialog = new MyDialog("Błąd","Zły adres URL");
-                            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-                        }
-                        catch (IOException e)
-                        {
-                            //network error/ tell the user
-                            DialogFragment dialog = new MyDialog("Błąd","Aplikacja nie ma dostępu do internetu!");
-                            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-                        }
-                        finally
-                        {
-                            if(ASPNETConnection != null) ASPNETConnection.disconnect();
-                        }
-                    }
-                });
-
-                DialogFragment dialog = new MyDialog("Wysyłam UPDATE",json.toString());
-                dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                //Czytanie odpowiedzi połączenia
+                if(connect.getResponseCode()==200)
+                {
+                    Toast toast = Toast.makeText(this,R.string.update_hour,Toast.LENGTH_LONG);
+                    toast.show();
+                    finish();
+                }
+                else
+                {
+                    DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connect.Error());
+                    dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                }
             }
-            //Dodawanie danych
+            //Dodawanie danych - METODA POST
             //To już prawie elegancko zrobione jest ogarnij json i będzie giciorek
             else
             {
-                //Tworzenie jsona do wysłania danych na serwer
-                final JSONObject json = new JSONObject();
+                //Dodawanie idDispenser do Jsona
                 try
                 {
-                    json.put("hour",tmphour);
-                    json.put("minutes",tmpminutes);
-                    json.put("count",tmpcount);
-                    json.put("periodicity",tmpperiodicity);
+                    json.put("idDispenser",IdDispenser);
                     json.put("opis",tmpdescription);
-                    json.put("idDispenser",dispenserID);
                 }
                 catch (JSONException e)
                 {

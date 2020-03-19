@@ -2,17 +2,29 @@ package com.example.dispenser;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.JsonReader;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
 
 public class Connections {
     private String URL;
     private String Method;
     private JSONObject Json;
+    private JSONObject JsonAnswer=null;
+    private JSONArray JsonArrayAnswer=null;
     private Boolean answer;
     private int ResponseCode = 0;
     private Context context;
@@ -48,9 +60,34 @@ public class Connections {
                     wr.flush();
                     wr.close();
 
-                    if (answer == true) {
-                        ASPNETConnection.setDoInput(true);
-                        //Tutaj dodaj, jeśli użytkownik oczekuje jakiejś odpowiedzi od serwera.
+                    if (answer == true)
+                    {
+                        InputStream responseBody = ASPNETConnection.getInputStream();
+
+                        StringBuilder sb = new StringBuilder();
+
+                        String line;
+                        BufferedReader br = new BufferedReader(new InputStreamReader(responseBody));
+                        while ((line = br.readLine()) != null) {
+                            sb.append(line);
+                        }
+                        try
+                        {
+                            JsonAnswer = new JSONObject(sb.toString());
+                        }
+                        catch (JSONException e)
+                        {
+                            //Jeśli tablica jsonów to trzeba to wychwycić
+                            try
+                            {
+                                JsonArrayAnswer = new JSONArray(sb.toString());
+                            }
+                            catch (JSONException ex)
+                            {
+                                ex.printStackTrace();
+                            }
+                            e.printStackTrace();
+                        }
                     }
 
                     ResponseCode = ASPNETConnection.getResponseCode();
@@ -73,16 +110,29 @@ public class Connections {
         });
 
         //To powoduje te dziwne rzeczy, które się tu dzieją jak naciśniesz drugi raz
-//        while (ResponseCode == 0) {
-//            //XDDDDDDDDDDDDDDDDDDDDD
-//            //żeby działało
-//            //XDDDDDDDDDDDDDDDDDDDDD
-//        }
+        try
+        {
+            Thread.sleep(1000);
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public int getResponseCode()
     {
         return ResponseCode;
+    }
+
+    public JSONObject JsonAnswer()
+    {
+        return JsonAnswer;
+    }
+
+    public JSONArray JsonArrayAnswer()
+    {
+        return JsonArrayAnswer;
     }
 
     public String Error()
