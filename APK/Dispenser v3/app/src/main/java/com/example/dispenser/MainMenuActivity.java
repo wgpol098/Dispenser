@@ -72,9 +72,9 @@ public class MainMenuActivity extends AppCompatActivity
     {
         SharedPreferences sharedpref = this.getSharedPreferences("LoginPreferences",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpref.edit();
-        editor.putString("login","");
-        editor.putString("password","");
-        editor.putInt("IdDispenser",-1);
+        editor.putString("login",null);
+        editor.putString("password",null);
+        editor.putString("IdDispenser",null);
         editor.commit();
         finish();
     }

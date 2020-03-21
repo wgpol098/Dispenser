@@ -27,36 +27,18 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
         getSupportActionBar().hide();
         setContentView(R.layout.activity_dispenser_menu);
 
-        //Tworzenie testowych preferencji
+        //Czytanie listy dispenserów z SharedPreferences
+        SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences", Context.MODE_PRIVATE);
+        String dispenserID = sharedPref.getString("IdDispenser",null);
 
-        JSONObject disp1 = new JSONObject();
-        JSONObject disp2 = new JSONObject();
-        JSONObject disp3 = new JSONObject();
-
-        try {
-            disp1.put("idDispenser",1);
-            disp2.put("idDispenser",3);
-            disp3.put("idDispenser",5);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        //Jeśli użytkownika nie ma w SharedPreferences
+        if(dispenserID==null)
+        {
+            Bundle b = getIntent().getExtras();
+            dispenserID = b.getString("IdDispenser");
         }
 
-        JSONArray array = new JSONArray();
-        array.put(disp1);
-        array.put(disp2);
-        array.put(disp3);
-
-
-        //Czytanie listy dispenserów z SharedPreferences
-        SharedPreferences sharedpref = this.getSharedPreferences("TestPref",Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedpref.edit();
-        editor.putString("IdDispenser",array.toString());
-        editor.commit();
-
-        SharedPreferences sharedPref = this.getSharedPreferences("TestPref", Context.MODE_PRIVATE);
-        String dispenserID = sharedPref.getString("IdDispenser","");
-
-
+        //Wyciąganie listy dispenserów
         JSONArray JsonDispList=null;
         try {
             JsonDispList = new JSONArray(dispenserID);
@@ -66,7 +48,7 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
         DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),JsonDispList.toString());
         dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
 
-        //Tworzenie elementów względem listy dispenserów w sharedpreferences
+        //Tworzenie elementów względem listy dispenserów w SharedPreferences
         LinearLayout linearLayout = findViewById(R.id.linearLayout);
         ScrollView scroll = findViewById(R.id.scrollView);
         linearLayout.setOrientation(linearLayout.VERTICAL);
@@ -146,5 +128,10 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
             startActivity(intent);
         }
         //Zrób opcje dotyczącą dodawania dispensera do konta
+        else
+        {
+            Intent intent = new Intent(this,QrScannerActivity.class);
+            startActivity(intent);
+        }
     }
 }

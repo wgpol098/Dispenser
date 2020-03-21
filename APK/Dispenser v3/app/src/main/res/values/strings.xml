@@ -29,5 +29,6 @@
     <string name="undefinied_error">Undefinied error!</string>
     <string name="update_hour">Hour updated successfully!</string>
     <string name="delete_hour">Hour deleted successfully!</string>
+    <string name="Name_hint">Name (Optional)</string>
 
 </resources>

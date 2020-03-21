@@ -24,6 +24,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,9 +52,10 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences",Context.MODE_PRIVATE);
         String login = sharedPref.getString("login", "");
         String password = sharedPref.getString("password","");
-        int dispenserID = sharedPref.getInt("IdDispenser",-1);
+        String dispenserID = sharedPref.getString("IdDispenser","");
 
-        if(!login.isEmpty() && !password.isEmpty() && dispenserID!=-1)
+        //Czytanie czy są w ogóle podane jakieś dane
+        if(!login.isEmpty() && !password.isEmpty() && !dispenserID.isEmpty())
         {
 //            MyDialog dialog = new MyDialog("Błąd",login + " " + password + " " + dispenserID);
 //            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
@@ -92,10 +94,8 @@ public class MainActivity extends AppCompatActivity {
         v.startAnimation(myAnim);
 
         //Odczytywanie danych z textboxów
-
         EditText l = findViewById(R.id.LoginTextBox);
         EditText p = findViewById(R.id.PasswordTextBox);
-
         String login = l.getText().toString();
         String password = p.getText().toString();
 
@@ -114,34 +114,46 @@ public class MainActivity extends AppCompatActivity {
 
         //Miejsce na stworzenie połączenia z serwerem i wysłanie zapytania
 
-        //Json z odpowiedzią od serwera
-        JSONObject json = new JSONObject();
-        try
-        {
-            json.put("Authorization",1);
-            json.put("IdDispenser",5);
-        }
-        catch (JSONException e)
-        {
+        //JSON z odpowiedzią od serwera
+
+        JSONObject j1 = new JSONObject();
+        JSONObject j2 = new JSONObject();
+        JSONObject j3 = new JSONObject();
+
+        try {
+            j1.put("idDispenser",1);
+            j2.put("idDispenser",3);
+            j3.put("idDispenser",5);
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        //Odczytywanie jsona od serwera
-        //authorization == 1 to git
-        //authorization == -1 to złe hasło
-        //authorization == 0 zły login
-        int authorization=-1;
-        int dispenserID=-1;
+        JSONArray JsonArrayAnswer = new JSONArray();
+        JsonArrayAnswer.put(j1);
+        JsonArrayAnswer.put(j2);
+        JsonArrayAnswer.put(j3);
 
-        try
+        //Analiza tablicy Json odczytanej od serwera
+        //Sprawdzanie czy użytkownik uzyskał autoryzację
+        int authorization=0;
+        if(JsonArrayAnswer.length()==1)
         {
-            authorization = json.getInt("Authorization");
-            dispenserID = json.getInt("IdDispenser");
+            JSONObject json=null;
+            int spr=-1;
+            try
+            {
+                json = JsonArrayAnswer.getJSONObject(0);
+                spr = json.getInt("idDispenser");
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+
+            if(spr!=-1) authorization = 1;
         }
-        catch (JSONException e)
-        {
-            e.printStackTrace();
-        }
+        else authorization=1;
+
 
         //Zapamiętywanie loginu, password i IdDispensera
         CheckBox ch = findViewById(R.id.RememberCheckBox);
@@ -152,13 +164,14 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = sharedpref.edit();
             editor.putString("login",login);
             editor.putString("password",password);
-            editor.putInt("IdDispenser",dispenserID);
+            editor.putString("IdDispenser",JsonArrayAnswer.toString());
             editor.commit();
         }
 
         if(authorization==1)
         {
             Intent intent = new Intent(this,DispenserMenuActivity.class);
+            intent.putExtra("IdDispenser",JsonArrayAnswer.toString());
             startActivity(intent);
         }
         //Tutaj dodaj opcję, że zły login albo hasło
