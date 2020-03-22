@@ -133,6 +133,9 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
     public boolean onLongClick(View v)
     {
         //Dodaj powiadomienia, czy usunąć//
+        MyDialog dialog1 = new MyDialog(getResources().getString(R.string.error),"Czy usunąć?","YESNO");
+        dialog1.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+
 
         //Tworzenie jsona, który muszę wysłać na serwer, żeby usunął dane
         Button tmp = (Button) v;
@@ -156,7 +159,7 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
         }
         else
         {
-            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connection.Error());
+            MyDialog dialog = new MyDialog(getResources().getString(R.string.error),connection.Error());
             dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
         }
 

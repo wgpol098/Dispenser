@@ -196,8 +196,6 @@ public class ChangeHourActivity extends AppCompatActivity {
 
                 //Wysyłanie zapytania do serwera
                 Connections connect = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Android","POST",json,false);
-
-                //To wywala jak klikniesz drugi raz
                 connect.Connect();
 
                 //Czytanie odpowiedzi połączenia

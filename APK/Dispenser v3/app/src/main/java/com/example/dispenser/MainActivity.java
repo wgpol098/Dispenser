@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
             //JSON do sprawdzenia połączenia z serwerem (dodaj)
             //To będzie ten sam JSON, który jest uzywany przy logowaniu się w aplikacji
 
+            //Tutaj będzie trzeba sprawdzać czy IdDispenser się nie zmieniło.
+
 
             Intent intent = new Intent(this,DispenserMenuActivity.class);
             startActivity(intent);
