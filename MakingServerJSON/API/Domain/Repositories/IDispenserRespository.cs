@@ -1,16 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using WebApplication1.API.Domain.Models;
+using WebApplication1.API.Resources;
 
 namespace WebApplication1.API.Domain.Repositories
 {
     public interface IDispenserRepository
     {
-        Task<IEnumerable<Dispenser>> ListAsync();
-        Task AddAsync(Dispenser dispenser);
-        Task<Dispenser> FindByIdAsync(int id);
-        Task<IEnumerable<Dispenser>> GetOneDispenserAsync(string login, string password);
-        void Update(Dispenser dispenser);
-        Task<bool> Remove(Dispenser dispenser);
+        Task<Dispenser> AddAsync(DispenserResource dispenserResource);
+        Task<ListOfDispenser> FindByLoginAndIdAsync(DispenserResource dispenserResource);
+        Task<bool> Remove(ListOfDispenser dispenser);
     }
 }

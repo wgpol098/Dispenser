@@ -36,6 +36,8 @@ namespace WebApplication1.API
             services.AddScoped<IAndroidService, AndroidService>();
             services.AddScoped<IDebugRepository, DebugRepository>();
             services.AddScoped<IDebugService, DebugService>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
+            services.AddScoped<IAccountService, AccountService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });

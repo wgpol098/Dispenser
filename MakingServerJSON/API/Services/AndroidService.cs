@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using WebApplication1.API.Domain.Models;
 using WebApplication1.API.Domain.Repositories;
@@ -91,11 +90,11 @@ namespace WebApplication1.API.Services
             var existingDispenser = await _androidRepository.FindDispenserAsync(id);
 
             if (existingDispenser == null)
-                return new DispenserResponse("Dispensera nie odnaleziono.");
+                return new DispenserResponse("Can't find dispenser with that id.");
 
             try
             {
-                existingDispenser.Nr_Okienka = v;
+                existingDispenser.NoWindow = v;
                 _androidRepository.UpdateOkienka(existingDispenser);
                 await _unitOfWork.CompleteAsync();
 

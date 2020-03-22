@@ -10,5 +10,6 @@ namespace WebApplication1.API.Domain.Services
         Task<IEnumerable<Historia>> ListAllRecordsFromHistory();
         Task<IEnumerable<Dispenser>> ListAllRecordsFromDispensers();
         Task<IEnumerable<Account>> ListAllRecordsFromAccounts();
+        Task<IEnumerable<ListOfDispenser>> ListAllRecordsFromListOfDispensers();
     }
 }

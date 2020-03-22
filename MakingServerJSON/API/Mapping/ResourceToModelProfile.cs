@@ -8,8 +8,9 @@ namespace WebApplication1.API.Mapping
     {
         public ResourceToModelProfile()
         {
-            CreateMap<SaveDispenserResource, Dispenser>();
-            //CreateMap<SaveDispenserResource, Dispenser>();
+            CreateMap<DispenserResource, Dispenser>();
+            CreateMap<AccountCheck, Account>();
+            CreateMap<AccountSendRegister, Account>();
         }
     }
 }

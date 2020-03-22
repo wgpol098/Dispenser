@@ -32,14 +32,14 @@ namespace WebApplication1.API.Services
             }
         }
 
-        public async Task<DispResponse> SaveHistoryRecordAsync(Historia disp)
+        public async Task<DispResponse> SaveHistoryRecordAsync(Historia historia)
         {
             try
             {
-                await _dispRepository.AddHistoryAsync(disp);
+                await _dispRepository.AddHistoryAsync(historia);
                 await _unitOfWork.CompleteAsync();
 
-                return new DispResponse(disp);
+                return new DispResponse(historia);
             }
             catch (Exception ex)
             {

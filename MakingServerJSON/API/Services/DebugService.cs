@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApplication1.API.Domain.Models;
 using WebApplication1.API.Domain.Repositories;
@@ -29,6 +27,11 @@ namespace WebApplication1.API.Services
         public async Task<IEnumerable<Historia>> ListAllRecordsFromHistory()
         {
             return await _debugRepository.FindAllRecordsInHistory();
+        }
+
+        public async Task<IEnumerable<ListOfDispenser>> ListAllRecordsFromListOfDispensers()
+        {
+            return await _debugRepository.FindAllRecordsInListOfDispensers();
         }
 
         public async Task<IEnumerable<Plan>> ListAllRecordsFromPlans()

@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApplication1.API.Domain.Models;
 using WebApplication1.API.Domain.Repositories;
 using WebApplication1.API.Persistence.Contexts;
+using WebApplication1.API.Resources;
 
 namespace WebApplication1.API.Persistence.Repositories
 {
@@ -14,48 +14,48 @@ namespace WebApplication1.API.Persistence.Repositories
         {
         }
 
-        public async Task<Dispenser> GetByIdAsync(int id)
+        public async Task<Dispenser> AddAsync(DispenserResource dispenser)
         {
-            return await _context.Dispensers.FirstOrDefaultAsync(x => x.Id == id);
+            var temp = await _context.Dispensers.FirstOrDefaultAsync(q => q.IdDispenser == dispenser.IdDispenser);
+            var acc = await _context.Accounts.FirstOrDefaultAsync(q => q.Login == dispenser.Login);
+
+            ListOfDispenser listOfDispenser = new ListOfDispenser()
+            {
+                IdAccount = acc.Id,
+                IdDispenser = dispenser.IdDispenser
+            };
+
+            _context.ListOfDispensers.Add(listOfDispenser);
+
+            if (temp == null)
+            {
+                Dispenser disp = new Dispenser()
+                {
+                    IdDispenser = dispenser.IdDispenser,
+                    NoWindow = "0000000"
+                };
+
+                await _context.Dispensers.AddAsync(disp);
+
+                return disp;
+            } 
+            else 
+                return temp;
         }
 
-        public async Task<IEnumerable<Dispenser>> GetOneDispenserAsync(string login, string password)
+        public async Task<ListOfDispenser> FindByLoginAndIdAsync(DispenserResource dispenserResource)
         {
-            var acc = await _context.Accounts.FirstOrDefaultAsync(x => x.Login == login);
-            if (acc == null || acc.Password != password)
-                return null;
-
-            List<Dispenser> disp = new List<Dispenser> { await _context.Dispensers.FirstOrDefaultAsync(x => x.Id == acc.DispenserId) };
-
-            return disp;
+            var acc = await _context.Accounts.FirstOrDefaultAsync(q => q.Login == dispenserResource.Login);
+            var temp = await _context.ListOfDispensers.FirstOrDefaultAsync(q => q.IdDispenser == dispenserResource.IdDispenser && q.IdAccount == acc.Id);
+            return temp;
         }
 
-        public async Task<IEnumerable<Dispenser>> ListAsync()
-        {
-            return await _context.Dispensers.ToListAsync();
-        }
-
-        public async Task AddAsync(Dispenser dispenser)
-        {
-            await _context.Dispensers.AddAsync(dispenser);
-        }
-
-        public async Task<Dispenser> FindByIdAsync(int id)
-        {
-            return await _context.Dispensers.FindAsync(id);
-        }
-
-        public void Update(Dispenser dispenser)
-        {
-            _context.Dispensers.Update(dispenser);
-        }
-
-        public async Task<bool> Remove(Dispenser dispenser)
+        public async Task<bool> Remove(ListOfDispenser dispenser)
         {
             if (dispenser == null)
                 return false;
 
-            _context.Dispensers.Remove(dispenser);
+            _context.ListOfDispensers.Remove(dispenser);
 
             try
             {

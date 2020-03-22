@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using WebApplication1.API.Domain.Models;
 using WebApplication1.API.Domain.Repositories;
 using WebApplication1.API.Domain.Services;
 using WebApplication1.API.Domain.Services.Communication;
+using WebApplication1.API.Resources;
 
 namespace WebApplication1.API.Services
 {
@@ -18,25 +17,14 @@ namespace WebApplication1.API.Services
             _dispenserRepository = dispenserRepository;
             _unitOfWork = unitOfWork;
         }
-
-        public async Task<IEnumerable<Dispenser>> ListAsync()
-        {
-            return await _dispenserRepository.ListAsync();
-        }
-
-        public async Task<IEnumerable<Dispenser>> GetByLoginAndPassword(string login, string password)
-        {
-            return await _dispenserRepository.GetOneDispenserAsync(login, password);
-        }
-
-        public async Task<DispenserResponse> SaveAsync(Dispenser dispenser)
+        public async Task<DispenserResponse> SaveAsync(DispenserResource dispenserResource)
         {
             try
             {
-                await _dispenserRepository.AddAsync(dispenser);
+                var result = await _dispenserRepository.AddAsync(dispenserResource);
                 await _unitOfWork.CompleteAsync();
 
-                return new DispenserResponse(dispenser);
+                return new DispenserResponse(result);
             }
             catch (Exception ex)
             {
@@ -44,47 +32,24 @@ namespace WebApplication1.API.Services
             }
         }
 
-        public async Task<DispenserResponse> UpdateAsync(int id, Dispenser disp)
+        public async Task<bool> DeleteAsync(DispenserResource dispenserResource)
         {
-            var existingDispenser = await _dispenserRepository.FindByIdAsync(id);
+            var existingDispenser = await _dispenserRepository.FindByLoginAndIdAsync(dispenserResource);
 
             if (existingDispenser == null)
-                return new DispenserResponse("Dispensera nie odnaleziono.");
-
-
-            try
-            {
-                _dispenserRepository.Update(existingDispenser);
-                await _unitOfWork.CompleteAsync();
-
-                return new DispenserResponse(existingDispenser);
-            }
-            catch (Exception ex)
-            {
-                return new DispenserResponse($"An error occurred when updating the dispenser: {ex.Message}");
-            }
-        }
-
-        public async Task<DispenserResponse> DeleteAsync(int id)
-        {
-            var existingDispenser = await _dispenserRepository.FindByIdAsync(id);
-
-            if (existingDispenser == null)
-                return new DispenserResponse("Dispensera nie odnaleziono.");
+                return false;
 
             try
             {
                 await _dispenserRepository.Remove(existingDispenser);
                 await _unitOfWork.CompleteAsync();
 
-                return new DispenserResponse(existingDispenser);
+                return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return new DispenserResponse($"An error occurred when deleting the dispenser: {ex.Message}");
+                return false;
             }
         }
-
-        
     }
 }

@@ -6,7 +6,7 @@
         public int Minutes { get; set; }
         public int Count { get; set; }
         public int Periodicity { get; set; }
-        public string Opis { get; set; }
+        public string Description { get; set; }
         public int IdDispenser { get; set; } //Token
     }
 }

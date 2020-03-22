@@ -9,10 +9,9 @@ namespace WebApplication1.API.Mapping
         public ModelToResourceProfile()
         {
             CreateMap<Dispenser, DispenserResources>();
+            CreateMap<ListOfDispenser, DispenserResources>();
             CreateMap<Plan, ServResourcesToDisp>();
-            //CreateMap<Plan, AndroidSendToAppByIdDisp>();
-            //CreateMap<Plan, AndroidSendToAppByIdRecord>();
-
+            CreateMap<Account, AccountCheck>();
         }
     }
 }

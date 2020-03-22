@@ -18,15 +18,15 @@ namespace WebApplication1.API.Persistence.Repositories
 
         public async Task AddHistoryAsync(Historia hist)
         {
-            var plans = await _context.Plans.Where(q => q.DispenserId == hist.DispenserId).ToListAsync();
+            var plans = await _context.Plans.Where(q => q.IdDispenser == hist.IdDispenser).ToListAsync();
 
             Historia historia = new Historia()
             {
-                DispenserId = hist.DispenserId,
-                Nr_Okienka = hist.Nr_Okienka,
-                Flaga = hist.Flaga,
+                IdDispenser = hist.IdDispenser,
+                NoWindow = hist.NoWindow,
+                Flag = hist.Flag,
                 DateAndTime = hist.DateAndTime,
-                Opis = plans.FirstOrDefault(q => q.Nr_Okienka == hist.Nr_Okienka).Opis
+                Description = plans.FirstOrDefault(q => q.NoWindow == hist.NoWindow).Description
             };
 
             try
@@ -49,7 +49,7 @@ namespace WebApplication1.API.Persistence.Repositories
 
         public async Task<IEnumerable<Plan>> ListAllDatesAsync(DispSendToServerGET dispSendToServer)
         {
-            return await _context.Plans.Where(q => q.DispenserId == dispSendToServer.DispenserId).ToListAsync();
+            return await _context.Plans.Where(q => q.IdDispenser == dispSendToServer.IdDispenser).ToListAsync();
         }
     }
 }

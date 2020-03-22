@@ -43,7 +43,6 @@ namespace WebApplication1.API.Controllers
             return disp;
         }
 
-        //ADD
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] AndroidSendPost androidSendPost)
         {
@@ -64,18 +63,18 @@ namespace WebApplication1.API.Controllers
 
                 for(int i = 0; i < androidSendPost.Count; i++)
                 {
-                    for (int j = 0; j<FindDispenserOkienka.Nr_Okienka.Length; j++)
+                    for (int j = 0; j<FindDispenserOkienka.NoWindow.Length; j++)
                     {
-                        if(FindDispenserOkienka.Nr_Okienka[j] == '0') {
-                            System.Text.StringBuilder temp = new System.Text.StringBuilder(FindDispenserOkienka.Nr_Okienka);
+                        if(FindDispenserOkienka.NoWindow[j] == '0') {
+                            System.Text.StringBuilder temp = new System.Text.StringBuilder(FindDispenserOkienka.NoWindow);
                             temp[j] = '1';
                             string str = temp.ToString();
                             Plan plan = new Plan()
                             {
                                 DateAndTime = dateAndTime,
-                                DispenserId = androidSendPost.IdDispenser,
-                                Opis = androidSendPost.Opis,
-                                Nr_Okienka = j + 1
+                                IdDispenser = androidSendPost.IdDispenser,
+                                Description = androidSendPost.Description,
+                                NoWindow = j + 1
                             };
 
                             await _androidService.SaveAsync(plan);
@@ -95,9 +94,9 @@ namespace WebApplication1.API.Controllers
                         Plan plan = new Plan()
                         {
                             DateAndTime = dateAndTime,
-                            DispenserId = androidSendPost.IdDispenser,
-                            Opis = androidSendPost.Opis,
-                            Nr_Okienka = -1
+                            IdDispenser = androidSendPost.IdDispenser,
+                            Description = androidSendPost.Description,
+                            NoWindow = -1
                         };
 
                         await _androidService.SaveAsync(plan);
@@ -115,7 +114,6 @@ namespace WebApplication1.API.Controllers
             return Ok();
         }
         
-        //UPDATE
         [HttpPut]
         public async Task<IActionResult> PutAsync([FromBody] AndroidSendPostUpdate resource)
         {
@@ -130,7 +128,6 @@ namespace WebApplication1.API.Controllers
             return Ok();
         }
 
-        //DELETE
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync([FromBody] AndroidSendIdRecord androidSendIdRecord)
         {

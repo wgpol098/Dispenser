@@ -10,5 +10,6 @@ namespace WebApplication1.API.Domain.Repositories
         Task<IEnumerable<Dispenser>> FindAllRecordsInDispensers();
         Task<IEnumerable<Historia>> FindAllRecordsInHistory();
         Task<IEnumerable<Plan>> FindAllRecordsInPlans();
+        Task<IEnumerable<ListOfDispenser>> FindAllRecordsInListOfDispensers();
     }
 }

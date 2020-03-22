@@ -34,12 +34,12 @@ namespace WebApplication1.API.Persistence.Repositories
         public async Task<IEnumerable<AndroidSendToAppByIdDisp>> ListAllRecordsForDispenserAsync(int androidSendIdDispenser)
         {
             List<AndroidSendToAppByIdDisp> ReturnList = new List<AndroidSendToAppByIdDisp>();
-            var TempListFromDatabase = await _context.Plans.Where(q => q.DispenserId == androidSendIdDispenser).ToListAsync();
+            var TempListFromDatabase = await _context.Plans.Where(q => q.IdDispenser == androidSendIdDispenser).ToListAsync();
             foreach (var q in TempListFromDatabase)
             {
                 var temp2 = new AndroidSendToAppByIdDisp()
                 {
-                    Description = q.Opis,
+                    Description = q.Description,
                     Hour = q.DateAndTime.Hour,
                     Minutes = q.DateAndTime.Minute,
                     IdRecord = q.Id
@@ -52,15 +52,15 @@ namespace WebApplication1.API.Persistence.Repositories
         public async Task<IEnumerable<AndroidSendToAppByIdDispHistory>> ListAllRecordsInHistoryAsync(int androidSendIdDispenser)
         {
             List<AndroidSendToAppByIdDispHistory> ReturnList = new List<AndroidSendToAppByIdDispHistory>();
-            var TempListFromDatabase = await _context.History.Where(q => q.DispenserId == androidSendIdDispenser).ToListAsync();
+            var TempListFromDatabase = await _context.History.Where(q => q.IdDispenser == androidSendIdDispenser).ToListAsync();
             foreach (var q in TempListFromDatabase)
             {
                 var temp2 = new AndroidSendToAppByIdDispHistory()
                 {
                     DateAndTime = q.DateAndTime,
-                    Flaga = q.Flaga,
-                    Nr_Okienka = q.Nr_Okienka,
-                    Opis = q.Opis
+                    Flaga = q.Flag,
+                    Nr_Okienka = q.NoWindow,
+                    Opis = q.Description
                 };
                 ReturnList.Add(temp2);
             }
@@ -70,12 +70,12 @@ namespace WebApplication1.API.Persistence.Repositories
         public async Task<AndroidSendToAppByIdRecord> ListAllRecordsInPlansByIdRecordAsync(int androidSendIdDispenser)
         {
             //Wyciaganie IdDispensera
-            int IdDispenser = _context.Plans.FirstOrDefault(q => q.Id == androidSendIdDispenser).DispenserId;
-            string Opis = _context.Plans.FirstOrDefault(q => q.Id == androidSendIdDispenser).Opis;
+            int IdDispenser = _context.Plans.FirstOrDefault(q => q.Id == androidSendIdDispenser).IdDispenser;
+            string Opis = _context.Plans.FirstOrDefault(q => q.Id == androidSendIdDispenser).Description;
 
             //Przygotowanie danych
-            List<Plan> lista = await _context.Plans.Where(q => q.DispenserId == IdDispenser).ToListAsync();
-            lista = lista.Where(q => q.Opis == Opis).ToList();
+            List<Plan> lista = await _context.Plans.Where(q => q.IdDispenser == IdDispenser).ToListAsync();
+            lista = lista.Where(q => q.Description == Opis).ToList();
             lista = lista.OrderBy(q => q.DateAndTime).ToList();
 
             int Period = 0;
@@ -91,9 +91,9 @@ namespace WebApplication1.API.Persistence.Repositories
             //Pakowanie danych
             var temp2 = new AndroidSendToAppByIdRecord()
             {
-                hour = temp.DateAndTime.Hour,
-                minutes = temp.DateAndTime.Minute,
-                description = temp.Opis,
+                Hour = temp.DateAndTime.Hour,
+                Minutes = temp.DateAndTime.Minute,
+                Description = temp.Description,
                 Count = lista.Count,
                 Periodicity = Period
             };
@@ -105,22 +105,22 @@ namespace WebApplication1.API.Persistence.Repositories
         public async Task<bool> Remove(int existingPlan)
         {
             Plan plan = await _context.Plans.FirstOrDefaultAsync(q => q.Id == existingPlan);
-            Dispenser FindDispenserOkienka = await _context.Dispensers.FirstOrDefaultAsync(q => q.DispenserId == plan.DispenserId);
+            Dispenser FindDispenserOkienka = await _context.Dispensers.FirstOrDefaultAsync(q => q.IdDispenser == plan.IdDispenser);
 
-            var FoundPlans = await _context.Plans.Where(q => q.DispenserId == plan.DispenserId).ToListAsync();
-            FoundPlans = FoundPlans.Where(q => q.Opis == plan.Opis).ToList();
+            var FoundPlans = await _context.Plans.Where(q => q.IdDispenser == plan.IdDispenser).ToListAsync();
+            FoundPlans = FoundPlans.Where(q => q.Description == plan.Description).ToList();
 
             //Próba wykasowania
             try
             {
-                System.Text.StringBuilder temp = new System.Text.StringBuilder(FindDispenserOkienka.Nr_Okienka);
+                System.Text.StringBuilder temp = new System.Text.StringBuilder(FindDispenserOkienka.NoWindow);
                 foreach (var q in FoundPlans)
                 {
-                    if (q.Nr_Okienka != -1)
-                        temp[q.Nr_Okienka - 1] = '0';
+                    if (q.NoWindow != -1)
+                        temp[q.NoWindow - 1] = '0';
                 }
                 string str = temp.ToString();
-                FindDispenserOkienka.Nr_Okienka = str;
+                FindDispenserOkienka.NoWindow = str;
 
                 foreach (var q in FoundPlans)
                 {
@@ -140,7 +140,7 @@ namespace WebApplication1.API.Persistence.Repositories
 
         public async Task<Dispenser> ReturnDispenserFromTable(int idDispenser)
         {
-            return await _context.Dispensers.FirstOrDefaultAsync(q => q.DispenserId == idDispenser);
+            return await _context.Dispensers.FirstOrDefaultAsync(q => q.IdDispenser == idDispenser);
         }
 
         public async Task<bool> Update(AndroidSendPostUpdate existingPlan)
@@ -155,7 +155,7 @@ namespace WebApplication1.API.Persistence.Repositories
 
             //Nowy lub update
             Dispenser FindDispenserOkienka = 
-                await _context.Dispensers.FirstOrDefaultAsync(q => q.DispenserId == FindPlan.DispenserId);
+                await _context.Dispensers.FirstOrDefaultAsync(q => q.IdDispenser == FindPlan.IdDispenser);
 
             //Próba wykasowania
             try
@@ -173,24 +173,24 @@ namespace WebApplication1.API.Persistence.Repositories
 
                 for (int i = 0; i < existingPlan.Count; i++)
                 {
-                    for (int j = 0; j < FindDispenserOkienka.Nr_Okienka.Length; j++)
+                    for (int j = 0; j < FindDispenserOkienka.NoWindow.Length; j++)
                     {
-                        if (FindDispenserOkienka.Nr_Okienka[j] == '0')
+                        if (FindDispenserOkienka.NoWindow[j] == '0')
                         {
-                            System.Text.StringBuilder temp = new System.Text.StringBuilder(FindDispenserOkienka.Nr_Okienka);
+                            System.Text.StringBuilder temp = new System.Text.StringBuilder(FindDispenserOkienka.NoWindow);
                             temp[j] = '1';
                             string str = temp.ToString();
                             Plan plan = new Plan()
                             {
                                 DateAndTime = dateAndTime,
-                                DispenserId = FindPlan.DispenserId,
-                                Opis = existingPlan.Description,
-                                Nr_Okienka = j + 1
+                                IdDispenser = FindPlan.IdDispenser,
+                                Description = existingPlan.Description,
+                                NoWindow = j + 1
                             };
 
                             await AddAsync(plan);
 
-                            FindDispenserOkienka.Nr_Okienka = str;
+                            FindDispenserOkienka.NoWindow = str;
 
                             UpdateOkienka(FindDispenserOkienka);
 
@@ -205,9 +205,9 @@ namespace WebApplication1.API.Persistence.Repositories
                         Plan plan = new Plan()
                         {
                             DateAndTime = dateAndTime,
-                            DispenserId = FindPlan.DispenserId,
-                            Opis = existingPlan.Description,
-                            Nr_Okienka = -1
+                            IdDispenser = FindPlan.IdDispenser,
+                            Description = existingPlan.Description,
+                            NoWindow = -1
                         };
 
                         await AddAsync(plan);

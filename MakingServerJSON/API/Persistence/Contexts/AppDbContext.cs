@@ -10,6 +10,7 @@ namespace WebApplication1.API.Persistence.Contexts
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Historia> History { get; set; }
         public DbSet<Plan> Plans { get; set; }
+        public DbSet<ListOfDispenser> ListOfDispensers { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {}
 
@@ -23,15 +24,15 @@ namespace WebApplication1.API.Persistence.Contexts
 
             builder.Entity<Dispenser>().HasData
             (
-                new Dispenser { Id = 1, DispenserId = 101, Nr_Okienka = "1110000" },
-                new Dispenser { Id = 2, DispenserId = 102, Nr_Okienka = "1010100" },
-                new Dispenser { Id = 3, DispenserId = 103, Nr_Okienka = "0100010" },
-                new Dispenser { Id = 4, DispenserId = 104, Nr_Okienka = "1000000" },
-                new Dispenser { Id = 5, DispenserId = 105, Nr_Okienka = "0000001" },
-                new Dispenser { Id = 6, DispenserId = 106, Nr_Okienka = "0001000" },
-                new Dispenser { Id = 7, DispenserId = 107, Nr_Okienka = "1000001" },
-                new Dispenser { Id = 8, DispenserId = 108, Nr_Okienka = "0001001" },
-                new Dispenser { Id = 9, DispenserId = 109, Nr_Okienka = "1000010" }
+                new Dispenser { Id = 1, IdDispenser = 101, NoWindow = "1110000" },
+                new Dispenser { Id = 2, IdDispenser = 102, NoWindow = "1010100" },
+                new Dispenser { Id = 3, IdDispenser = 103, NoWindow = "0100010" },
+                new Dispenser { Id = 4, IdDispenser = 104, NoWindow = "1000000" },
+                new Dispenser { Id = 5, IdDispenser = 105, NoWindow = "0000001" },
+                new Dispenser { Id = 6, IdDispenser = 106, NoWindow = "0001000" },
+                new Dispenser { Id = 7, IdDispenser = 107, NoWindow = "1000001" },
+                new Dispenser { Id = 8, IdDispenser = 108, NoWindow = "0001001" },
+                new Dispenser { Id = 9, IdDispenser = 109, NoWindow = "1000010" }
             );
 
             builder.Entity<Account>().ToTable("Accounts");
@@ -40,15 +41,15 @@ namespace WebApplication1.API.Persistence.Contexts
 
             builder.Entity<Account>().HasData
             (
-                new Account { Id = 1, Login = "AndrzejKrawczyk", Password = "Tak123", DispenserId = 101 },
-                new Account { Id = 2, Login = "MateuszWałek", Password = "Nie321", DispenserId = 102 },
-                new Account { Id = 3, Login = "TomekKowalski", Password = "Haslo", DispenserId = 103 },
-                new Account { Id = 4, Login = "PawełNowak", Password = "Test", DispenserId = 104 },
-                new Account { Id = 5, Login = "JakubLewandowski", Password = "Somsiad", DispenserId = 105 },
-                new Account { Id = 6, Login = "MarekPracowity", Password = "Viagra", DispenserId = 106 },
-                new Account { Id = 7, Login = "FranekGolas", Password = "Wojna", DispenserId = 107 },
-                new Account { Id = 8, Login = "AdamMickiewicz", Password = "Pisarz", DispenserId = 108 },
-                new Account { Id = 9, Login = "JanKazimierzKretacz", Password = "Test109", DispenserId = 109 }
+                new Account { Id = 1, Login = "TestGuy123", Password = "Tak123", Name = "Andrzej Krawczyk", TypeAccount = 1},
+                new Account { Id = 2, Login = "TG123456", Password = "Nie321", Name = "Mateusz Wałek", TypeAccount = 1 },
+                new Account { Id = 3, Login = "TTeesstt", Password = "Haslo", Name = "Tomek Kowalski", TypeAccount = 1 },
+                new Account { Id = 4, Login = "Tetestst", Password = "Test", Name = "Paweł Nowak", TypeAccount = 1 },
+                new Account { Id = 5, Login = "GuyGuyGuy", Password = "Somsiad", Name = "Jakub Lewandowski", TypeAccount = 1 },
+                new Account { Id = 6, Login = "TempTemp", Password = "Viagra", Name = "Marek Pracowity", TypeAccount = 3 },
+                new Account { Id = 7, Login = "TestAccount", Password = "Wojna", Name = "Franek Golas", TypeAccount = 2 },
+                new Account { Id = 8, Login = "qwerty", Password = "Pisarz", Name = "Adam Mickiewicz", TypeAccount = 2 },
+                new Account { Id = 9, Login = "qwerty123", Password = "Test109", Name = "Jan Kazimierz Kretacz", TypeAccount = 1 }
             );
 
             builder.Entity<Historia>().ToTable("History");
@@ -57,25 +58,25 @@ namespace WebApplication1.API.Persistence.Contexts
 
             builder.Entity<Historia>().HasData
             (
-                new Historia { Id = 1, DispenserId = 109, DateAndTime = DateTime.Parse("1/3/2020 9:00 AM"), Flaga = 0, Nr_Okienka = 1, Opis = "Stimea" },
-                new Historia { Id = 2, DispenserId = 108, DateAndTime = DateTime.Parse("1/3/2020 11:00 AM"), Flaga = 1, Nr_Okienka = 2, Opis = "Iladian" },
-                new Historia { Id = 3, DispenserId = 107, DateAndTime = DateTime.Parse("1/3/2020 4:00 PM"), Flaga = 0, Nr_Okienka = 3, Opis = "Maxigra" },
-                new Historia { Id = 4, DispenserId = 106, DateAndTime = DateTime.Parse("2/3/2020 6:00 AM"), Flaga = 1, Nr_Okienka = 4, Opis = "Limetic" },
-                new Historia { Id = 5, DispenserId = 105, DateAndTime = DateTime.Parse("2/3/2020 9:00 AM"), Flaga = 1, Nr_Okienka = 5, Opis = "Stimea" },
-                new Historia { Id = 6, DispenserId = 104, DateAndTime = DateTime.Parse("2/3/2020 6:00 PM"), Flaga = -1, Nr_Okienka = 6, Opis = "Iladian" },
-                new Historia { Id = 7, DispenserId = 103, DateAndTime = DateTime.Parse("3/3/2020 8:00 AM"), Flaga = 1, Nr_Okienka = 7, Opis = "Maxigra" },
-                new Historia { Id = 8, DispenserId = 102, DateAndTime = DateTime.Parse("3/3/2020 1:00 PM"), Flaga = 1, Nr_Okienka = 1, Opis = "Limetic" },
-                new Historia { Id = 9, DispenserId = 101, DateAndTime = DateTime.Parse("3/3/2020 5:00 PM"), Flaga = 1, Nr_Okienka = 1, Opis = "Stimea" },
-                new Historia { Id = 10, DispenserId = 102, DateAndTime = DateTime.Parse("4/3/2020 9:00 AM"), Flaga = -1, Nr_Okienka = 2, Opis = "Iladian" },
-                new Historia { Id = 11, DispenserId = 103, DateAndTime = DateTime.Parse("4/3/2020 2:00 PM"), Flaga = 1, Nr_Okienka = 2, Opis = "Maxigra" },
-                new Historia { Id = 12, DispenserId = 104, DateAndTime = DateTime.Parse("4/3/2020 6:00 PM"), Flaga = 0, Nr_Okienka = 3, Opis = "Limetic" },
-                new Historia { Id = 13, DispenserId = 105, DateAndTime = DateTime.Parse("5/3/2020 7:00 AM"), Flaga = 1, Nr_Okienka = 3, Opis = "Stimea" },
-                new Historia { Id = 14, DispenserId = 106, DateAndTime = DateTime.Parse("5/3/2020 8:00 AM"), Flaga = -1, Nr_Okienka = 4, Opis = "Iladian" },
-                new Historia { Id = 15, DispenserId = 107, DateAndTime = DateTime.Parse("5/3/2020 5:00 PM"), Flaga = 1, Nr_Okienka = 5, Opis = "Maxigra" },
-                new Historia { Id = 16, DispenserId = 108, DateAndTime = DateTime.Parse("6/3/2020 8:00 AM"), Flaga = 1, Nr_Okienka = 6, Opis = "Limetic" },
-                new Historia { Id = 17, DispenserId = 109, DateAndTime = DateTime.Parse("6/3/2020 9:00 PM"), Flaga = 1, Nr_Okienka = 7, Opis = "Stimea" },
-                new Historia { Id = 18, DispenserId = 109, DateAndTime = DateTime.Parse("7/3/2020 10:00 AM"), Flaga = -1, Nr_Okienka = 1, Opis = "Maxigra" },
-                new Historia { Id = 19, DispenserId = 109, DateAndTime = DateTime.Parse("7/3/2020 9:00 PM"), Flaga = 1, Nr_Okienka = 2, Opis = "Iladian" }
+                new Historia { Id = 1, IdDispenser = 109, DateAndTime = DateTime.Parse("2020-03-1 09:00:01"), Flag = 0, NoWindow = 1, Description = "Stimea" },
+                new Historia { Id = 2, IdDispenser = 108, DateAndTime = DateTime.Parse("2020-03-1 11:00:01"), Flag = 1, NoWindow = 2, Description = "Iladian" },
+                new Historia { Id = 3, IdDispenser = 107, DateAndTime = DateTime.Parse("2020-03-1 16:00:01"), Flag = 0, NoWindow = 3, Description = "Maxigra" },
+                new Historia { Id = 4, IdDispenser = 106, DateAndTime = DateTime.Parse("2020-03-2 06:00:01"), Flag = 1, NoWindow = 4, Description = "Limetic" },
+                new Historia { Id = 5, IdDispenser = 105, DateAndTime = DateTime.Parse("2020-03-2 09:00:01"), Flag = 1, NoWindow = 5, Description = "Stimea" },
+                new Historia { Id = 6, IdDispenser = 104, DateAndTime = DateTime.Parse("2020-03-2 18:00:01"), Flag = -1, NoWindow = 6, Description = "Iladian" },
+                new Historia { Id = 7, IdDispenser = 103, DateAndTime = DateTime.Parse("2020-03-3 08:00:01"), Flag = 1, NoWindow = 7, Description = "Maxigra" },
+                new Historia { Id = 8, IdDispenser = 102, DateAndTime = DateTime.Parse("2020-03-3 13:00:01"), Flag = 1, NoWindow = 1, Description = "Limetic" },
+                new Historia { Id = 9, IdDispenser = 101, DateAndTime = DateTime.Parse("2020-03-3 17:00:01"), Flag = 1, NoWindow = 1, Description = "Stimea" },
+                new Historia { Id = 10, IdDispenser = 102, DateAndTime = DateTime.Parse("2020-03-4 09:00:01"), Flag = -1, NoWindow = 2, Description = "Iladian" },
+                new Historia { Id = 11, IdDispenser = 103, DateAndTime = DateTime.Parse("2020-03-4 14:00:01"), Flag = 1, NoWindow = 2, Description = "Maxigra" },
+                new Historia { Id = 12, IdDispenser = 104, DateAndTime = DateTime.Parse("2020-03-4 18:00:01"), Flag = 0, NoWindow = 3, Description = "Limetic" },
+                new Historia { Id = 13, IdDispenser = 105, DateAndTime = DateTime.Parse("2020-03-5 07:00:01"), Flag = 1, NoWindow = 3, Description = "Stimea" },
+                new Historia { Id = 14, IdDispenser = 106, DateAndTime = DateTime.Parse("2020-03-5 08:00:01"), Flag = -1, NoWindow = 4, Description = "Iladian" },
+                new Historia { Id = 15, IdDispenser = 107, DateAndTime = DateTime.Parse("2020-03-5 17:00:01"), Flag = 1, NoWindow = 5, Description = "Maxigra" },
+                new Historia { Id = 16, IdDispenser = 108, DateAndTime = DateTime.Parse("2020-03-6 08:00:01"), Flag = 1, NoWindow = 6, Description = "Limetic" },
+                new Historia { Id = 17, IdDispenser = 109, DateAndTime = DateTime.Parse("2020-03-6 21:00:01"), Flag = 1, NoWindow = 7, Description = "Stimea" },
+                new Historia { Id = 18, IdDispenser = 109, DateAndTime = DateTime.Parse("2020-03-7 10:00:01"), Flag = -1, NoWindow = 1, Description = "Maxigra" },
+                new Historia { Id = 19, IdDispenser = 109, DateAndTime = DateTime.Parse("2020-03-7 21:00:01"), Flag = 1, NoWindow = 2, Description = "Iladian" }
             );
 
             builder.Entity<Plan>().ToTable("Plans");
@@ -84,23 +85,47 @@ namespace WebApplication1.API.Persistence.Contexts
 
             builder.Entity<Plan>().HasData
             (
-                new Plan { Id = 1, DispenserId = 101, DateAndTime = DateTime.Parse("20/3/2020 1:00 PM"), Opis = "Apap", Nr_Okienka = 1 },
-                new Plan { Id = 2, DispenserId = 101, DateAndTime = DateTime.Parse("21/3/2020 1:00 PM"), Opis = "Apap", Nr_Okienka = 2 },
-                new Plan { Id = 3, DispenserId = 101, DateAndTime = DateTime.Parse("22/3/2020 1:00 PM"), Opis = "Apap", Nr_Okienka = 3 },
-                new Plan { Id = 4, DispenserId = 102, DateAndTime = DateTime.Parse("20/3/2020 6:00 AM"), Opis = "IBUM", Nr_Okienka = 1 },
-                new Plan { Id = 5, DispenserId = 102, DateAndTime = DateTime.Parse("20/3/2020 6:00 PM"), Opis = "IBUM", Nr_Okienka = 3 },
-                new Plan { Id = 6, DispenserId = 102, DateAndTime = DateTime.Parse("21/3/2020 6:00 AM"), Opis = "IBUM", Nr_Okienka = 5 },
-                new Plan { Id = 7, DispenserId = 103, DateAndTime = DateTime.Parse("20/3/2020 4:00 AM"), Opis = "aaa", Nr_Okienka = 2 },
-                new Plan { Id = 8, DispenserId = 103, DateAndTime = DateTime.Parse("20/3/2020 11:00 PM"), Opis = "aaa", Nr_Okienka = 6 },
-                new Plan { Id = 9, DispenserId = 104, DateAndTime = DateTime.Parse("20/3/2020 5:00 AM"), Opis = "bbb", Nr_Okienka = 1 },
-                new Plan { Id = 10, DispenserId = 105, DateAndTime = DateTime.Parse("20/3/2020 4:00 AM"), Opis = "ccc", Nr_Okienka = 7 },
-                new Plan { Id = 11, DispenserId = 106, DateAndTime = DateTime.Parse("25/3/2020 9:00 AM"), Opis = "ddd", Nr_Okienka = 4 },
-                new Plan { Id = 12, DispenserId = 107, DateAndTime = DateTime.Parse("20/3/2020 1:00 AM"), Opis = "brain", Nr_Okienka = 1 },
-                new Plan { Id = 13, DispenserId = 107, DateAndTime = DateTime.Parse("20/3/2020 2:00 AM"), Opis = "brain", Nr_Okienka = 7 },
-                new Plan { Id = 14, DispenserId = 108, DateAndTime = DateTime.Parse("20/3/2020 5:00 AM"), Opis = "lol", Nr_Okienka = 4 },
-                new Plan { Id = 15, DispenserId = 108, DateAndTime = DateTime.Parse("22/3/2020 4:00 PM"), Opis = "lol", Nr_Okienka = 7 },
-                new Plan { Id = 16, DispenserId = 109, DateAndTime = DateTime.Parse("20/3/2020 4:00 PM"), Opis = "Eutanazol", Nr_Okienka = 1 },
-                new Plan { Id = 17, DispenserId = 109, DateAndTime = DateTime.Parse("20/3/2020 5:30 PM"), Opis = "Eutanazol", Nr_Okienka = 6 }
+                new Plan { Id = 1, IdDispenser = 101, DateAndTime = DateTime.Parse("2020-03-20 13:00:01"), Description = "Apap", NoWindow = 1 },
+                new Plan { Id = 2, IdDispenser = 101, DateAndTime = DateTime.Parse("2020-03-21 13:00:01"), Description = "Apap", NoWindow = 2 },
+                new Plan { Id = 3, IdDispenser = 101, DateAndTime = DateTime.Parse("2020-03-22 13:00:01"), Description = "Apap", NoWindow = 3 },
+                new Plan { Id = 4, IdDispenser = 102, DateAndTime = DateTime.Parse("2020-03-20 06:00:01"), Description = "IBUM", NoWindow = 1 },
+                new Plan { Id = 5, IdDispenser = 102, DateAndTime = DateTime.Parse("2020-03-20 18:00:01"), Description = "IBUM", NoWindow = 3 },
+                new Plan { Id = 6, IdDispenser = 102, DateAndTime = DateTime.Parse("2020-03-21 06:00:01"), Description = "IBUM", NoWindow = 5 },
+                new Plan { Id = 7, IdDispenser = 103, DateAndTime = DateTime.Parse("2020-03-20 04:00:01"), Description = "aaa", NoWindow = 2 },
+                new Plan { Id = 8, IdDispenser = 103, DateAndTime = DateTime.Parse("2020-03-20 23:00:01"), Description = "aaa", NoWindow = 6 },
+                new Plan { Id = 9, IdDispenser = 104, DateAndTime = DateTime.Parse("2020-03-20 05:00:01"), Description = "bbb", NoWindow = 1 },
+                new Plan { Id = 10, IdDispenser = 105, DateAndTime = DateTime.Parse("2020-03-20 04:00:01"), Description = "ccc", NoWindow = 7 },
+                new Plan { Id = 11, IdDispenser = 106, DateAndTime = DateTime.Parse("2020-03-25 09:00:01"), Description = "ddd", NoWindow = 4 },
+                new Plan { Id = 12, IdDispenser = 107, DateAndTime = DateTime.Parse("2020-03-20 01:00:01"), Description = "brain", NoWindow = 1 },
+                new Plan { Id = 13, IdDispenser = 107, DateAndTime = DateTime.Parse("2020-03-20 02:00:01"), Description = "brain", NoWindow = 7 },
+                new Plan { Id = 14, IdDispenser = 108, DateAndTime = DateTime.Parse("2020-03-20 05:00:01"), Description = "lol", NoWindow = 4 },
+                new Plan { Id = 15, IdDispenser = 108, DateAndTime = DateTime.Parse("2020-03-22 16:00:01"), Description = "lol", NoWindow = 7 },
+                new Plan { Id = 16, IdDispenser = 109, DateAndTime = DateTime.Parse("2020-03-20 16:00:01"), Description = "Eutanazol", NoWindow = 1 },
+                new Plan { Id = 17, IdDispenser = 109, DateAndTime = DateTime.Parse("2020-03-20 17:30:01"), Description = "Eutanazol", NoWindow = 6 }
+            );
+
+            builder.Entity<ListOfDispenser>().ToTable("ListOfDispensers");
+            builder.Entity<ListOfDispenser>().HasKey(p => p.Id);
+            builder.Entity<ListOfDispenser>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+
+            builder.Entity<ListOfDispenser>().HasData
+            (
+                new ListOfDispenser { Id = 1, IdDispenser = 101, IdAccount = 1 },
+                new ListOfDispenser { Id = 2, IdDispenser = 102, IdAccount = 2 },
+                new ListOfDispenser { Id = 3, IdDispenser = 103, IdAccount = 3 },
+                new ListOfDispenser { Id = 4, IdDispenser = 104, IdAccount = 4 },
+                new ListOfDispenser { Id = 5, IdDispenser = 105, IdAccount = 5 },
+                new ListOfDispenser { Id = 6, IdDispenser = 106, IdAccount = 6 },
+                new ListOfDispenser { Id = 7, IdDispenser = 107, IdAccount = 7 },
+                new ListOfDispenser { Id = 8, IdDispenser = 108, IdAccount = 8 },
+                new ListOfDispenser { Id = 9, IdDispenser = 109, IdAccount = 9 },
+                new ListOfDispenser { Id = 10, IdDispenser = 101, IdAccount = 6 },
+                new ListOfDispenser { Id = 11, IdDispenser = 102, IdAccount = 6 },
+                new ListOfDispenser { Id = 12, IdDispenser = 104, IdAccount = 6 },
+                new ListOfDispenser { Id = 13, IdDispenser = 103, IdAccount = 7 },
+                new ListOfDispenser { Id = 14, IdDispenser = 109, IdAccount = 7 },
+                new ListOfDispenser { Id = 15, IdDispenser = 102, IdAccount = 8 },
+                new ListOfDispenser { Id = 16, IdDispenser = 109, IdAccount = 8 }
             );
         }
     }

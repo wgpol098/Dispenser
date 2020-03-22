@@ -32,5 +32,10 @@ namespace WebApplication1.API.Persistence.Repositories
         {
             return await _context.Dispensers.ToListAsync();
         }
+
+        public async Task<IEnumerable<ListOfDispenser>> FindAllRecordsInListOfDispensers()
+        {
+            return await _context.ListOfDispensers.ToListAsync();
+        }
     }
 }

@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using WebApplication1.API.Persistence.Contexts;
 using Microsoft.AspNetCore;
@@ -27,7 +21,6 @@ namespace WebApplication1.API
             host.Run();
         }
 
-        //public static IHostBuilder CreateHostBuilder(string[] args) =>
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
             .UseStartup<Startup>()

@@ -2,6 +2,6 @@
 {
     public class DispSendToServerGET
     {
-        public int DispenserId { get; set; }
+        public int IdDispenser { get; set; }
     }
 }

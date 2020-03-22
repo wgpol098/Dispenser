@@ -43,5 +43,12 @@ namespace WebApplication1.API.Controllers
             var acc = await _debugService.ListAllRecordsFromAccounts();
             return acc;
         }
+
+        [HttpGet("listofdispensers")]
+        public async Task<IEnumerable<ListOfDispenser>> GetAllRecordsFromListOfDispensers()
+        {
+            var list = await _debugService.ListAllRecordsFromListOfDispensers();
+            return list;
+        }
     }
 }
