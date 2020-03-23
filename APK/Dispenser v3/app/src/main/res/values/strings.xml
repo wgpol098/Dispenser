@@ -33,5 +33,14 @@
     <string name="ok" translatable="false">OK</string>
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
+    <string name="doctor_account">Doctor account</string>
+    <string name="validation_code">Validation code</string>
+    <string name="wrong_validation_code">Wrong validation code!</string>
+    <string name="dispenser_name">Dispenser name (optional)</string>
+    <string name="dispenser_belongs">Dispenser belongs to the account!</string>
+    <string name="add_dispenser">Dispenser added successfully!</string>
+    <string name="wrong_email">Incorrect email address!</string>
+    <string name="confirm_password">Confirm password</string>
+    <string name="sign_in_success">Registration was successful</string>
 
 </resources>

@@ -11,7 +11,6 @@
         android:id="@+id/EmailTextBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="136dp"
         android:layout_marginEnd="86dp"
         android:layout_marginRight="86dp"
         android:backgroundTint="@color/white"
@@ -21,7 +20,7 @@
         android:textColor="@color/white"
         android:textColorHint="@color/whitehint"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/wrongEmailLabel" />
 
     <EditText
         android:id="@+id/PasswordTextBox"
@@ -31,64 +30,19 @@
         android:layout_marginEnd="2dp"
         android:layout_marginRight="2dp"
         android:backgroundTint="@color/white"
-        android:textColor="@color/white"
-        android:textColorHint="@color/whitehint"
         android:ems="10"
         android:hint="@string/password"
         android:inputType="textPassword"
-        app:layout_constraintEnd_toEndOf="@+id/EmailTextBox"
-        app:layout_constraintTop_toBottomOf="@+id/EmailTextBox" />
-
-    <EditText
-        android:id="@+id/DispenserIDTextBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="237dp"
-        android:layout_marginBottom="237dp"
-        android:backgroundTint="@color/white"
-        android:ems="10"
-        android:hint="@string/DispenserID"
-        android:inputType="textPersonName"
         android:textColor="@color/white"
         android:textColorHint="@color/whitehint"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/PasswordTextBox"
-        app:layout_constraintStart_toStartOf="@+id/PasswordTextBox"
-        app:layout_constraintTop_toTopOf="@+id/PasswordTextBox" />
-
-    <Button
-        android:id="@+id/QRScanButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:onClick="fScanButton"
-        android:text="@string/scan_qr"
-        android:textColor="@color/white"
-        app:layout_constraintBaseline_toBaselineOf="@+id/SignInButton"
-        app:layout_constraintEnd_toEndOf="@+id/DispenserIDTextBox"
-        app:layout_constraintStart_toEndOf="@+id/DispenserIDTextBox" />
-
-    <Button
-        android:id="@+id/SignInButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginRight="40dp"
-        android:background="@android:color/transparent"
-        android:onClick="fSignInButton"
-        android:text="@string/sign_in"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toStartOf="@+id/QRScanButton"
-        app:layout_constraintTop_toBottomOf="@+id/DispenserIDTextBox" />
+        app:layout_constraintEnd_toEndOf="@+id/EmailTextBox"
+        app:layout_constraintTop_toBottomOf="@+id/EmailTextBox" />
 
     <EditText
         android:id="@+id/NameTextBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="49dp"
-        android:layout_marginEnd="3dp"
-        android:layout_marginRight="3dp"
+        android:layout_marginTop="120dp"
         android:backgroundTint="@color/white"
         android:ems="10"
         android:hint="@string/Name_hint"
@@ -96,6 +50,56 @@
         android:textColor="@color/white"
         android:textColorHint="@color/whitehint"
         app:layout_constraintEnd_toEndOf="@+id/PasswordTextBox"
+        app:layout_constraintTop_toBottomOf="@+id/PasswordTextBox" />
+
+    <Button
+        android:id="@+id/SignInButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="92dp"
+        android:background="@android:color/transparent"
+        android:onClick="fSignInButton"
+        android:text="@string/sign_in"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <CheckBox
+        android:id="@+id/DoctorCheckbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="@string/doctor_account"
+        app:layout_constraintStart_toStartOf="@+id/NameTextBox"
+        app:layout_constraintTop_toBottomOf="@+id/NameTextBox" />
+
+    <TextView
+        android:id="@+id/wrongEmailLabel"
+        android:layout_width="0dp"
+        android:layout_height="27dp"
+        android:layout_marginTop="109dp"
+        android:text="@string/wrong_email"
+        android:textColor="@android:color/holo_red_dark"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@+id/EmailTextBox"
+        app:layout_constraintStart_toStartOf="@+id/EmailTextBox"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/confirmPasswordTextBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="2dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/white"
+        android:ems="10"
+        android:hint="@string/confirm_password"
+        android:inputType="textPersonName"
+        android:textColor="@color/white"
+        android:textColorHint="@color/whitehint"
+        app:layout_constraintStart_toStartOf="@+id/PasswordTextBox"
         app:layout_constraintTop_toBottomOf="@+id/PasswordTextBox" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

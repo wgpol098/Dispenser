@@ -24,6 +24,7 @@ import org.json.JSONObject;
 public class DispenserMenuActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener
 {
     String idDispenser;
+    String login;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -34,12 +35,18 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
         //Czytanie listy dispenserów z SharedPreferences
         SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences", Context.MODE_PRIVATE);
         idDispenser = sharedPref.getString("IdDispenser",null);
+        login = sharedPref.getString("login",null);
 
         //Jeśli użytkownika nie ma w SharedPreferences
         if(idDispenser==null)
         {
             Bundle b = getIntent().getExtras();
             idDispenser = b.getString("IdDispenser");
+        }
+        if(login==null)
+        {
+            Bundle b = getIntent().getExtras();
+            login = b.getString("login");
         }
 
         //Wyciąganie listy dispenserów
@@ -49,8 +56,6 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),JsonDispList.toString());
-        dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
 
         //Tworzenie elementów względem listy dispenserów w SharedPreferences
         LinearLayout linearLayout = findViewById(R.id.linearLayout);
@@ -59,13 +64,13 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
         scroll.setBackgroundResource(R.drawable.bg_gradient);
 
         //Jeżeli jest tylko jeden dispenser na koncie to po co to wyświetlać
-        if(JsonDispList.length()==1)
+        if(JsonDispList.length()==0)
         {
             JSONObject json=null;
             int IDdispenser=-1;
             try
             {
-                json = JsonDispList.getJSONObject(0);
+                json = JsonDispList.getJSONObject(-1);
                 IDdispenser = json.getInt("idDispenser");
             }
             catch (JSONException e)
@@ -97,13 +102,16 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
                 if(IDdispenser!=-1)
                 {
                     Button button = new Button(this);
-                    button.setText(String.valueOf(IDdispenser));
                     button.setId(IDdispenser);
                     button.setTextSize(20);
                     button.setGravity(Gravity.CENTER);
                     button.setOnClickListener(this);
                     button.setOnLongClickListener(this);
                     linearLayout.addView(button);
+
+                    //Przypisywanie name do buttona jeśli user ma przypisaną nazwę
+                    sharedPref = this.getSharedPreferences(login, Context.MODE_PRIVATE);
+                    button.setText(sharedPref.getString(String.valueOf(IDdispenser),String.valueOf(IDdispenser)));
                 }
             }
 
@@ -136,6 +144,7 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
         {
             Intent intent = new Intent(this,QrScannerActivity.class);
             intent.putExtra("idDispenser",idDispenser);
+            intent.putExtra("login",login);
             startActivity(intent);
         }
     }
@@ -145,50 +154,67 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
     @Override
     public boolean onLongClick(View v)
     {
+        //Tworzenie jsona do wysłania na serwer
+        JSONObject json = new JSONObject();
+
+        try
+        {
+            json.put("login",login);
+            json.put("idDispenser",v.getId());
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
         //Połączenie z serwerem w celu DELETE
         //Jeśli otrzymamy odpowiedz 200 to usuwamy z listy w aplikacji
         //W innym przypadku nie można usunąć, bo coś jest nie tak
+        Connections connection = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Dispenser","DELETE",json,false);
+        connection.Connect();
 
-
-        //A co w sytuacji jak usuniesz ostatni dispenser? Shared Preferences może wywalić
-
-
-        //Usuwanie dispensera z listy
-        //Jeśli user jest zapamiętany
-        //Odczytywanie danych z SharedPreferences
-        SharedPreferences sharedpref = this.getSharedPreferences("LoginPreferences",Context.MODE_PRIVATE);
-        String dispenserID = sharedpref.getString("IdDispenser","");
-
-        //Przetwarzanie listy dispenserów
-        if(!dispenserID.isEmpty())
+        //Jeśli błąd to nie czytam odpowiedzi od serwera
+        if(connection.getResponseCode()!=200)
         {
-            try
-            {
-                JSONArray JsonArray = new JSONArray(dispenserID);
-
-                for(int i=0;i<JsonArray.length();i++)
-                {
-                    JSONObject json = JsonArray.getJSONObject(i);
-                    int tmp  = json.getInt("idDispenser");
-
-                    if(v.getId()==tmp) JsonArray.remove(i);
-                }
-
-                SharedPreferences.Editor editor = sharedpref.edit();
-                editor.putString("IdDispenser",JsonArray.toString());
-                editor.commit();
-            }
-            catch (JSONException e)
-            {
-                e.printStackTrace();
-            }
-
+            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connection.Error());
+            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+            finish();
         }
+        else
+        {
+            //Odczytywanie danych z SharedPreferences
+            SharedPreferences sharedpref = this.getSharedPreferences("LoginPreferences",Context.MODE_PRIVATE);
+            String dispenserID = sharedpref.getString("IdDispenser","");
 
-        //Jeśli user nie jest zapamiętany to wystarczy to
-        //Usuwanie dispensera z listy
-        LinearLayout l = findViewById(R.id.linearLayout);
-        l.removeView(v);
+            //Przetwarzanie listy dispenserów
+            if(!dispenserID.isEmpty())
+            {
+                try
+                {
+                    JSONArray JsonArray = new JSONArray(dispenserID);
+                    for(int i=0;i<JsonArray.length();i++)
+                    {
+                        json = JsonArray.getJSONObject(i);
+                        int tmp  = json.getInt("idDispenser");
+
+                        if(v.getId()==tmp) JsonArray.remove(i);
+                    }
+
+                    SharedPreferences.Editor editor = sharedpref.edit();
+                    editor.putString("IdDispenser",JsonArray.toString());
+                    editor.commit();
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
+            //Jeśli user nie jest zapamiętany to wystarczy to
+            //Usuwanie dispensera z listy
+            LinearLayout l = findViewById(R.id.linearLayout);
+            l.removeView(v);
+        }
         return true;
     }
 }

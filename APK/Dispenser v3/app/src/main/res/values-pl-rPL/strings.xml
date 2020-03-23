@@ -28,4 +28,13 @@
     <string name="Name_hint">Imię i nazwisko (opcjonalnie)</string>
     <string name="yes">Tak</string>
     <string name="cancel">Anuluj</string>
+    <string name="doctor_account">Konto doktora</string>
+    <string name="validation_code">Kod weryfikujący</string>
+    <string name="wrong_validation_code">Zły kod weryfikujący</string>
+    <string name="dispenser_name">Nazwa dispensera (opcjonalnie)</string>
+    <string name="dispenser_belongs">Dispenser już należy do tego konta!</string>
+    <string name="add_dispenser">Dispenser dodany pomyślnie!</string>
+    <string name="wrong_email">Niepoprawny adres email!</string>
+    <string name="confirm_password">Potwierdź hasło!</string>
+    <string name="sign_in_success">Rejestracja przebiegła pomyślnie</string>
 </resources>

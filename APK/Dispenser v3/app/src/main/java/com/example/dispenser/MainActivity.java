@@ -49,27 +49,58 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         setContentView(R.layout.activity_main);
 
+        //Czytanie danych zalogowanego użytkownika
         SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences",Context.MODE_PRIVATE);
         String login = sharedPref.getString("login", "");
         String password = sharedPref.getString("password","");
         String dispenserID = sharedPref.getString("IdDispenser","");
 
-        //Czytanie czy są w ogóle podane jakieś dane
+        //Jeśli użytkownik jest zapamiętany
         if(!login.isEmpty() && !password.isEmpty() && !dispenserID.isEmpty())
         {
-//            MyDialog dialog = new MyDialog("Błąd",login + " " + password + " " + dispenserID);
-//            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+            //Tworzenie jsona do wysłania na serwer
+            JSONObject json = new JSONObject();
+            try
+            {
+                json.put("login",login);
+                json.put("password",password);
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
 
+            //Wysyłanie na serwer zapytania odnoście logowania użytkownika
+            Connections connection = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Account/login","POST",json,true);
+            connection.Connect();
 
-            //JSON do sprawdzenia połączenia z serwerem (dodaj)
-            //To będzie ten sam JSON, który jest uzywany przy logowaniu się w aplikacji
+            JSONArray JsonArrayAnswer = new JSONArray();
+            //Jeśli błąd to nie czytam odpowiedzi od serwera
+            if(connection.getResponseCode()!=200)
+            {
+                DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connection.Error());
+                dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+//                finish();
+            }
+            //Jeśli wszystko poszło i serwer działa to trzeba odczytać odpowiedź
+            else
+            {
+                JsonArrayAnswer = connection.JsonArrayAnswer();
 
-            //Tutaj będzie trzeba sprawdzać czy IdDispenser się nie zmieniło.
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("IdDispenser",JsonArrayAnswer.toString());
+                editor.commit();
 
-
-            Intent intent = new Intent(this,DispenserMenuActivity.class);
-            startActivity(intent);
+                Intent intent = new Intent(this,DispenserMenuActivity.class);
+                startActivity(intent);
+            }
         }
+        //Animacje guziczków
+        final Animation myAnim = AnimationUtils.loadAnimation(this, R.anim.milkshake);
+        Button signB = findViewById(R.id.SignInButton);
+        Button logB = findViewById(R.id.LogInButton);
+        signB.startAnimation(myAnim);
+        logB.startAnimation(myAnim);
     }
 
     public void fdbutton(View v)
@@ -80,11 +111,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void fSignInButton(View v)
     {
-        //Animacja po kliknięcu na przycisk
-        final Animation myAnim = AnimationUtils.loadAnimation(this, R.anim.milkshake);
-        v.startAnimation(myAnim);
-
-        //Otwieranie nowej aktywności
         Intent intent = new Intent(this,SignInActivity.class);
         startActivity(intent);
     }
@@ -92,8 +118,8 @@ public class MainActivity extends AppCompatActivity {
     public void fLogInButton(View v)
     {
         //Animacja po kliknięcu na przycisk
-        final Animation myAnim = AnimationUtils.loadAnimation(this, R.anim.milkshake);
-        v.startAnimation(myAnim);
+//        final Animation myAnim = AnimationUtils.loadAnimation(this, R.anim.milkshake);
+//        v.startAnimation(myAnim);
 
         //Odczytywanie danych z textboxów
         EditText l = findViewById(R.id.LoginTextBox);
@@ -103,44 +129,41 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Json z zapytaniem do serwera
-        JSONObject zap = new JSONObject();
+        JSONObject json = new JSONObject();
         try
         {
-            zap.put("Login",login);
-            zap.put("Password",password);
+            json.put("login",login);
+            json.put("password",password);
         }
         catch (JSONException e)
         {
             e.printStackTrace();
         }
 
-        //Miejsce na stworzenie połączenia z serwerem i wysłanie zapytania
-
-        //JSON z odpowiedzią od serwera
-
-        JSONObject j1 = new JSONObject();
-        JSONObject j2 = new JSONObject();
-        JSONObject j3 = new JSONObject();
-
-        try {
-            j1.put("idDispenser",1);
-            j2.put("idDispenser",3);
-            j3.put("idDispenser",5);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        //Wysyłanie na serwer zapytania odnoście logowania użytkownika
+        Connections connection = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Account/login","POST",json,true);
+        connection.Connect();
 
         JSONArray JsonArrayAnswer = new JSONArray();
-        JsonArrayAnswer.put(j1);
-        JsonArrayAnswer.put(j2);
-        JsonArrayAnswer.put(j3);
+        //Jeśli błąd to nie czytam odpowiedzi od serwera
+        if(connection.getResponseCode()!=200)
+        {
+            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connection.Error());
+            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+            finish();
+        }
+        //Jeśli wszystko poszło i serwer działa to trzeba odczytać odpowiedź
+        else
+        {
+            JsonArrayAnswer = connection.JsonArrayAnswer();
+        }
 
         //Analiza tablicy Json odczytanej od serwera
         //Sprawdzanie czy użytkownik uzyskał autoryzację
         int authorization=0;
         if(JsonArrayAnswer.length()==1)
         {
-            JSONObject json=null;
+            json=null;
             int spr=-1;
             try
             {
@@ -173,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
         if(authorization==1)
         {
             Intent intent = new Intent(this,DispenserMenuActivity.class);
+            intent.putExtra("login",login);
             intent.putExtra("IdDispenser",JsonArrayAnswer.toString());
             startActivity(intent);
         }

@@ -11,9 +11,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -34,6 +36,7 @@ public class QrScannerActivity extends AppCompatActivity implements BarcodeReade
 
     BarcodeReader barcodeReader;
     String idDispenser;
+    String login;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -46,9 +49,11 @@ public class QrScannerActivity extends AppCompatActivity implements BarcodeReade
         //Odczytywanie informacji o dispenserze
         Bundle b= getIntent().getExtras();
         idDispenser = b.getString("idDispenser");
+        login = b.getString("login");
 
 //        Intent intent = new Intent(this,AddDispenserActivity.class);
 //        intent.putExtra("QrScan","12345");
+//        intent.putExtra("login",login);
 //        intent.putExtra("idDispenser",idDispenser);
 //        startActivity(intent);
     }
@@ -60,33 +65,34 @@ public class QrScannerActivity extends AppCompatActivity implements BarcodeReade
         Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
         vibrator.vibrate(1000);
 
-
         //Sprawdzanie czy zapamiętany użytkownik posiada już ten dispenser.
         if(idDispenser!=null)
         {
-            JSONArray JsonArray = null;
             try
             {
-                JsonArray = new JSONArray(idDispenser);
+                JSONArray JsonArray = new JSONArray(idDispenser);
                 for(int i=0;i<JsonArray.length();i++)
                 {
                     JSONObject json = JsonArray.getJSONObject(i);
                     int tmp = json.getInt("idDispenser");
-                    if(tmp == Integer.parseInt(barcode.displayValue)) finish();
+                    if(tmp == Integer.parseInt(barcode.displayValue))
+                    {
+                        Toast toast = Toast.makeText(this, R.string.dispenser_belongs, Toast.LENGTH_LONG);
+                        toast.show();
+                    }
                 }
             }
             catch (JSONException e)
             {
                 e.printStackTrace();
             }
-//            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),"connection.Error()");
-//            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
         }
         else
         {
             Intent intent = new Intent(this,AddDispenserActivity.class);
             intent.putExtra("QrScan",barcode.displayValue);
             intent.putExtra("idDispenser",idDispenser);
+            intent.putExtra("login",login);
             startActivity(intent);
         }
     }

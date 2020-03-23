@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -75,7 +77,7 @@ public class ChangeHourActivity extends AppCompatActivity {
             }
         }
         //Wyciąganie danych z Jsona jesli jest to update
-        if(IdRecord!=-1)
+        if(IdRecord>0)
         {
             try
             {
@@ -99,8 +101,8 @@ public class ChangeHourActivity extends AppCompatActivity {
         }
 
         //Wpisywanie danych wyciągniętych z jsona do kontrolek
-        EditText h = findViewById(R.id.HoursTextBox);
-        EditText m = findViewById(R.id.MinutesTextBox);
+        final EditText h = findViewById(R.id.HoursTextBox);
+        final EditText m = findViewById(R.id.MinutesTextBox);
         EditText c = findViewById(R.id.CountTextBox);
         EditText p = findViewById(R.id.PeriodicityTextBox);
         EditText d = findViewById(R.id.DescriptionTextBox);
@@ -109,6 +111,45 @@ public class ChangeHourActivity extends AppCompatActivity {
         c.setText(Integer.toString(count));
         p.setText(Integer.toString(periodicity));
         d.setText(description);
+
+        h.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+                int hour=0;
+                if(s.length()>0) hour = Integer.parseInt(s.toString());
+                if(hour>23 || s.length()>2)
+                {
+                    StringBuilder tmp = new StringBuilder();
+                    for(int i=0;i<s.length()-1;i++) tmp.append(s.charAt(i));
+                    h.setText(tmp.toString());
+                    h.setSelection(s.length()-1);
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+        m.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
+                int minutes=0;
+                if(s.length()>0) minutes = Integer.parseInt(s.toString());
+                if(minutes>59 || s.length()>2)
+                {
+                    StringBuilder tmp = new StringBuilder();
+                    for(int i=0;i<s.length()-1;i++) tmp.append(s.charAt(i));
+                    m.setText(tmp.toString());
+                    m.setSelection(s.length()-1);
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
     }
 
     public void fOkButton(View v)
@@ -119,20 +160,20 @@ public class ChangeHourActivity extends AppCompatActivity {
         EditText c = findViewById(R.id.CountTextBox);
         EditText p = findViewById(R.id.PeriodicityTextBox);
 
-        //Dodaj sprawdzanie przy add
-        int tmphour = Integer.parseInt(h.getText().toString());
-        int tmpminutes = Integer.parseInt(m.getText().toString());
-        String tmpdescription = d.getText().toString();
-        int tmpcount = Integer.parseInt(c.getText().toString());
-        int tmpperiodicity = Integer.parseInt(p.getText().toString());
-
-        if(tmphour>23 || tmphour<0 || tmpminutes>59 || tmpminutes < 0 )
+        //Sprawdzanie czy są podane jakieś dane
+        if(h.getText().toString().isEmpty() || m.getText().toString().isEmpty() || d.getText().toString().isEmpty() || c.getText().toString().isEmpty() || p.getText().toString().isEmpty())
         {
-            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),"Co Ty mnie tu za godzinę podajesz");
+            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),"connect.Error()");
             dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
         }
         else
         {
+            int tmphour = Integer.parseInt(h.getText().toString());
+            int tmpminutes = Integer.parseInt(m.getText().toString());
+            String tmpdescription = d.getText().toString();
+            int tmpcount = Integer.parseInt(c.getText().toString());
+            int tmpperiodicity = Integer.parseInt(p.getText().toString());
+
             //Tworzenie jsona do wysyłania danych
             final JSONObject json = new JSONObject();
             try
@@ -141,6 +182,7 @@ public class ChangeHourActivity extends AppCompatActivity {
                 json.put("minutes",tmpminutes);
                 json.put("count",tmpcount);
                 json.put("periodicity",tmpperiodicity);
+                json.put("description",tmpdescription);
 
             }
             catch (JSONException e)
@@ -156,12 +198,14 @@ public class ChangeHourActivity extends AppCompatActivity {
                 try
                 {
                     json.put("idRecord",IdRecord);
-                    json.put("description",tmpdescription);
                 }
                 catch (JSONException e)
                 {
                     e.printStackTrace();
                 }
+
+                DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),json.toString());
+                dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
 
                 Connections connect = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Android","PUT",json,false);
                 connect.Connect();
@@ -175,7 +219,7 @@ public class ChangeHourActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connect.Error());
+                    dialog = new MyDialog(getResources().getString(R.string.error),connect.Error());
                     dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
                 }
             }
@@ -187,12 +231,12 @@ public class ChangeHourActivity extends AppCompatActivity {
                 try
                 {
                     json.put("idDispenser",IdDispenser);
-                    json.put("opis",tmpdescription);
                 }
                 catch (JSONException e)
                 {
                     e.printStackTrace();
                 }
+
 
                 //Wysyłanie zapytania do serwera
                 Connections connect = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Android","POST",json,false);

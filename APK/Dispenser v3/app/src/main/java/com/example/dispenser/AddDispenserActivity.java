@@ -7,8 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,6 +24,7 @@ public class AddDispenserActivity extends AppCompatActivity {
     int idDispenser=0;
     int ControlSum=0;
     String idDispensers;
+    String login;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,123 +33,136 @@ public class AddDispenserActivity extends AppCompatActivity {
 
         //Odczytywanie przekazanego kodu
         Bundle b = getIntent().getExtras();
-        String qrCode=null;
         if(b!=null)
         {
-            qrCode = b.getString("QrScan");
+            //Jeśli user nie jest zapamiętany
+            idDispenser = Integer.parseInt(b.getString("QrScan"));
             idDispensers = b.getString("idDispenser");
+            login = b.getString("login");
         }
-
-        //Zapisywanie idDispensera
-        idDispenser = Integer.parseInt(qrCode);
-
-        //Obliczanie sumy kontrolnej.
-        int sum=0;
-        int control=124;
-        char[] digits=qrCode.toCharArray();
-
-        for(int i=0;i<qrCode.length();i++)
+        else
         {
-            int number = Character.getNumericValue(digits[i]);
-            number *= control*(i+1);
-            if(number>999) number=number%1000;
-            sum+=number;
-
-            control+=9;
-        }
-        if(sum<1000) sum*=control;
-        sum = sum % 1000;
-        if(sum==0)
-        {
-            sum=control* qrCode.length() * (qrCode.length() % 10 + 10);
-            sum = sum % 1000;
+            //Jeśli user jest zapamiętany to pobierz dane z shared preferences
+            SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences", Context.MODE_PRIVATE);
+            idDispensers = sharedPref.getString("IdDispenser", "");
         }
 
-        EditText tv = findViewById(R.id.DebugTextBox);
-        if(qrCode!=null) tv.setText(Integer.toString(sum));
+        //Generowanie sumy kontrolnej
+        ValidationCodeGenerator val = new ValidationCodeGenerator(idDispenser);
+        val.Generate();
+        ControlSum = val.getValidationCode();
 
-        //Zapusywanie sumy kontrolnej
-        ControlSum=sum;
+        //Tworzenie listenera jak się zmieni tekst w textboxie
+        final EditText code = findViewById(R.id.MD5TextBox);
+        code.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length()>3)
+                {
+                    StringBuilder tmp= new StringBuilder();
+                    for(int i=0;i<3;i++) tmp.append(s.charAt(i));
+                    code.setText(tmp.toString());
+                    code.setSelection(3);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
     }
 
     //Akcja po kliknięciu ADD
     public void fAddDispenserButton(View v)
     {
         EditText tv = findViewById(R.id.MD5TextBox);
-        if(ControlSum==Integer.parseInt(tv.getText().toString()))
+
+        //Sprwadzdanie czy user podał w ogóle kod weryfikacyjny
+        if(!tv.getText().toString().isEmpty())
         {
-            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),"Suma się zgadza mordeczko");
-            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-
-            //Wysłanie informacji na serwer jeśli suma kontrolna się zgadza metoda PUT
-
-
-            //Jeśli wszystko się zgadza i serwer zwraca 200 to dodaj idDispenser do SharedPreferences
-            //Najpierw sprawdź czy są sharedpreferences tj użytkownik jest zapisany
-            SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences", Context.MODE_PRIVATE);
-            String dispenserID = sharedPref.getString("IdDispenser","");
-
-            //Odczytywanie danych z SharedPreferences i dodanie do tablicy json nowego Dispensera
-            //Czyli jeżeli użytkownik jest zapamiętany
-            if(!dispenserID.isEmpty())
+            if (ControlSum == Integer.parseInt(tv.getText().toString()))
             {
-                JSONArray JsonArray = null;
-                JSONObject json = null;
-                try
-                {
-                    json = new JSONObject();
-                    JsonArray = new JSONArray(dispenserID);
-                    json.put("idDispenser",idDispenser);
-                    JsonArray.put(json);
-                }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
-                }
-
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString("IdDispenser",JsonArray.toString());
-                editor.commit();
-
-                Intent intent = new Intent(this,DispenserMenuActivity.class);
-                startActivity(intent);
-            }
-            //Jeśli użytkownik nie jest zapamiętany
-            //Tu coś wywala
-            else
-            {
+                //Tworzenie jsona do wysłania elementów
                 JSONObject json = new JSONObject();
                 try
                 {
-                    json.put("idDispenser",idDispenser);
+                    json.put("login", login);
+                    json.put("idDispenser", idDispenser);
                 }
                 catch (JSONException e)
                 {
                     e.printStackTrace();
                 }
 
-                JSONArray JsonArray = null;
-                try
-                {
-                    JsonArray = new JSONArray(idDispensers);
-                }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
-                }
-                JsonArray.put(json);
+                //Wysłanie informacji na serwer jeśli suma kontrolna się zgadza metoda POST
+                Connections connection = new Connections(this, "http://panda.fizyka.umk.pl:9092/api/Dispenser", "POST", json, false);
+                connection.Connect();
 
-                Intent intent = new Intent(this,DispenserMenuActivity.class);
-                intent.putExtra("IdDispenser",JsonArray.toString());
-                startActivity(intent);
+                //Jeśli błąd to nie czytam odpowiedzi od serwera
+                if (connection.getResponseCode() != 200)
+                {
+                    DialogFragment dialog = new MyDialog(getResources().getString(R.string.error), connection.Error());
+                    dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                }
+                //Jeśli wszystko poszło i serwer działa to powiadamiam o tym użytkownika
+                else
+                {
+                    //Dodanie nowego dispensera do listy dispenserów w aplikacji
+                    JSONArray JsonArray = null;
+                    json = new JSONObject();
+                    try
+                    {
+                        JsonArray = new JSONArray(idDispensers);
+                        json.put("idDispenser", idDispenser);
+                        JsonArray.put(json);
+                    }
+                    catch (JSONException e)
+                    {
+                        e.printStackTrace();
+                    }
+
+                    //Najpierw sprawdź czy są sharedpreferences tj użytkownik jest zapisany
+                    SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences", Context.MODE_PRIVATE);
+                    String dispenserID = sharedPref.getString("IdDispenser", "");
+
+                    Intent intent = new Intent(this, DispenserMenuActivity.class);
+                    //Czyli jeżeli użytkownik jest zapamiętany
+                    if (!dispenserID.isEmpty())
+                    {
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putString("IdDispenser", JsonArray.toString());
+                        editor.commit();
+                    }
+                    //Jeśli użytkownik nie jest zapamiętany
+                    else intent.putExtra("IdDispenser", JsonArray.toString());
+
+                    //Zapamiętywanie nazwy dispensera w pamięci aplikacji dla danego usera
+                    sharedPref = this.getSharedPreferences(login, Context.MODE_PRIVATE);
+                    EditText tmp = findViewById(R.id.dispenserNameTextBox);
+                    String name = tmp.getText().toString();
+                    if(name.isEmpty()) name = String.valueOf(idDispenser);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putString(String.valueOf(idDispenser),name);
+                    editor.commit();
+
+                    //Odpalenie nowej aktywności i wyświetlenie komunikatu
+                    startActivity(intent);
+                    Toast toast = Toast.makeText(this, R.string.add_dispenser, Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            }
+            else
+            {
+                DialogFragment dialog = new MyDialog(getResources().getString(R.string.error), getString(R.string.wrong_validation_code));
+                dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
             }
         }
         else
         {
-            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),"Błędna suma!");
+            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error), getString(R.string.wrong_validation_code));
             dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
         }
-
-
     }
 }
