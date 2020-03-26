@@ -34,9 +34,10 @@ import info.androidhive.barcode.BarcodeReader;
 
 public class QrScannerActivity extends AppCompatActivity implements BarcodeReader.BarcodeReaderListener {
 
-    BarcodeReader barcodeReader;
-    String idDispenser;
-    String login;
+    private BarcodeReader barcodeReader;
+    private String idDispenser;
+    private String login;
+    private boolean user;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -48,14 +49,19 @@ public class QrScannerActivity extends AppCompatActivity implements BarcodeReade
 
         //Odczytywanie informacji o dispenserze
         Bundle b= getIntent().getExtras();
-        idDispenser = b.getString("idDispenser");
-        login = b.getString("login");
+        if(b!=null)
+        {
+            idDispenser = b.getString("idDispenser");
+            login = b.getString("login");
+            user = b.getBoolean("user");
+        }
 
-//        Intent intent = new Intent(this,AddDispenserActivity.class);
-//        intent.putExtra("QrScan","12345");
-//        intent.putExtra("login",login);
-//        intent.putExtra("idDispenser",idDispenser);
-//        startActivity(intent);
+        Intent intent = new Intent(this,AddDispenserActivity.class);
+        intent.putExtra("QrScan","12345");
+        intent.putExtra("login",login);
+        intent.putExtra("idDispenser",idDispenser);
+        intent.putExtra("user",true);
+        startActivity(intent);
     }
 
     @Override
@@ -77,8 +83,17 @@ public class QrScannerActivity extends AppCompatActivity implements BarcodeReade
                     int tmp = json.getInt("idDispenser");
                     if(tmp == Integer.parseInt(barcode.displayValue))
                     {
-                        Toast toast = Toast.makeText(this, R.string.dispenser_belongs, Toast.LENGTH_LONG);
-                        toast.show();
+                        //jeśli jest to user
+                        if(user=true)
+                        {
+                            Toast toast = Toast.makeText(this, R.string.dispenser_belongs, Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+                        //jeśli jest to lekarz
+                        else
+                        {
+
+                        }
                     }
                 }
             }
@@ -87,12 +102,14 @@ public class QrScannerActivity extends AppCompatActivity implements BarcodeReade
                 e.printStackTrace();
             }
         }
+        //jeśli jest to nowy dispenser dla użytkownika
         else
         {
             Intent intent = new Intent(this,AddDispenserActivity.class);
             intent.putExtra("QrScan",barcode.displayValue);
             intent.putExtra("idDispenser",idDispenser);
             intent.putExtra("login",login);
+            intent.putExtra("user",user);
             startActivity(intent);
         }
     }

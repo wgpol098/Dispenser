@@ -7,6 +7,7 @@ import androidx.fragment.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.google.android.gms.vision.text.Line;
 
@@ -51,78 +53,125 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
 
         //Wyciąganie listy dispenserów
         JSONArray JsonDispList=null;
-        try {
+        try
+        {
             JsonDispList = new JSONArray(idDispenser);
-        } catch (JSONException e) {
+        }
+        catch (JSONException e)
+        {
             e.printStackTrace();
         }
 
-        //Tworzenie elementów względem listy dispenserów w SharedPreferences
-        LinearLayout linearLayout = findViewById(R.id.linearLayout);
-        ScrollView scroll = findViewById(R.id.scrollView);
-        linearLayout.setOrientation(linearLayout.VERTICAL);
-        scroll.setBackgroundResource(R.drawable.bg_gradient);
+        //Sprawdzanie czy podana osoba jest lekarzem czy zwykłym użytkownikiem
 
-        //Jeżeli jest tylko jeden dispenser na koncie to po co to wyświetlać
-        if(JsonDispList.length()==0)
+        //Tworzenie jsona do wysłania zapytania
+        JSONObject json = new JSONObject();
+        try
         {
-            JSONObject json=null;
-            int IDdispenser=-1;
+            json.put("login",login);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
+        //Wysyłanie zapytania do serwera
+        Connections connection = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Account/check","POST",json,true);
+        connection.Connect();
+
+        //Jeśli błąd to nie czytam odpowiedzi od serwera
+        if(connection.getResponseCode()!=200)
+        {
+            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connection.Error());
+            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+ //           finish();
+        }
+        //Jeśli wszystko poszło i serwer działa to trzeba odczytać odpowiedź
+        else
+        {
+            //Odczytywanie czy uzytkownik jest zwykłym userem czy lekarzem
+            int auth=-1;
+            json = connection.JsonAnswer();
             try
             {
-                json = JsonDispList.getJSONObject(-1);
-                IDdispenser = json.getInt("idDispenser");
+                auth = json.getInt("typeAccount");
             }
             catch (JSONException e)
             {
                 e.printStackTrace();
             }
-            Intent intent = new Intent(this,MainMenuActivity.class);
-            intent.putExtra("IdDispenser",IDdispenser);
-            startActivity(intent);
-        }
-        //Jeżeli jest więcej dispenserów to twórz guziki
-        else
-        {
-            for(int i=0;i<JsonDispList.length();i++)
+
+
+            //Jeżeli jest zwykłym userem
+            if(auth == 0)
             {
-                JSONObject json=null;
-                int IDdispenser=-1;
-                try
+                //Tworzenie elementów względem listy dispenserów w SharedPreferences
+                LinearLayout linearLayout = findViewById(R.id.linearLayout);
+                ScrollView scroll = findViewById(R.id.scrollView);
+                linearLayout.setOrientation(linearLayout.VERTICAL);
+                scroll.setBackgroundResource(R.drawable.bg_gradient);
+
+                //Tworzenie buttonów do danych dispenserów
+                for(int i=0;i<JsonDispList.length();i++)
                 {
-                    json = JsonDispList.getJSONObject(i);
-                    IDdispenser = json.getInt("idDispenser");
-                }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
+                    json=null;
+                    int IDdispenser=-1;
+                    try
+                    {
+                        json = JsonDispList.getJSONObject(i);
+                        IDdispenser = json.getInt("idDispenser");
+                    }
+                    catch (JSONException e)
+                    {
+                        e.printStackTrace();
+                    }
+
+                    //Jeżeli w json są wpisane jakieś dane
+                    if(IDdispenser!=-1)
+                    {
+                        Button button = new Button(this);
+                        button.setId(IDdispenser);
+                        button.setTextSize(20);
+                        button.setGravity(Gravity.CENTER);
+                        button.setOnClickListener(this);
+                        button.setOnLongClickListener(this);
+                        linearLayout.addView(button);
+
+                        //Przypisywanie name do buttona jeśli user ma przypisaną nazwę
+                        sharedPref = this.getSharedPreferences(login, Context.MODE_PRIVATE);
+                        button.setText(sharedPref.getString(String.valueOf(IDdispenser),String.valueOf(IDdispenser)));
+                    }
                 }
 
-                //Jeżeli w json są wpisane jakieś dane
-                if(IDdispenser!=-1)
+                //Jeśli nie ma dispenserów informacja o dodaniu dispensera!
+                if(JsonDispList.length()==0)
                 {
-                    Button button = new Button(this);
-                    button.setId(IDdispenser);
-                    button.setTextSize(20);
-                    button.setGravity(Gravity.CENTER);
-                    button.setOnClickListener(this);
-                    button.setOnLongClickListener(this);
-                    linearLayout.addView(button);
-
-                    //Przypisywanie name do buttona jeśli user ma przypisaną nazwę
-                    sharedPref = this.getSharedPreferences(login, Context.MODE_PRIVATE);
-                    button.setText(sharedPref.getString(String.valueOf(IDdispenser),String.valueOf(IDdispenser)));
+                    TextView tv = new TextView(this);
+                    tv.setText(R.string.no_dispenser);
+                    tv.setTextSize(20);
+                    tv.setTextColor(Color.WHITE);
+                    tv.setPadding(0,20,0,20);
+                    tv.setGravity(Gravity.CENTER_HORIZONTAL);
+                    linearLayout.addView(tv);
                 }
+
+                //Dodanie na końcu buttona do dodawania Dispnesnera do konta
+                Button button = new Button(this);
+                button.setText(getString(R.string.add));
+                button.setId(-1);
+                button.setTextSize(20);
+                button.setGravity(Gravity.CENTER);
+                button.setOnClickListener(this);
+                linearLayout.addView(button);
             }
-
-            //Dodanie na końcu buttona do dodawania Dispnesnera do konta
-            Button button = new Button(this);
-            button.setText(getString(R.string.add));
-            button.setId(-1);
-            button.setTextSize(20);
-            button.setGravity(Gravity.CENTER);
-            button.setOnClickListener(this);
-            linearLayout.addView(button);
+            if(auth>=1)
+            {
+                finish();
+                Intent intent = new Intent(this,DispenserMenuDoctorActivity.class);
+                intent.putExtra("IdDispenser",idDispenser);
+                intent.putExtra("login",login);
+                startActivity(intent);
+            }
         }
     }
 
@@ -145,6 +194,7 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
             Intent intent = new Intent(this,QrScannerActivity.class);
             intent.putExtra("idDispenser",idDispenser);
             intent.putExtra("login",login);
+            intent.putExtra("user",true);
             startActivity(intent);
         }
     }
@@ -154,6 +204,13 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
     @Override
     public boolean onLongClick(View v)
     {
+        //TUTAJ OGARNIJ PRZEKAZYWANIE DALEJ TYCH DANYCH WSZYSTKICH BO POWODUJE BLEDY
+        //W SENSIE SA DWA TE SAME DISPENSERY PO DODATNIU N
+        //spowodowane to jest tym, ze nie nadpisuje zmiennej lokalnej idDispenser
+        //Ale nie działa tylko dla niezapamiętanego użytkownika
+
+
+
         //Tworzenie jsona do wysłania na serwer
         JSONObject json = new JSONObject();
 
@@ -196,13 +253,31 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
                     {
                         json = JsonArray.getJSONObject(i);
                         int tmp  = json.getInt("idDispenser");
-
                         if(v.getId()==tmp) JsonArray.remove(i);
                     }
 
+                    idDispenser = JsonArray.toString();
                     SharedPreferences.Editor editor = sharedpref.edit();
                     editor.putString("IdDispenser",JsonArray.toString());
                     editor.commit();
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+            else
+            {
+                try
+                {
+                    JSONArray JsonArray = new JSONArray(idDispenser);
+                    for(int i=0;i<JsonArray.length();i++)
+                    {
+                        json = JsonArray.getJSONObject(i);
+                        int tmp  = json.getInt("idDispenser");
+                        if(v.getId()==tmp) JsonArray.remove(i);
+                    }
+                    idDispenser = JsonArray.toString();
                 }
                 catch (JSONException e)
                 {
@@ -214,6 +289,18 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
             //Usuwanie dispensera z listy
             LinearLayout l = findViewById(R.id.linearLayout);
             l.removeView(v);
+
+            //jeśli usunięto ostatni dispenser
+            if(l.getChildCount()==1)
+            {
+                TextView tv = new TextView(this);
+                tv.setText(R.string.no_dispenser);
+                tv.setTextSize(20);
+                tv.setTextColor(Color.WHITE);
+                tv.setPadding(0,20,0,20);
+                tv.setGravity(Gravity.CENTER_HORIZONTAL);
+                l.addView(tv);
+            }
         }
         return true;
     }

@@ -42,5 +42,11 @@
     <string name="wrong_email">Incorrect email address!</string>
     <string name="confirm_password">Confirm password</string>
     <string name="sign_in_success">Registration was successful</string>
+    <string name="wrong_password">Incorrect password!</string>
+    <string name="wrong_cpassword">Password aren\'t the same!</string>
+    <string name="no_history">No history to display!</string>
+    <string name="no_hour">No hour to display! Add hours!</string>
+    <string name="no_dispenser">You don\'t have any device. Add it now!</string>
+    <string name="find_dispenser">Find dispenser!</string>
 
 </resources>

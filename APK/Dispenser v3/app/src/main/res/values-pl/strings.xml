@@ -37,4 +37,10 @@
     <string name="wrong_email">Niepoprawy adres email!</string>
     <string name="confirm_password">Potwierdź hasło!</string>
     <string name="sign_in_success">Rejestracja przebiegła pomyślnie</string>
+    <string name="wrong_password">Niewłaściwe hasło!</string>
+    <string name="wrong_cpassword">Hasła nie są prawidłowe!</string>
+    <string name="no_history">Brak historii do wyświetlenia!</string>
+    <string name="no_hour">Brak godzin do wyświetlenia, dodaj godziny!</string>
+    <string name="no_dispenser">Brak urządzeń przypisanych do konta. Dodaj je!</string>
+    <string name="find_dispenser">Znajdź dispenser!</string>
 </resources>

@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString("IdDispenser",JsonArrayAnswer.toString());
                 editor.commit();
 
+                finish();
                 Intent intent = new Intent(this,DispenserMenuActivity.class);
                 startActivity(intent);
             }
@@ -144,67 +145,66 @@ public class MainActivity extends AppCompatActivity {
         Connections connection = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Account/login","POST",json,true);
         connection.Connect();
 
-        JSONArray JsonArrayAnswer = new JSONArray();
         //Jeśli błąd to nie czytam odpowiedzi od serwera
         if(connection.getResponseCode()!=200)
         {
             DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connection.Error());
             dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-            finish();
+            //finish();
         }
         //Jeśli wszystko poszło i serwer działa to trzeba odczytać odpowiedź
         else
         {
-            JsonArrayAnswer = connection.JsonArrayAnswer();
-        }
-
-        //Analiza tablicy Json odczytanej od serwera
-        //Sprawdzanie czy użytkownik uzyskał autoryzację
-        int authorization=0;
-        if(JsonArrayAnswer.length()==1)
-        {
-            json=null;
-            int spr=-1;
-            try
+            JSONArray JsonArrayAnswer = connection.JsonArrayAnswer();
+            //Analiza tablicy Json odczytanej od serwera
+            //Sprawdzanie czy użytkownik uzyskał autoryzację
+            int authorization=0;
+            if(JsonArrayAnswer.length()==1)
             {
-                json = JsonArrayAnswer.getJSONObject(0);
-                spr = json.getInt("idDispenser");
+                json=null;
+                int spr=-1;
+                try
+                {
+                    json = JsonArrayAnswer.getJSONObject(0);
+                    spr = json.getInt("idDispenser");
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+
+                if(spr!=-1) authorization = 1;
             }
-            catch (JSONException e)
+            else authorization=1;
+
+
+            //Zapamiętywanie loginu, password i IdDispensera
+            CheckBox ch = findViewById(R.id.RememberCheckBox);
+
+            if(ch.isChecked() && authorization==1)
             {
-                e.printStackTrace();
+                SharedPreferences sharedpref = this.getSharedPreferences("LoginPreferences",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedpref.edit();
+                editor.putString("login",login);
+                editor.putString("password",password);
+                editor.putString("IdDispenser",JsonArrayAnswer.toString());
+                editor.commit();
             }
 
-            if(spr!=-1) authorization = 1;
-        }
-        else authorization=1;
-
-
-        //Zapamiętywanie loginu, password i IdDispensera
-        CheckBox ch = findViewById(R.id.RememberCheckBox);
-
-        if(ch.isChecked() && authorization==1)
-        {
-            SharedPreferences sharedpref = this.getSharedPreferences("LoginPreferences",Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedpref.edit();
-            editor.putString("login",login);
-            editor.putString("password",password);
-            editor.putString("IdDispenser",JsonArrayAnswer.toString());
-            editor.commit();
-        }
-
-        if(authorization==1)
-        {
-            Intent intent = new Intent(this,DispenserMenuActivity.class);
-            intent.putExtra("login",login);
-            intent.putExtra("IdDispenser",JsonArrayAnswer.toString());
-            startActivity(intent);
-        }
-        //Tutaj dodaj opcję, że zły login albo hasło
-        else
-        {
-            MyDialog dialog = new MyDialog("Błąd","Zły login lub hasło");
-            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+            if(authorization==1)
+            {
+                finish();
+                Intent intent = new Intent(this,DispenserMenuActivity.class);
+                intent.putExtra("login",login);
+                intent.putExtra("IdDispenser",JsonArrayAnswer.toString());
+                startActivity(intent);
+            }
+            //Tutaj dodaj opcję, że zły login albo hasło
+            else
+            {
+                MyDialog dialog = new MyDialog("Błąd","Zły login lub hasło");
+                dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+            }
         }
     }
 }

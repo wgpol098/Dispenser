@@ -20,7 +20,8 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:appComponentFactory"
         tools:targetApi="p">
-        <activity android:name=".AddDispenserActivity"></activity>
+        <activity android:name=".DispenserMenuDoctorActivity"></activity>
+        <activity android:name=".AddDispenserActivity" />
         <activity android:name=".DispenserMenuActivity" />
         <activity android:name=".SettingActivity" />
         <activity android:name=".QrScannerActivity" />

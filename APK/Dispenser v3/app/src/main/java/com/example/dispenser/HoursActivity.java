@@ -109,6 +109,18 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
             linearLayout.addView(button);
         }
 
+        //Jeśli informacji, że nie ma żadnych godzin!
+        if(jsonArray.length()==0)
+        {
+            TextView tv = new TextView(this);
+            tv.setText(R.string.no_hour);
+            tv.setTextSize(20);
+            tv.setTextColor(Color.WHITE);
+            tv.setPadding(0,20,0,20);
+            tv.setGravity(Gravity.CENTER_HORIZONTAL);
+            linearLayout.addView(tv);
+        }
+
         //Dodanie na końcu buttona do dodawania godzin
         Button button = new Button(this);
         button.setText(getString(R.string.add));

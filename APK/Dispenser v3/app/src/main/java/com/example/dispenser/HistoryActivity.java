@@ -145,5 +145,17 @@ public class HistoryActivity extends AppCompatActivity {
                 linearLayout.addView(tv);
             }
         }
+
+        //Jeśli w historii nic nie ma wyświetl o tym informacje
+        if(jsonArray.length()==0)
+        {
+            TextView tv = new TextView(this);
+            tv.setText(R.string.no_history);
+            tv.setTextSize(20);
+            tv.setTextColor(Color.WHITE);
+            tv.setPadding(0,20,0,20);
+            tv.setGravity(Gravity.CENTER_HORIZONTAL);
+            linearLayout.addView(tv);
+        }
     }
 }

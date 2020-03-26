@@ -1,11 +1,13 @@
 package com.example.dispenser;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,10 +23,11 @@ import java.util.ResourceBundle;
 
 public class AddDispenserActivity extends AppCompatActivity {
 
-    int idDispenser=0;
-    int ControlSum=0;
-    String idDispensers;
-    String login;
+    private int idDispenser=0;
+    private int ControlSum=0;
+    private String idDispensers;
+    private String login;
+    private boolean user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +42,7 @@ public class AddDispenserActivity extends AppCompatActivity {
             idDispenser = Integer.parseInt(b.getString("QrScan"));
             idDispensers = b.getString("idDispenser");
             login = b.getString("login");
+            user = b.getBoolean("user");
         }
         else
         {
@@ -75,6 +79,7 @@ public class AddDispenserActivity extends AppCompatActivity {
     }
 
     //Akcja po kliknięciu ADD
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void fAddDispenserButton(View v)
     {
         EditText tv = findViewById(R.id.MD5TextBox);
@@ -127,7 +132,17 @@ public class AddDispenserActivity extends AppCompatActivity {
                     SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences", Context.MODE_PRIVATE);
                     String dispenserID = sharedPref.getString("IdDispenser", "");
 
-                    Intent intent = new Intent(this, DispenserMenuActivity.class);
+                    Intent intent;
+                    if(user==true)
+                    {
+                       intent = new Intent(this, DispenserMenuActivity.class);
+                    }
+                    else
+                    {
+                        intent = new Intent(this,DispenserMenuDoctorActivity.class);
+                    }
+
+
                     //Czyli jeżeli użytkownik jest zapamiętany
                     if (!dispenserID.isEmpty())
                     {
@@ -136,7 +151,11 @@ public class AddDispenserActivity extends AppCompatActivity {
                         editor.commit();
                     }
                     //Jeśli użytkownik nie jest zapamiętany
-                    else intent.putExtra("IdDispenser", JsonArray.toString());
+                    else
+                    {
+                        intent.putExtra("IdDispenser", JsonArray.toString());
+                        intent.putExtra("login",login);
+                    }
 
                     //Zapamiętywanie nazwy dispensera w pamięci aplikacji dla danego usera
                     sharedPref = this.getSharedPreferences(login, Context.MODE_PRIVATE);
@@ -146,6 +165,9 @@ public class AddDispenserActivity extends AppCompatActivity {
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.putString(String.valueOf(idDispenser),name);
                     editor.commit();
+
+                    //zamknięcie poprzednich aktywności
+                    finishAffinity();
 
                     //Odpalenie nowej aktywności i wyświetlenie komunikatu
                     startActivity(intent);

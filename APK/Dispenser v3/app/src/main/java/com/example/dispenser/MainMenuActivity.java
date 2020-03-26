@@ -1,5 +1,6 @@
 package com.example.dispenser;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.renderscript.ScriptGroup;
@@ -68,6 +70,7 @@ public class MainMenuActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void fLogOutButton(View v)
     {
         SharedPreferences sharedpref = this.getSharedPreferences("LoginPreferences",Context.MODE_PRIVATE);
@@ -76,7 +79,10 @@ public class MainMenuActivity extends AppCompatActivity
         editor.putString("password",null);
         editor.putString("IdDispenser",null);
         editor.commit();
-        finish();
+
+        finishAffinity();
+        Intent intent = new Intent(this,MainActivity.class);
+        startActivity(intent);
     }
 
     public void fGetButton(View v)
