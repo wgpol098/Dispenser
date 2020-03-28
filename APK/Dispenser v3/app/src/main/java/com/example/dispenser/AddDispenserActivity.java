@@ -3,7 +3,6 @@ package com.example.dispenser;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,12 +13,9 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ResourceBundle;
 
 public class AddDispenserActivity extends AppCompatActivity {
 
@@ -44,12 +40,13 @@ public class AddDispenserActivity extends AppCompatActivity {
             login = b.getString("login");
             user = b.getBoolean("user");
         }
-        else
-        {
-            //Jeśli user jest zapamiętany to pobierz dane z shared preferences
-            SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences", Context.MODE_PRIVATE);
-            idDispensers = sharedPref.getString("IdDispenser", "");
-        }
+//        //Taka opcja chyba nigdy nie nastapi
+//        else
+//        {
+//            //Jeśli user jest zapamiętany to pobierz dane z shared preferences
+//            SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences", Context.MODE_PRIVATE);
+//            idDispensers = sharedPref.getString("IdDispenser", "");
+//        }
 
         //Generowanie sumy kontrolnej
         ValidationCodeGenerator val = new ValidationCodeGenerator(idDispenser);
@@ -61,9 +58,9 @@ public class AddDispenserActivity extends AppCompatActivity {
         code.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(CharSequence s, int start, int before, int count)
+            {
                 if(s.length()>3)
                 {
                     StringBuilder tmp= new StringBuilder();
@@ -72,7 +69,6 @@ public class AddDispenserActivity extends AppCompatActivity {
                     code.setSelection(3);
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) {}
         });
@@ -83,102 +79,86 @@ public class AddDispenserActivity extends AppCompatActivity {
     public void fAddDispenserButton(View v)
     {
         EditText tv = findViewById(R.id.MD5TextBox);
-
         //Sprwadzdanie czy user podał w ogóle kod weryfikacyjny
-        if(!tv.getText().toString().isEmpty())
+        if(!tv.getText().toString().isEmpty() && ControlSum == Integer.parseInt(tv.getText().toString()))
         {
-            if (ControlSum == Integer.parseInt(tv.getText().toString()))
+            //Tworzenie jsona do wysłania elementów
+            JSONObject json = new JSONObject();
+            try
             {
-                //Tworzenie jsona do wysłania elementów
-                JSONObject json = new JSONObject();
+                json.put("login", login);
+                json.put("idDispenser", idDispenser);
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+
+            //Wysłanie informacji na serwer jeśli suma kontrolna się zgadza metoda POST
+            Connections connection = new Connections(this, "http://panda.fizyka.umk.pl:9092/api/Dispenser", "POST", json, false);
+            connection.Connect();
+
+            //Jeśli błąd to nie czytam odpowiedzi od serwera
+            if (connection.getResponseCode() != 200)
+            {
+                DialogFragment dialog = new MyDialog(getResources().getString(R.string.error), connection.Error());
+                dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+            }
+            //Jeśli wszystko poszło i serwer działa to powiadamiam o tym użytkownika
+            else
+            {
+                //Dodanie nowego dispensera do listy dispenserów w aplikacji
+                JSONArray JsonArray = null;
+                json = new JSONObject();
                 try
                 {
-                    json.put("login", login);
+                    JsonArray = new JSONArray(idDispensers);
                     json.put("idDispenser", idDispenser);
+                    JsonArray.put(json);
                 }
                 catch (JSONException e)
                 {
                     e.printStackTrace();
                 }
 
-                //Wysłanie informacji na serwer jeśli suma kontrolna się zgadza metoda POST
-                Connections connection = new Connections(this, "http://panda.fizyka.umk.pl:9092/api/Dispenser", "POST", json, false);
-                connection.Connect();
+                //Najpierw sprawdź czy są sharedpreferences tj użytkownik jest zapisany
+                SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences", Context.MODE_PRIVATE);
+                String dispenserID = sharedPref.getString("IdDispenser", "");
 
-                //Jeśli błąd to nie czytam odpowiedzi od serwera
-                if (connection.getResponseCode() != 200)
+                Intent intent;
+                if(user) intent = new Intent(this, DispenserMenuActivity.class);
+                else intent = new Intent(this,DispenserMenuDoctorActivity.class);
+
+                //Czyli jeżeli użytkownik jest zapamiętany
+                if (!dispenserID.isEmpty())
                 {
-                    DialogFragment dialog = new MyDialog(getResources().getString(R.string.error), connection.Error());
-                    dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putString("IdDispenser", JsonArray.toString());
+                    editor.commit();
                 }
-                //Jeśli wszystko poszło i serwer działa to powiadamiam o tym użytkownika
+                //Jeśli użytkownik nie jest zapamiętany
                 else
                 {
-                    //Dodanie nowego dispensera do listy dispenserów w aplikacji
-                    JSONArray JsonArray = null;
-                    json = new JSONObject();
-                    try
-                    {
-                        JsonArray = new JSONArray(idDispensers);
-                        json.put("idDispenser", idDispenser);
-                        JsonArray.put(json);
-                    }
-                    catch (JSONException e)
-                    {
-                        e.printStackTrace();
-                    }
-
-                    //Najpierw sprawdź czy są sharedpreferences tj użytkownik jest zapisany
-                    SharedPreferences sharedPref = this.getSharedPreferences("LoginPreferences", Context.MODE_PRIVATE);
-                    String dispenserID = sharedPref.getString("IdDispenser", "");
-
-                    Intent intent;
-                    if(user==true)
-                    {
-                       intent = new Intent(this, DispenserMenuActivity.class);
-                    }
-                    else
-                    {
-                        intent = new Intent(this,DispenserMenuDoctorActivity.class);
-                    }
-
-
-                    //Czyli jeżeli użytkownik jest zapamiętany
-                    if (!dispenserID.isEmpty())
-                    {
-                        SharedPreferences.Editor editor = sharedPref.edit();
-                        editor.putString("IdDispenser", JsonArray.toString());
-                        editor.commit();
-                    }
-                    //Jeśli użytkownik nie jest zapamiętany
-                    else
-                    {
-                        intent.putExtra("IdDispenser", JsonArray.toString());
-                        intent.putExtra("login",login);
-                    }
-
-                    //Zapamiętywanie nazwy dispensera w pamięci aplikacji dla danego usera
-                    sharedPref = this.getSharedPreferences(login, Context.MODE_PRIVATE);
-                    EditText tmp = findViewById(R.id.dispenserNameTextBox);
-                    String name = tmp.getText().toString();
-                    if(name.isEmpty()) name = String.valueOf(idDispenser);
-                    SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putString(String.valueOf(idDispenser),name);
-                    editor.commit();
-
-                    //zamknięcie poprzednich aktywności
-                    finishAffinity();
-
-                    //Odpalenie nowej aktywności i wyświetlenie komunikatu
-                    startActivity(intent);
-                    Toast toast = Toast.makeText(this, R.string.add_dispenser, Toast.LENGTH_LONG);
-                    toast.show();
+                    intent.putExtra("IdDispenser", JsonArray.toString());
+                    intent.putExtra("login",login);
                 }
-            }
-            else
-            {
-                DialogFragment dialog = new MyDialog(getResources().getString(R.string.error), getString(R.string.wrong_validation_code));
-                dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+
+                //Zapamiętywanie nazwy dispensera w pamięci aplikacji dla danego usera
+                sharedPref = this.getSharedPreferences(login, Context.MODE_PRIVATE);
+                EditText tmp = findViewById(R.id.dispenserNameTextBox);
+                String name = tmp.getText().toString();
+                if(name.isEmpty()) name = String.valueOf(idDispenser);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString(String.valueOf(idDispenser),name);
+                editor.commit();
+
+                //zamknięcie poprzednich aktywności
+                finishAffinity();
+
+                //Odpalenie nowej aktywności i wyświetlenie komunikatu
+                startActivity(intent);
+                Toast toast = Toast.makeText(this, R.string.add_dispenser, Toast.LENGTH_LONG);
+                toast.show();
             }
         }
         else

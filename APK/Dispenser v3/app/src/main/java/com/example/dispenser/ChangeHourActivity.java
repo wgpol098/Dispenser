@@ -204,8 +204,8 @@ public class ChangeHourActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),json.toString());
-                dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+//                DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),json.toString());
+//                dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
 
                 Connections connect = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Android","PUT",json,false);
                 connect.Connect();
@@ -219,7 +219,7 @@ public class ChangeHourActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    dialog = new MyDialog(getResources().getString(R.string.error),connect.Error());
+                    MyDialog dialog = new MyDialog(getResources().getString(R.string.error),connect.Error());
                     dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
                 }
             }

@@ -29,7 +29,8 @@ public class Connections {
     private int ResponseCode = 0;
     private Context context;
 
-    Connections(Context context, String _URL, String _Method, JSONObject _Json, Boolean _answer) {
+    Connections(Context context, String _URL, String _Method, JSONObject _Json, Boolean _answer)
+    {
         URL = _URL;
         Method = _Method;
         Json = _Json;
@@ -37,8 +38,8 @@ public class Connections {
         this.context = context;
     }
 
-    //W tej metodzie siedzi błąd, który nie pozwala drugi raz wcisnąć guzika
-    public void Connect() {
+    public void Connect()
+    {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run()
@@ -112,7 +113,7 @@ public class Connections {
         //To powoduje te dziwne rzeczy, które się tu dzieją jak naciśniesz drugi raz
         try
         {
-            Thread.sleep(1000);
+            while (ResponseCode==0) Thread.sleep(50);
         }
         catch (InterruptedException e)
         {

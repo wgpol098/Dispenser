@@ -1,7 +1,6 @@
 package com.example.dispenser;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,14 +12,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DispenserMenuDoctorActivity extends AppCompatActivity {
-
+public class DispenserMenuDoctorActivity extends AppCompatActivity implements View.OnClickListener
+{
     private String idDispenser;
     private String login;
     private Context context;
@@ -83,7 +80,7 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity {
                 button.setId(iddispenser);
                 button.setTextSize(20);
                 button.setGravity(Gravity.CENTER);
-//                button.setOnClickListener(this);
+                button.setOnClickListener(this);
 //                button.setOnLongClickListener(this);
                 linearLayout.addView(button);
 
@@ -128,7 +125,7 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity {
                             button.setText(tmp);
                             button.setTextSize(20);
                             button.setGravity(Gravity.CENTER);
-//                button.setOnClickListener(this);
+                            button.setOnClickListener((View.OnClickListener) context);
 //                button.setOnLongClickListener(this);
                             linearLayout.addView(button);
                         }
@@ -161,9 +158,18 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity {
         editor.putString("password",null);
         editor.putString("IdDispenser",null);
         editor.commit();
-        finish();
 
+        finish();
         Intent intent = new Intent(this,MainActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onClick(View v)
+    {
+        Button btn = (Button)v;
+        Intent intent = new Intent(this,MainMenuDoctorActivity.class);
+        intent.putExtra("idDispenser",btn.getId());
         startActivity(intent);
     }
 }

@@ -43,4 +43,5 @@
     <string name="no_hour">Brak godzin do wyświetlenia, dodaj godziny!</string>
     <string name="no_dispenser">Brak urządzeń przypisanych do konta. Dodaj je!</string>
     <string name="find_dispenser">Znajdź dispenser!</string>
+    <string name="wrong_login_password">Zły login lub hasło!</string>
 </resources>

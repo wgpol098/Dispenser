@@ -48,5 +48,6 @@
     <string name="no_hour">No hour to display! Add hours!</string>
     <string name="no_dispenser">You don\'t have any device. Add it now!</string>
     <string name="find_dispenser">Find dispenser!</string>
+    <string name="wrong_login_password">Wrong login or password!</string>
 
 </resources>

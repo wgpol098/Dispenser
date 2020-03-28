@@ -1,5 +1,6 @@
 package com.example.dispenser;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
@@ -8,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -42,6 +44,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity {
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -74,13 +77,12 @@ public class MainActivity extends AppCompatActivity {
             Connections connection = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Account/login","POST",json,true);
             connection.Connect();
 
-            JSONArray JsonArrayAnswer = new JSONArray();
+            JSONArray JsonArrayAnswer;
             //Jeśli błąd to nie czytam odpowiedzi od serwera
             if(connection.getResponseCode()!=200)
             {
                 DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connection.Error());
                 dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-//                finish();
             }
             //Jeśli wszystko poszło i serwer działa to trzeba odczytać odpowiedź
             else
@@ -91,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString("IdDispenser",JsonArrayAnswer.toString());
                 editor.commit();
 
-                finish();
+                finishAffinity();
                 Intent intent = new Intent(this,DispenserMenuActivity.class);
                 startActivity(intent);
             }
@@ -116,18 +118,14 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void fLogInButton(View v)
     {
-        //Animacja po kliknięcu na przycisk
-//        final Animation myAnim = AnimationUtils.loadAnimation(this, R.anim.milkshake);
-//        v.startAnimation(myAnim);
-
         //Odczytywanie danych z textboxów
         EditText l = findViewById(R.id.LoginTextBox);
         EditText p = findViewById(R.id.PasswordTextBox);
         String login = l.getText().toString();
         String password = p.getText().toString();
-
 
         //Json z zapytaniem do serwera
         JSONObject json = new JSONObject();
@@ -150,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
         {
             DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connection.Error());
             dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-            //finish();
         }
         //Jeśli wszystko poszło i serwer działa to trzeba odczytać odpowiedź
         else
@@ -161,22 +158,17 @@ public class MainActivity extends AppCompatActivity {
             int authorization=0;
             if(JsonArrayAnswer.length()==1)
             {
-                json=null;
-                int spr=-1;
                 try
                 {
                     json = JsonArrayAnswer.getJSONObject(0);
-                    spr = json.getInt("idDispenser");
+                    if(json.getInt("idDispenser")!=-1) authorization=1;
                 }
                 catch (JSONException e)
                 {
                     e.printStackTrace();
                 }
-
-                if(spr!=-1) authorization = 1;
             }
             else authorization=1;
-
 
             //Zapamiętywanie loginu, password i IdDispensera
             CheckBox ch = findViewById(R.id.RememberCheckBox);
@@ -191,9 +183,10 @@ public class MainActivity extends AppCompatActivity {
                 editor.commit();
             }
 
+            //jeśli użytkownik zyskał autoryzację
             if(authorization==1)
             {
-                finish();
+                finishAffinity();
                 Intent intent = new Intent(this,DispenserMenuActivity.class);
                 intent.putExtra("login",login);
                 intent.putExtra("IdDispenser",JsonArrayAnswer.toString());
@@ -202,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
             //Tutaj dodaj opcję, że zły login albo hasło
             else
             {
-                MyDialog dialog = new MyDialog("Błąd","Zły login lub hasło");
+                MyDialog dialog = new MyDialog(getResources().getString(R.string.error),getResources().getString(R.string.wrong_login_password));
                 dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
             }
         }

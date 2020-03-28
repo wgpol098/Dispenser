@@ -16,9 +16,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
-import com.google.android.gms.vision.text.Line;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,14 +37,10 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
         login = sharedPref.getString("login",null);
 
         //Jeśli użytkownika nie ma w SharedPreferences
-        if(idDispenser==null)
+        if(idDispenser==null || login==null)
         {
             Bundle b = getIntent().getExtras();
             idDispenser = b.getString("IdDispenser");
-        }
-        if(login==null)
-        {
-            Bundle b = getIntent().getExtras();
             login = b.getString("login");
         }
 
@@ -84,7 +77,6 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
         {
             DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connection.Error());
             dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
- //           finish();
         }
         //Jeśli wszystko poszło i serwer działa to trzeba odczytać odpowiedź
         else
@@ -108,13 +100,11 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
                 //Tworzenie elementów względem listy dispenserów w SharedPreferences
                 LinearLayout linearLayout = findViewById(R.id.linearLayout);
                 ScrollView scroll = findViewById(R.id.scrollView);
-                linearLayout.setOrientation(linearLayout.VERTICAL);
                 scroll.setBackgroundResource(R.drawable.bg_gradient);
 
                 //Tworzenie buttonów do danych dispenserów
                 for(int i=0;i<JsonDispList.length();i++)
                 {
-                    json=null;
                     int IDdispenser=-1;
                     try
                     {
@@ -204,16 +194,8 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
     @Override
     public boolean onLongClick(View v)
     {
-        //TUTAJ OGARNIJ PRZEKAZYWANIE DALEJ TYCH DANYCH WSZYSTKICH BO POWODUJE BLEDY
-        //W SENSIE SA DWA TE SAME DISPENSERY PO DODATNIU N
-        //spowodowane to jest tym, ze nie nadpisuje zmiennej lokalnej idDispenser
-        //Ale nie działa tylko dla niezapamiętanego użytkownika
-
-
-
         //Tworzenie jsona do wysłania na serwer
         JSONObject json = new JSONObject();
-
         try
         {
             json.put("login",login);
@@ -244,48 +226,28 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
             String dispenserID = sharedpref.getString("IdDispenser","");
 
             //Przetwarzanie listy dispenserów
-            if(!dispenserID.isEmpty())
+            JSONArray JsonArray;
+            try
             {
-                try
-                {
-                    JSONArray JsonArray = new JSONArray(dispenserID);
-                    for(int i=0;i<JsonArray.length();i++)
-                    {
-                        json = JsonArray.getJSONObject(i);
-                        int tmp  = json.getInt("idDispenser");
-                        if(v.getId()==tmp) JsonArray.remove(i);
-                    }
+                if(!dispenserID.isEmpty()) JsonArray = new JSONArray(dispenserID);
+                else JsonArray = new JSONArray(idDispenser);
 
-                    idDispenser = JsonArray.toString();
+                for(int i=0;i<JsonArray.length();i++)
+                    if(v.getId()== JsonArray.getJSONObject(i).getInt("idDispenser")) JsonArray.remove(i);
+
+                idDispenser = JsonArray.toString();
+                if(!dispenserID.isEmpty())
+                {
                     SharedPreferences.Editor editor = sharedpref.edit();
                     editor.putString("IdDispenser",JsonArray.toString());
                     editor.commit();
                 }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
-                }
             }
-            else
+            catch (JSONException e)
             {
-                try
-                {
-                    JSONArray JsonArray = new JSONArray(idDispenser);
-                    for(int i=0;i<JsonArray.length();i++)
-                    {
-                        json = JsonArray.getJSONObject(i);
-                        int tmp  = json.getInt("idDispenser");
-                        if(v.getId()==tmp) JsonArray.remove(i);
-                    }
-                    idDispenser = JsonArray.toString();
-                }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
-                }
+                e.printStackTrace();
             }
 
-            //Jeśli user nie jest zapamiętany to wystarczy to
             //Usuwanie dispensera z listy
             LinearLayout l = findViewById(R.id.linearLayout);
             l.removeView(v);
@@ -293,6 +255,8 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
             //jeśli usunięto ostatni dispenser
             if(l.getChildCount()==1)
             {
+                Button btn = (Button)l.getChildAt(0);
+                l.removeView(l.getChildAt(0));
                 TextView tv = new TextView(this);
                 tv.setText(R.string.no_dispenser);
                 tv.setTextSize(20);
@@ -300,8 +264,24 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
                 tv.setPadding(0,20,0,20);
                 tv.setGravity(Gravity.CENTER_HORIZONTAL);
                 l.addView(tv);
+                l.addView(btn);
             }
         }
         return true;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void fLogOutButton(View v)
+    {
+        SharedPreferences sharedpref = this.getSharedPreferences("LoginPreferences",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedpref.edit();
+        editor.putString("login",null);
+        editor.putString("password",null);
+        editor.putString("IdDispenser",null);
+        editor.commit();
+
+        finishAffinity();
+        Intent intent = new Intent(this,MainActivity.class);
+        startActivity(intent);
     }
 }

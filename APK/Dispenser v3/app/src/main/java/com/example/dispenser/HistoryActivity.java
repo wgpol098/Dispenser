@@ -45,7 +45,8 @@ import static org.apache.http.params.CoreProtocolPNames.USER_AGENT;
 public class HistoryActivity extends AppCompatActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_history);

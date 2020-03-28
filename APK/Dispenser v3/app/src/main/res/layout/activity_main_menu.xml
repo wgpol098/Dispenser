@@ -33,38 +33,14 @@
         app:layout_constraintTop_toBottomOf="@+id/HistoryButton" />
 
     <Button
-        android:id="@+id/GetButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@android:color/transparent"
-        android:onClick="fGetButton"
-        android:text="POST"
-        android:textColor="@color/white"
-        app:layout_constraintStart_toStartOf="@+id/HoursButton"
-        app:layout_constraintTop_toBottomOf="@+id/HoursButton" />
-
-    <Button
-        android:id="@+id/LogOutButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="26dp"
-        android:background="@android:color/transparent"
-        android:onClick="fLogOutButton"
-        android:text="@string/logout"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="@+id/SettingButton"
-        app:layout_constraintTop_toBottomOf="@+id/SettingButton" />
-
-    <Button
         android:id="@+id/SettingButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
         android:background="@android:color/transparent"
         android:onClick="fSettingsButton"
         android:text="@string/settings"
         android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="@+id/GetButton"
-        app:layout_constraintTop_toBottomOf="@+id/GetButton" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/HoursButton"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
