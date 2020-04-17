@@ -16,5 +16,8 @@ namespace WebApplication1.API.Domain.Services
         Task<DispenserResponse> UpdateDispenserOkienkaAsync(string v, int id);
         Task<bool> UpdateAsync(AndroidSendPostUpdate resource);
         Task<bool> DeleteAsync(AndroidSendIdRecord androidSendIdRecord);
+        Task<IEnumerable<AndroidSendToAppByIdDispDoctorHistory>> ListHistoryPlanAsync(int idDispenser);
+        Task<IEnumerable<AndroidSendToAppByIdDispDoctorPlan>> ListDoctorPlanAsync(int idDispenser);
+        Task<AndroidSendToAppByDispWindows> ListWindows(int idDispenser);
     }
 }

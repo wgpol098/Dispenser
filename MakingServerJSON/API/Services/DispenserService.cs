@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using WebApplication1.API.Domain.Models;
 using WebApplication1.API.Domain.Repositories;
 using WebApplication1.API.Domain.Services;
 using WebApplication1.API.Domain.Services.Communication;
@@ -17,18 +18,18 @@ namespace WebApplication1.API.Services
             _dispenserRepository = dispenserRepository;
             _unitOfWork = unitOfWork;
         }
-        public async Task<DispenserResponse> SaveAsync(DispenserResource dispenserResource)
+        public async Task<ListOfDispenser> SaveAsync(DispenserResource dispenserResource)
         {
             try
             {
                 var result = await _dispenserRepository.AddAsync(dispenserResource);
                 await _unitOfWork.CompleteAsync();
 
-                return new DispenserResponse(result);
+                return result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return new DispenserResponse($"An error occurred when saving the dispenser: {ex.Message}");
+                return null;
             }
         }
 

@@ -45,6 +45,11 @@ namespace WebApplication1.API.Services
             return await _androidRepository.ListAllRecordsInHistoryAsync(androidSendIdDispenser);
         }
 
+        public async Task<IEnumerable<AndroidSendToAppByIdDispDoctorHistory>> ListHistoryPlanAsync(int idDispenser)
+        {
+            return await _androidRepository.ListAllRecordsInHistoryPlanAsync(idDispenser);
+        }
+
         public async Task<IEnumerable<AndroidSendToAppByIdDisp>> ListPlansAsync(int androidSendIdDispenser)
         {
             return await _androidRepository.ListAllRecordsForDispenserAsync(androidSendIdDispenser);
@@ -53,6 +58,16 @@ namespace WebApplication1.API.Services
         public async Task<AndroidSendToAppByIdRecord> ListPlansByRecAsync(int androidSendIdRecord)
         {
             return await _androidRepository.ListAllRecordsInPlansByIdRecordAsync(androidSendIdRecord);
+        }
+
+        public async Task<IEnumerable<AndroidSendToAppByIdDispDoctorPlan>> ListDoctorPlanAsync(int idDispenser)
+        {
+            return await _androidRepository.ListAllRecordsInDoctorPlanAsync(idDispenser);
+        }
+
+        public async Task<AndroidSendToAppByDispWindows> ListWindows(int idDispenser)
+        {
+            return await _androidRepository.ListAllRecordsOfWindows(idDispenser);
         }
 
         public async Task<AndroidResponse> SaveAsync(Plan dispenser)

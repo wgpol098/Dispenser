@@ -19,5 +19,8 @@ namespace WebApplication1.API.Domain.Repositories
         Task<bool> Remove(int existingPlan);
         Task<bool> Update(AndroidSendPostUpdate existingPlan);
         void UpdateOkienka(Dispenser existingDispenser);
+        Task<IEnumerable<AndroidSendToAppByIdDispDoctorHistory>> ListAllRecordsInHistoryPlanAsync(int idDispenser);
+        Task<IEnumerable<AndroidSendToAppByIdDispDoctorPlan>> ListAllRecordsInDoctorPlanAsync(int idDispenser);
+        Task<AndroidSendToAppByDispWindows> ListAllRecordsOfWindows(int idDispenser);
     }
 }

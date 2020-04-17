@@ -5,5 +5,6 @@
         public int Id { get; set; }
         public int IdAccount { get; set; }
         public int IdDispenser { get; set; }
+        public string Name { get; set; }
     }
 }

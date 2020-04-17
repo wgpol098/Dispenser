@@ -28,8 +28,8 @@ namespace WebApplication1.API.Controllers
 
             var result = await _DispenserService.SaveAsync(resource);
 
-            if (!result.Success)
-                return BadRequest(result.Message);
+            if (result == null)
+                return BadRequest();
 
             return Ok();
         }

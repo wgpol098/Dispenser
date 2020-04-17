@@ -25,7 +25,7 @@ namespace WebApplication1.API.Persistence.Contexts
             builder.Entity<Dispenser>().HasData
             (
                 new Dispenser { Id = 1, IdDispenser = 101, NoWindow = "1110000" },
-                new Dispenser { Id = 2, IdDispenser = 102, NoWindow = "1010100" },
+                new Dispenser { Id = 2, IdDispenser = 102, NoWindow = "1111100" },
                 new Dispenser { Id = 3, IdDispenser = 103, NoWindow = "0100010" },
                 new Dispenser { Id = 4, IdDispenser = 104, NoWindow = "1000000" },
                 new Dispenser { Id = 5, IdDispenser = 105, NoWindow = "0000001" },
@@ -101,7 +101,9 @@ namespace WebApplication1.API.Persistence.Contexts
                 new Plan { Id = 14, IdDispenser = 108, DateAndTime = DateTime.Parse("2020-03-20 05:00:01"), Description = "lol", NoWindow = 4 },
                 new Plan { Id = 15, IdDispenser = 108, DateAndTime = DateTime.Parse("2020-03-22 16:00:01"), Description = "lol", NoWindow = 7 },
                 new Plan { Id = 16, IdDispenser = 109, DateAndTime = DateTime.Parse("2020-03-20 16:00:01"), Description = "Eutanazol", NoWindow = 1 },
-                new Plan { Id = 17, IdDispenser = 109, DateAndTime = DateTime.Parse("2020-03-20 17:30:01"), Description = "Eutanazol", NoWindow = 6 }
+                new Plan { Id = 17, IdDispenser = 109, DateAndTime = DateTime.Parse("2020-03-20 17:30:01"), Description = "Eutanazol", NoWindow = 6 },
+                new Plan { Id = 18, IdDispenser = 102, DateAndTime = DateTime.Parse("2020-03-20 15:30:01"), Description = "Apap", NoWindow = 2 },
+                new Plan { Id = 19, IdDispenser = 102, DateAndTime = DateTime.Parse("2020-03-20 07:30:01"), Description = "Apap", NoWindow = 4 }
             );
 
             builder.Entity<ListOfDispenser>().ToTable("ListOfDispensers");
@@ -110,22 +112,22 @@ namespace WebApplication1.API.Persistence.Contexts
 
             builder.Entity<ListOfDispenser>().HasData
             (
-                new ListOfDispenser { Id = 1, IdDispenser = 101, IdAccount = 1 },
-                new ListOfDispenser { Id = 2, IdDispenser = 102, IdAccount = 2 },
-                new ListOfDispenser { Id = 3, IdDispenser = 103, IdAccount = 3 },
-                new ListOfDispenser { Id = 4, IdDispenser = 104, IdAccount = 4 },
-                new ListOfDispenser { Id = 5, IdDispenser = 105, IdAccount = 5 },
-                new ListOfDispenser { Id = 6, IdDispenser = 106, IdAccount = 6 },
-                new ListOfDispenser { Id = 7, IdDispenser = 107, IdAccount = 7 },
-                new ListOfDispenser { Id = 8, IdDispenser = 108, IdAccount = 8 },
-                new ListOfDispenser { Id = 9, IdDispenser = 109, IdAccount = 9 },
-                new ListOfDispenser { Id = 10, IdDispenser = 101, IdAccount = 6 },
-                new ListOfDispenser { Id = 11, IdDispenser = 102, IdAccount = 6 },
-                new ListOfDispenser { Id = 12, IdDispenser = 104, IdAccount = 6 },
-                new ListOfDispenser { Id = 13, IdDispenser = 103, IdAccount = 7 },
-                new ListOfDispenser { Id = 14, IdDispenser = 109, IdAccount = 7 },
-                new ListOfDispenser { Id = 15, IdDispenser = 102, IdAccount = 8 },
-                new ListOfDispenser { Id = 16, IdDispenser = 109, IdAccount = 8 }
+                new ListOfDispenser { Id = 1, IdDispenser = 101, IdAccount = 1, Name = "a" },
+                new ListOfDispenser { Id = 2, IdDispenser = 102, IdAccount = 2, Name = "b" },
+                new ListOfDispenser { Id = 3, IdDispenser = 103, IdAccount = 3, Name = "c" },
+                new ListOfDispenser { Id = 4, IdDispenser = 104, IdAccount = 4, Name = "d" },
+                new ListOfDispenser { Id = 5, IdDispenser = 105, IdAccount = 5, Name = "e" },
+                new ListOfDispenser { Id = 6, IdDispenser = 106, IdAccount = 6, Name = "f" },
+                new ListOfDispenser { Id = 7, IdDispenser = 107, IdAccount = 7, Name = "g" },
+                new ListOfDispenser { Id = 8, IdDispenser = 108, IdAccount = 8, Name = "h" },
+                new ListOfDispenser { Id = 9, IdDispenser = 109, IdAccount = 9, Name = "i" },
+                new ListOfDispenser { Id = 10, IdDispenser = 101, IdAccount = 6, Name = "j" },
+                new ListOfDispenser { Id = 11, IdDispenser = 102, IdAccount = 6, Name = "k" },
+                new ListOfDispenser { Id = 12, IdDispenser = 104, IdAccount = 6, Name = "l" },
+                new ListOfDispenser { Id = 13, IdDispenser = 103, IdAccount = 7, Name = "m" },
+                new ListOfDispenser { Id = 14, IdDispenser = 109, IdAccount = 7, Name = "n" },
+                new ListOfDispenser { Id = 15, IdDispenser = 102, IdAccount = 8, Name = "o" },
+                new ListOfDispenser { Id = 16, IdDispenser = 109, IdAccount = 8, Name = "p" }
             );
         }
     }

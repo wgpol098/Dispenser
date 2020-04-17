@@ -43,6 +43,27 @@ namespace WebApplication1.API.Controllers
             return disp;
         }
 
+        [HttpPost("GetDoctorHistory")]
+        public async Task<IEnumerable<AndroidSendToAppByIdDispDoctorHistory>> GetByIdDispenserHistoryPlan([FromBody] AndroidSendIdDispenser androidSendIdDispenser)
+        {
+            var disp = await _androidService.ListHistoryPlanAsync(androidSendIdDispenser.IdDispenser);
+            return disp;
+        }
+
+        [HttpPost("GetDoctorPlan")]
+        public async Task<IEnumerable<AndroidSendToAppByIdDispDoctorPlan>> GetByIdDispenserDoctorPlan([FromBody] AndroidSendIdDispenser androidSendIdDispenser)
+        {
+            var disp = await _androidService.ListDoctorPlanAsync(androidSendIdDispenser.IdDispenser);
+            return disp;
+        }
+
+        [HttpPost("GetWindows")]
+        public async Task<AndroidSendToAppByDispWindows> GetByIdDispenserWindows([FromBody] AndroidSendIdDispenser androidSendIdDispenser)
+        {
+            var disp = await _androidService.ListWindows(androidSendIdDispenser.IdDispenser);
+            return disp;
+        }
+
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] AndroidSendPost androidSendPost)
         {
@@ -51,6 +72,8 @@ namespace WebApplication1.API.Controllers
 
             DateTime dateAndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
                 androidSendPost.Hour, androidSendPost.Minutes, 0);
+
+            dateAndTime.AddDays(androidSendPost.Days);
 
             if (androidSendPost.Hour < DateTime.Now.Hour)
                 dateAndTime.AddDays(1);

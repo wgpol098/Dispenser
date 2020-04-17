@@ -14,7 +14,7 @@ namespace WebApplication1.API.Persistence.Repositories
         {
         }
 
-        public async Task<Dispenser> AddAsync(DispenserResource dispenser)
+        public async Task<ListOfDispenser> AddAsync(DispenserResource dispenser)
         {
             var temp = await _context.Dispensers.FirstOrDefaultAsync(q => q.IdDispenser == dispenser.IdDispenser);
             var acc = await _context.Accounts.FirstOrDefaultAsync(q => q.Login == dispenser.Login);
@@ -22,7 +22,8 @@ namespace WebApplication1.API.Persistence.Repositories
             ListOfDispenser listOfDispenser = new ListOfDispenser()
             {
                 IdAccount = acc.Id,
-                IdDispenser = dispenser.IdDispenser
+                IdDispenser = dispenser.IdDispenser,
+                Name = dispenser.Name
             };
 
             _context.ListOfDispensers.Add(listOfDispenser);
@@ -37,10 +38,10 @@ namespace WebApplication1.API.Persistence.Repositories
 
                 await _context.Dispensers.AddAsync(disp);
 
-                return disp;
+                return listOfDispenser;
             } 
             else 
-                return temp;
+                return listOfDispenser;
         }
 
         public async Task<ListOfDispenser> FindByLoginAndIdAsync(DispenserResource dispenserResource)

@@ -6,7 +6,7 @@ namespace WebApplication1.API.Domain.Repositories
 {
     public interface IDispenserRepository
     {
-        Task<Dispenser> AddAsync(DispenserResource dispenserResource);
+        Task<ListOfDispenser> AddAsync(DispenserResource dispenserResource);
         Task<ListOfDispenser> FindByLoginAndIdAsync(DispenserResource dispenserResource);
         Task<bool> Remove(ListOfDispenser dispenser);
     }
