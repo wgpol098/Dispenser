@@ -73,7 +73,7 @@ namespace WebApplication1.API.Persistence.Repositories
             TempListFromDatabaseHistory.Sort((q, p) => q.DateAndTime.CompareTo(p.DateAndTime));
             TempListFromDatabasePlans.Sort((q, p) => q.DateAndTime.CompareTo(p.DateAndTime));
 
-            foreach (var q in TempListFromDatabaseHistory)
+            foreach (var q in TempListFromDatabasePlans)
             {
                 if (!ListOfUniqueDescription.Contains(q.Description))
                     ListOfUniqueDescription.Add(q.Description);
@@ -85,7 +85,8 @@ namespace WebApplication1.API.Persistence.Repositories
 
             foreach (var q in ListOfUniqueDescription)
             {
-                temp = null;
+                temp.Clear();
+
                 foreach (var p in TempListFromDatabaseHistory)
                 {
                     if (p.Description == q && p.Flag <= 0)
@@ -114,17 +115,18 @@ namespace WebApplication1.API.Persistence.Repositories
                 }
 
                 string start = TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Year + "-" +
-                    TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Month + "-" +
-                    TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Day;
+                        TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Month + "-" +
+                        TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Day;
+                string fh = (TempListFromDatabasePlans.Where(p => p.Description == q).FirstOrDefault().DateAndTime.Hour + "-" + TempListFromDatabasePlans.Where(p => p.Description == q).FirstOrDefault().DateAndTime.Minute).ToString();
 
                 int end = TempListFromDatabasePlans.LastOrDefault().DateAndTime.Day - TempListFromDatabasePlans.FirstOrDefault().DateAndTime.Day;
+
                 var temp2 = new AndroidSendToAppByIdDispDoctorPlan()
                 {
                     Description = q,
                     Start = start,
                     TabDidnttake = new List<ListOfDate>(temp),
-                    FirstHour = (TempListFromDatabasePlans.Where(p => p.Description == q).FirstOrDefault().DateAndTime.Hour + "-" +
-                    TempListFromDatabasePlans.Where(p => p.Description == q).FirstOrDefault().DateAndTime.Minute).ToString(),
+                    FirstHour = fh,
                     Periodicity = Period,
                     DaysLeft = end
                 };
@@ -245,7 +247,7 @@ namespace WebApplication1.API.Persistence.Repositories
             {
                 Hour = temp.DateAndTime.Hour,
                 Minutes = temp.DateAndTime.Minute,
-                Days = temp.DateAndTime.Day,
+                Days = (DateTime.Now - temp.DateAndTime).Days,
                 Description = temp.Description,
                 Count = lista.Count,
                 Periodicity = Period
@@ -316,10 +318,10 @@ namespace WebApplication1.API.Persistence.Repositories
             DateTime dateAndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
                 existingPlan.Hour, existingPlan.Minutes, 0);
 
-            dateAndTime.AddDays(existingPlan.Days);
+            dateAndTime = dateAndTime.AddDays(existingPlan.Days);
 
             if (existingPlan.Hour < DateTime.Now.Hour)
-                dateAndTime.AddDays(1);
+                dateAndTime = dateAndTime.AddDays(1);
 
             var FindPlan = await _context.Plans.FirstOrDefaultAsync(q => q.Id == existingPlan.IdRecord);
 

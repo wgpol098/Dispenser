@@ -73,10 +73,10 @@ namespace WebApplication1.API.Controllers
             DateTime dateAndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
                 androidSendPost.Hour, androidSendPost.Minutes, 0);
 
-            dateAndTime.AddDays(androidSendPost.Days);
+            dateAndTime = dateAndTime.AddDays(androidSendPost.Days);
 
             if (androidSendPost.Hour < DateTime.Now.Hour)
-                dateAndTime.AddDays(1);
+                dateAndTime = dateAndTime.AddDays(1);
 
             Dispenser FindDispenserOkienka = await _androidService.FindOkienka(androidSendPost.IdDispenser);
 
