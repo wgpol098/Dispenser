@@ -62,10 +62,12 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
         {
             JSONObject json;
             int iddispenser=0;
+            String DispenserName="";
             try
             {
                  json = JsonArray.getJSONObject(i);
                  iddispenser = json.getInt("idDispenser");
+                 DispenserName = json.getString("name");
             }
             catch (JSONException e)
             {
@@ -84,9 +86,9 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
 //                button.setOnLongClickListener(this);
                 linearLayout.addView(button);
 
-                //Przypisywanie name do buttona jeśli user ma przypisaną nazwę
-                SharedPreferences sharedPref = this.getSharedPreferences(login, Context.MODE_PRIVATE);
-                button.setText(sharedPref.getString(String.valueOf(iddispenser),String.valueOf(iddispenser)));
+                //Wyświetlanie nazwy dispensera
+                if(!DispenserName.isEmpty()) button.setText(DispenserName);
+                if(DispenserName=="null") button.setText(String.valueOf(iddispenser));
             }
         }
 
@@ -100,7 +102,7 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
-                //Sprawdzanie czy istnieje dispenser o danym id na liście
+                //Sprawdzanie czy istnieje dispenser o danym id, bądź nazwie na liście
                 try
                 {
                     linearLayout.removeAllViews();
@@ -113,21 +115,21 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
                         JSONObject json = JsonArray.getJSONObject(i);
                         String tmp = String.valueOf(json.getInt("idDispenser"));
                         int id = json.getInt("idDispenser");
+                        String DispenserName = json.getString("name");
 
-                        //Sprawdzanie czy dispenser ma podaną jakąś nazwę dla tego loginu w Shared preferences
-                        SharedPreferences sharedPref = context.getSharedPreferences(login, Context.MODE_PRIVATE);
-                        String name = sharedPref.getString(String.valueOf(id),String.valueOf(id));
-
-                        if(name.contains(text))
+                        if(DispenserName.contains(text) || tmp.contains(text))
                         {
                             Button button = new Button(context);
                             button.setId(id);
-                            button.setText(tmp);
                             button.setTextSize(20);
                             button.setGravity(Gravity.CENTER);
                             button.setOnClickListener((View.OnClickListener) context);
 //                button.setOnLongClickListener(this);
                             linearLayout.addView(button);
+
+                            //Wyświetlanie nazwy dispensera
+                            if(!DispenserName.isEmpty()) button.setText(DispenserName);
+                            if(DispenserName=="null") button.setText(String.valueOf(id));
                         }
                     }
                 }

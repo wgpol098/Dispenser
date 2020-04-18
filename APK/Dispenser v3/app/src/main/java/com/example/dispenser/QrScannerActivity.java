@@ -37,12 +37,12 @@ public class QrScannerActivity extends AppCompatActivity implements BarcodeReade
             user = b.getBoolean("user");
         }
 
-//        Intent intent = new Intent(this,AddDispenserActivity.class);
-//        intent.putExtra("QrScan","12345");
-//        intent.putExtra("login",login);
-//        intent.putExtra("idDispenser",idDispenser);
-//        intent.putExtra("user",true);
-//        startActivity(intent);
+        Intent intent = new Intent(this,AddDispenserActivity.class);
+        intent.putExtra("QrScan","12345");
+        intent.putExtra("login",login);
+        intent.putExtra("idDispenser",idDispenser);
+        intent.putExtra("user",true);
+        startActivity(intent);
     }
 
     @Override

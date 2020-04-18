@@ -44,4 +44,6 @@
     <string name="no_dispenser">Brak urządzeń przypisanych do konta. Dodaj je!</string>
     <string name="find_dispenser">Znajdź dispenser!</string>
     <string name="wrong_login_password">Zły login lub hasło!</string>
+    <string name="Days">Dni</string>
+    <string name="no_history_plans">Ten dispenser nie ma historii ani planów!</string>
 </resources>

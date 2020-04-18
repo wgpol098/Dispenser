@@ -48,6 +48,7 @@ public class Connections {
                 try {
                     URL ASPNETURL = new URL(URL);
                     ASPNETConnection = (HttpURLConnection) ASPNETURL.openConnection();
+                    ASPNETConnection.setReadTimeout(2000);
 
                     //Żądania połączenia
                     ASPNETConnection.setRequestProperty("Content-Type", "application/json");
@@ -113,7 +114,13 @@ public class Connections {
         //To powoduje te dziwne rzeczy, które się tu dzieją jak naciśniesz drugi raz
         try
         {
-            while (ResponseCode==0) Thread.sleep(50);
+            int s=0;
+            while (ResponseCode==0)
+            {
+                s++;
+                Thread.sleep(50);
+                if(s==40) ResponseCode=400;
+            }
         }
         catch (InterruptedException e)
         {

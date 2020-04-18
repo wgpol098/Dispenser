@@ -106,10 +106,12 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
                 for(int i=0;i<JsonDispList.length();i++)
                 {
                     int IDdispenser=-1;
+                    String DispenserName="";
                     try
                     {
                         json = JsonDispList.getJSONObject(i);
                         IDdispenser = json.getInt("idDispenser");
+                        DispenserName = json.getString("name");
                     }
                     catch (JSONException e)
                     {
@@ -127,9 +129,9 @@ public class DispenserMenuActivity extends AppCompatActivity implements View.OnC
                         button.setOnLongClickListener(this);
                         linearLayout.addView(button);
 
-                        //Przypisywanie name do buttona jeśli user ma przypisaną nazwę
-                        sharedPref = this.getSharedPreferences(login, Context.MODE_PRIVATE);
-                        button.setText(sharedPref.getString(String.valueOf(IDdispenser),String.valueOf(IDdispenser)));
+                        //Wyświetlanie nazwy dispensera
+                        if(!DispenserName.isEmpty()) button.setText(DispenserName);
+                        if(DispenserName=="null") button.setText(String.valueOf(IDdispenser));
                     }
                 }
 

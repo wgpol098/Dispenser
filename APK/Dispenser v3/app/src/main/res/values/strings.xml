@@ -49,5 +49,7 @@
     <string name="no_dispenser">You don\'t have any device. Add it now!</string>
     <string name="find_dispenser">Find dispenser!</string>
     <string name="wrong_login_password">Wrong login or password!</string>
+    <string name="Days">Days</string>
+    <string name="no_history_plans">This dispenser don\'t have any history or plans!</string>
 
 </resources>

@@ -79,7 +79,9 @@ public class AddDispenserActivity extends AppCompatActivity {
     public void fAddDispenserButton(View v)
     {
         EditText tv = findViewById(R.id.MD5TextBox);
-        //Sprwadzdanie czy user podał w ogóle kod weryfikacyjny
+        EditText DispenserName = findViewById(R.id.dispenserNameTextBox);
+
+        //Sprawdzdanie czy user podał w ogóle kod weryfikacyjny
         if(!tv.getText().toString().isEmpty() && ControlSum == Integer.parseInt(tv.getText().toString()))
         {
             //Tworzenie jsona do wysłania elementów
@@ -88,6 +90,7 @@ public class AddDispenserActivity extends AppCompatActivity {
             {
                 json.put("login", login);
                 json.put("idDispenser", idDispenser);
+                if(!DispenserName.getText().toString().isEmpty()) json.put("name",DispenserName.getText().toString());
             }
             catch (JSONException e)
             {
@@ -114,6 +117,8 @@ public class AddDispenserActivity extends AppCompatActivity {
                 {
                     JsonArray = new JSONArray(idDispensers);
                     json.put("idDispenser", idDispenser);
+                    if(!DispenserName.getText().toString().isEmpty()) json.put("name",DispenserName.getText().toString());
+                    else json.put("name",String.valueOf(idDispenser));
                     JsonArray.put(json);
                 }
                 catch (JSONException e)
@@ -142,15 +147,6 @@ public class AddDispenserActivity extends AppCompatActivity {
                     intent.putExtra("IdDispenser", JsonArray.toString());
                     intent.putExtra("login",login);
                 }
-
-                //Zapamiętywanie nazwy dispensera w pamięci aplikacji dla danego usera
-                sharedPref = this.getSharedPreferences(login, Context.MODE_PRIVATE);
-                EditText tmp = findViewById(R.id.dispenserNameTextBox);
-                String name = tmp.getText().toString();
-                if(name.isEmpty()) name = String.valueOf(idDispenser);
-                SharedPreferences.Editor editor = sharedPref.edit();
-                editor.putString(String.valueOf(idDispenser),name);
-                editor.commit();
 
                 //zamknięcie poprzednich aktywności
                 finishAffinity();

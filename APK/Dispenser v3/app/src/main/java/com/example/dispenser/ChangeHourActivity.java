@@ -44,6 +44,7 @@ public class ChangeHourActivity extends AppCompatActivity {
         String description="";
         int count=0;
         int periodicity=0;
+        int days=0;
 
         JSONObject json = new JSONObject();
         if(IdRecord > 0)
@@ -86,6 +87,7 @@ public class ChangeHourActivity extends AppCompatActivity {
                 description = json.getString("description");
                 count = json.getInt("count");
                 periodicity = json.getInt("periodicity");
+                days = json.getInt("days");
             }
             catch (JSONException e)
             {
@@ -106,11 +108,13 @@ public class ChangeHourActivity extends AppCompatActivity {
         EditText c = findViewById(R.id.CountTextBox);
         EditText p = findViewById(R.id.PeriodicityTextBox);
         EditText d = findViewById(R.id.DescriptionTextBox);
+        EditText de = findViewById(R.id.DaysTextBox);
         h.setText(Integer.toString(hour));
         m.setText(Integer.toString(minutes));
         c.setText(Integer.toString(count));
         p.setText(Integer.toString(periodicity));
         d.setText(description);
+        de.setText(Integer.toString(days));
 
         h.addTextChangedListener(new TextWatcher() {
             @Override
@@ -159,6 +163,7 @@ public class ChangeHourActivity extends AppCompatActivity {
         EditText d = findViewById(R.id.DescriptionTextBox);
         EditText c = findViewById(R.id.CountTextBox);
         EditText p = findViewById(R.id.PeriodicityTextBox);
+        EditText de = findViewById(R.id.DaysTextBox);
 
         //Sprawdzanie czy są podane jakieś dane
         if(h.getText().toString().isEmpty() || m.getText().toString().isEmpty() || d.getText().toString().isEmpty() || c.getText().toString().isEmpty() || p.getText().toString().isEmpty())
@@ -173,6 +178,7 @@ public class ChangeHourActivity extends AppCompatActivity {
             String tmpdescription = d.getText().toString();
             int tmpcount = Integer.parseInt(c.getText().toString());
             int tmpperiodicity = Integer.parseInt(p.getText().toString());
+            int tmpdays = Integer.parseInt(de.getText().toString());
 
             //Tworzenie jsona do wysyłania danych
             final JSONObject json = new JSONObject();
@@ -183,6 +189,7 @@ public class ChangeHourActivity extends AppCompatActivity {
                 json.put("count",tmpcount);
                 json.put("periodicity",tmpperiodicity);
                 json.put("description",tmpdescription);
+                json.put("days",tmpdays);
 
             }
             catch (JSONException e)
