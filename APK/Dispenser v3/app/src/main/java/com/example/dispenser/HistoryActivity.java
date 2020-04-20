@@ -39,6 +39,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.SimpleTimeZone;
 
 import static org.apache.http.params.CoreProtocolPNames.USER_AGENT;
 
@@ -94,7 +95,7 @@ public class HistoryActivity extends AppCompatActivity {
         for(int i=0;i<jsonArray.length();i++)
         {
             JSONObject tmp=null;
-            String datetime="";
+            Date datetime=null;
             int nr_window=-1;
             String description="";
             int flag=-10;
@@ -103,31 +104,22 @@ public class HistoryActivity extends AppCompatActivity {
                  tmp = jsonArray.getJSONObject(i);
                  if(tmp!=null)
                  {
-                     datetime = tmp.getString("dateAndTime");
-                     nr_window = tmp.getInt("nr_Okienka");
-                     description = tmp.getString("opis");
-                     flag = tmp.getInt("flaga");
+                     datetime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse(tmp.getString("dateAndTime"));
+                     nr_window = tmp.getInt("noWindow");
+                     description = tmp.getString("description");
+                     flag = tmp.getInt("flag");
                  }
             }
-            catch (JSONException e)
+            catch (JSONException | ParseException e)
             {
                 e.printStackTrace();
             }
             if(tmp!=null)
             {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-                Date date=null;
-                try {
-                    date = dateFormat.parse(datetime);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-                //datetime = date.getDay() + "-" + date.getMonth() + "-" + date.getYear();
 
                 //Tworzenie textView do wypisywania danych
                 TextView tv = new TextView(this);
-                tv.setText(i+1 + ": " + date + ", " + description);
+                tv.setText(i+1 + ": " + description + ", " + datetime.getDate()+ "." + datetime.getMonth() + "." + datetime.getYear() + " " + datetime.getHours() + ":" + datetime.getMinutes());
                 tv.setTextSize(20);
                 tv.setPadding(0,20,0,20);
                 tv.setGravity(Gravity.CENTER_HORIZONTAL);

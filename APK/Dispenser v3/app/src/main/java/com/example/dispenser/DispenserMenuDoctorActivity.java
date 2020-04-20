@@ -117,7 +117,8 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
                         int id = json.getInt("idDispenser");
                         String DispenserName = json.getString("name");
 
-                        if(DispenserName.contains(text) || tmp.contains(text))
+                        //Sprawdzanie tylko na małych literach
+                        if(DispenserName.toLowerCase().contains(text.toLowerCase()) || tmp.contains(text))
                         {
                             Button button = new Button(context);
                             button.setId(id);

@@ -3,20 +3,24 @@ package com.example.dispenser;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.JsonReader;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class MainMenuDoctorActivity extends AppCompatActivity
+public class MainMenuDoctorActivity extends AppCompatActivity implements View.OnClickListener
 {
+    //Trzymanie otrzymanych danych o historii i o zmiennej
+    int n=1000;
+    JSONArray ArrayHistory;
+    JSONArray ArrayPlans;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -52,7 +56,7 @@ public class MainMenuDoctorActivity extends AppCompatActivity
         }
 
 
-        //GETDOCTOR PLANS
+        //GETDOCTORPLANS
         Connections connection = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Android/GetDoctorPlan","POST",json,true);
         connection.Connect();
 
@@ -66,7 +70,62 @@ public class MainMenuDoctorActivity extends AppCompatActivity
         else
         {
             JSONArray JsonArray = connection.JsonArrayAnswer();
+            ArrayPlans = JsonArray;
             if(JsonArray.length()==0) blank++;
+
+            //sprawdzanie odpowiedzi od serwera
+//            DialogFragment dialog = new MyDialog("Plan",JsonArray.toString());
+//            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+
+            //Odczytywanie danych i tworzenie kontrolek do wyświetlania danych
+            for(int i=0;i<JsonArray.length();i++)
+            {
+                //Odczytywanie danych o konkretnym leku
+                String description = "";
+                String start = "";
+                String firsthour = "";
+                int periodicity = 0;
+                JSONArray didntTakeArray = new JSONArray();
+
+                try
+                {
+                    JSONObject json1 = JsonArray.getJSONObject(i);
+                    description = json1.getString("description");
+                    start = json1.getString("start");
+                    firsthour = json1.getString("firstHour");
+                    periodicity = json1.getInt("periodicity");
+                    didntTakeArray = json1.getJSONArray("tabDidnttake");
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+
+                //Tworzenie kontrolki
+                TextView tv = new TextView(this);
+                tv.setText(description);
+                tv.append(System.getProperty("line.separator"));
+                tv.append(start + " " + firsthour + " - Nał");
+                tv.append(System.getProperty("line.separator"));
+                tv.append(String.valueOf(periodicity));
+                //wyświetlanie kiedy nie wziął leku
+                for(int j=0;j<didntTakeArray.length();j++)
+                {
+                    JSONObject jtmp;
+                    try
+                    {
+                        jtmp = didntTakeArray.getJSONObject(j);
+                        String stmp = jtmp.getString("date");
+                        tv.append(System.getProperty("line.separator"));
+                        tv.append(stmp);
+                    }
+                    catch (JSONException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+                linearLayout.addView(tv);
+            }
 
         }
 
@@ -87,11 +146,12 @@ public class MainMenuDoctorActivity extends AppCompatActivity
         else
         {
             JSONArray JsonArray = connection.JsonArrayAnswer();
+            ArrayHistory = JsonArray;
             if(JsonArray.length()==0) blank++;
 
             //sprawdzanie odpowiedzi od serwera
-            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),JsonArray.toString());
-            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+//            DialogFragment dialog = new MyDialog("History",JsonArray.toString());
+//            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
 
             //Tworzenie kontrolek, które wyświetlają dane z serwera
             for(int i=JsonArray.length()-1;0<=i;i--)
@@ -107,14 +167,14 @@ public class MainMenuDoctorActivity extends AppCompatActivity
 
                 try
                 {
-                    json = JsonArray.getJSONObject(i);
-                    description = json.getString("description");
-                    start = json.getString("start");
-                    end = json.getString("end");
-                    firsthour = json.getString("firstHour");
-                    periodicity = json.getInt("periodicity");
-                    count = json.getInt("count");
-                    didntTakeArray = json.getJSONArray("tabDidnttake");
+                    JSONObject json1 = JsonArray.getJSONObject(i);
+                    description = json1.getString("description");
+                    start = json1.getString("start");
+                    end = json1.getString("end");
+                    firsthour = json1.getString("firstHour");
+                    periodicity = json1.getInt("periodicity");
+                    count = json1.getInt("count");
+                    didntTakeArray = json1.getJSONArray("tabDidnttake");
                 }
                 catch (JSONException e)
                 {
@@ -151,6 +211,8 @@ public class MainMenuDoctorActivity extends AppCompatActivity
                         e.printStackTrace();
                     }
                 }
+                tv.setOnClickListener(this);
+                tv.setId(i+n);
                 linearLayout.addView(tv);
             }
         }
@@ -166,5 +228,30 @@ public class MainMenuDoctorActivity extends AppCompatActivity
             tv.setGravity(Gravity.CENTER_HORIZONTAL);
             linearLayout.addView(tv);
         }
+    }
+
+    @Override
+    public void onClick(View v)
+    {
+        //Odczytywanie jakie Id ma button i sprawdzanie czy to jest historia czy to jest plan
+        int id = v.getId()-n;
+        JSONObject json=null;
+
+        try
+        {
+            json = ArrayHistory.getJSONObject(id);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
+
+//        DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),json.toString());
+//        dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+
+        Intent intent = new Intent(this,HistoryDoctorActivity.class);
+        intent.putExtra("info",json.toString());
+        startActivity(intent);
     }
 }

@@ -109,7 +109,7 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
             linearLayout.addView(button);
         }
 
-        //Jeśli informacji, że nie ma żadnych godzin!
+        //Jeśli nie ma informacji to napisz, że nie ma żadnych godzin!
         if(jsonArray.length()==0)
         {
             TextView tv = new TextView(this);
