@@ -9,5 +9,4 @@ VPN jest sprawdzony i na pewno działa</br>
 
 <b>Dodawanie Dispensera</b>
 ----------
-Polega na skanowaniu QR. Ale że możecie nie ogarniać jak tworzyć idDispensera i do tego kod uwierzytelniający, więc poprostu zrobiłem wam SKIP skanowania i na stałę macie jeden dispenser.</br>
-Przy dodawaniu dispensera dodajecie do konta dispenser:12345 jego kod uwierzytelniający to: 350
+Polega na skanowaniu QR. Ale że możecie nie ogarniać jak tworzyć idDispensera i do tego kod uwierzytelniający, więc żeby nie było problemów to skipuje wam skanowanie i dodaje zawsze dispenser:12345 o kodzie uwieżytelniającym:350.</br>
