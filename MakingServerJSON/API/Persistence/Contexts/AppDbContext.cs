@@ -24,15 +24,15 @@ namespace WebApplication1.API.Persistence.Contexts
 
             builder.Entity<Dispenser>().HasData
             (
-                new Dispenser { Id = 1, IdDispenser = 101, NoWindow = "1110000" },
-                new Dispenser { Id = 2, IdDispenser = 102, NoWindow = "1111100" },
-                new Dispenser { Id = 3, IdDispenser = 103, NoWindow = "0100010" },
-                new Dispenser { Id = 4, IdDispenser = 104, NoWindow = "1000000" },
-                new Dispenser { Id = 5, IdDispenser = 105, NoWindow = "0000001" },
-                new Dispenser { Id = 6, IdDispenser = 106, NoWindow = "0001000" },
-                new Dispenser { Id = 7, IdDispenser = 107, NoWindow = "1000001" },
-                new Dispenser { Id = 8, IdDispenser = 108, NoWindow = "0001001" },
-                new Dispenser { Id = 9, IdDispenser = 109, NoWindow = "1000010" }
+                new Dispenser { Id = 1, IdDispenser = 101, NoWindow = "1110000", NoUpdate = 5 },
+                new Dispenser { Id = 2, IdDispenser = 102, NoWindow = "1111100", NoUpdate = 10 },
+                new Dispenser { Id = 3, IdDispenser = 103, NoWindow = "0100010", NoUpdate = 15 },
+                new Dispenser { Id = 4, IdDispenser = 104, NoWindow = "1000000", NoUpdate = 20 },
+                new Dispenser { Id = 5, IdDispenser = 105, NoWindow = "0000001", NoUpdate = 25 },
+                new Dispenser { Id = 6, IdDispenser = 106, NoWindow = "0001000", NoUpdate = 30 },
+                new Dispenser { Id = 7, IdDispenser = 107, NoWindow = "1000001", NoUpdate = 35 },
+                new Dispenser { Id = 8, IdDispenser = 108, NoWindow = "0001001", NoUpdate = 40 },
+                new Dispenser { Id = 9, IdDispenser = 109, NoWindow = "1000010", NoUpdate = 45 }
             );
 
             builder.Entity<Account>().ToTable("Accounts");

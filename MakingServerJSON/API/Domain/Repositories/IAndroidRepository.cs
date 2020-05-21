@@ -15,12 +15,13 @@ namespace WebApplication1.API.Domain.Repositories
         Task AddAsync(Plan dispenser);
         Task<Dispenser> ReturnDispenserFromTable(int idDispenser);
         Task<Dispenser> FindDispenserAsync(int id);
-        Task<Plan> FindPlanAsync(int idRecord);
+        Task<Plan> FindPlanAsync(int idRecord); //Coś tu nie gra, potem sprawdzić dlaczego jest tylko 1 odwołanie
         Task<bool> Remove(int existingPlan);
         Task<bool> Update(AndroidSendPostUpdate existingPlan);
         void UpdateOkienka(Dispenser existingDispenser);
         Task<IEnumerable<AndroidSendToAppByIdDispDoctorHistory>> ListAllRecordsInHistoryPlanAsync(int idDispenser);
         Task<IEnumerable<AndroidSendToAppByIdDispDoctorPlan>> ListAllRecordsInDoctorPlanAsync(int idDispenser);
         Task<AndroidSendToAppByDispWindows> ListAllRecordsOfWindows(int idDispenser);
+        Task<int> SendUpdateCounter(int androidSendIdDispenser);
     }
 }

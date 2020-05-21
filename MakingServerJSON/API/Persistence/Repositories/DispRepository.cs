@@ -20,14 +20,30 @@ namespace WebApplication1.API.Persistence.Repositories
         {
             var plans = await _context.Plans.Where(q => q.IdDispenser == hist.IdDispenser).ToListAsync();
 
-            Historia historia = new Historia()
+            Historia historia;
+
+            try
             {
-                IdDispenser = hist.IdDispenser,
-                NoWindow = hist.NoWindow,
-                Flag = hist.Flag,
-                DateAndTime = hist.DateAndTime,
-                Description = plans.FirstOrDefault(q => q.NoWindow == hist.NoWindow).Description
-            };
+                historia = new Historia()
+                {
+                    IdDispenser = hist.IdDispenser,
+                    NoWindow = hist.NoWindow,
+                    Flag = hist.Flag,
+                    DateAndTime = hist.DateAndTime,
+                    Description = plans.FirstOrDefault(q => q.NoWindow == hist.NoWindow).Description
+                };
+            }
+            catch (Exception) //Catch tymczasowy, później do usunięcia
+            {
+                historia = new Historia()
+                {
+                    IdDispenser = hist.IdDispenser,
+                    NoWindow = hist.NoWindow,
+                    Flag = hist.Flag,
+                    DateAndTime = hist.DateAndTime,
+                    Description = "Siema Hubert"
+                };
+            }
 
             try
             {
@@ -39,6 +55,7 @@ namespace WebApplication1.API.Persistence.Repositories
                         _context.Plans.Remove(q);
                 }
 
+                await UpdateCounter(hist.IdDispenser);
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -50,6 +67,24 @@ namespace WebApplication1.API.Persistence.Repositories
         public async Task<IEnumerable<Plan>> ListAllDatesAsync(DispSendToServerGET dispSendToServer)
         {
             return await _context.Plans.Where(q => q.IdDispenser == dispSendToServer.IdDispenser).ToListAsync();
+        }
+
+        //Powtórzenie metody z AndroidRep - najwyżej później usunąć
+        public async Task<bool> UpdateCounter(int androidSendIdDispenser)
+        {
+            try
+            {
+                Dispenser disp = await _context.Dispensers.FirstOrDefaultAsync(q => q.IdDispenser == androidSendIdDispenser);
+                disp.NoUpdate++;
+
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

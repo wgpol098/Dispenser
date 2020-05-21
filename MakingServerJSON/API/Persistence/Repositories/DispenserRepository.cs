@@ -33,7 +33,8 @@ namespace WebApplication1.API.Persistence.Repositories
                 Dispenser disp = new Dispenser()
                 {
                     IdDispenser = dispenser.IdDispenser,
-                    NoWindow = "0000000"
+                    NoWindow = "0000000",
+                    NoUpdate = 0
                 };
 
                 await _context.Dispensers.AddAsync(disp);

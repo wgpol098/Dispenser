@@ -12,6 +12,7 @@ namespace WebApplication1.API.Mapping
             CreateMap<ListOfDispenser, DispenserResources>();
             CreateMap<Plan, ServResourcesToDisp>();
             CreateMap<Account, AccountCheck>();
+            CreateMap<DispSendToServerPOST, Historia>();
         }
     }
 }

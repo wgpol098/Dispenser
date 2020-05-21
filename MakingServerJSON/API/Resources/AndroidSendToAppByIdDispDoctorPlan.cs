@@ -10,5 +10,6 @@ namespace WebApplication1.API.Resources
         public string FirstHour { get; set; }
         public int Periodicity { get; set; }
         public List<ListOfDate> TabDidnttake { get; set; }
+        public int NoUpdate { get; set; }
     }
 }

@@ -120,5 +120,19 @@ namespace WebApplication1.API.Services
                 return new DispenserResponse($"An error occurred when updating the dispenser: {ex.Message}");
             }
         }
+
+        public async Task<DispenserUpdateCounter> UpdateCounterAsync(AndroidSendIdDispenser androidSendIdDispenser)
+        {
+            try
+            {
+                var result = await _androidRepository.SendUpdateCounter(androidSendIdDispenser.IdDispenser);
+
+                return new DispenserUpdateCounter() { NoUpdate = result };
+            }
+            catch (Exception)
+            {
+                return new DispenserUpdateCounter() { NoUpdate = -1 };
+            }
+        }
     }
 }

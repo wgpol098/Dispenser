@@ -64,6 +64,17 @@ namespace WebApplication1.API.Controllers
             return disp;
         }
 
+        [HttpPost("UpdateCounter")]
+        public async Task<DispenserUpdateCounter> UpdateCounterAsync([FromBody] AndroidSendIdDispenser androidSendIdDispenser)
+        {
+            if (!ModelState.IsValid)
+                return new DispenserUpdateCounter() { NoUpdate = -1 };
+
+            var result = await _androidService.UpdateCounterAsync(androidSendIdDispenser);
+
+            return result;
+        }
+
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] AndroidSendPost androidSendPost)
         {
