@@ -19,6 +19,6 @@ namespace WebApplication1.API.Domain.Services
         Task<IEnumerable<AndroidSendToAppByIdDispDoctorHistory>> ListHistoryPlanAsync(int idDispenser);
         Task<IEnumerable<AndroidSendToAppByIdDispDoctorPlan>> ListDoctorPlanAsync(int idDispenser);
         Task<AndroidSendToAppByDispWindows> ListWindows(int idDispenser);
-        Task<DispenserUpdateCounter> UpdateCounterAsync(AndroidSendIdDispenser androidSendIdDispenser);
+        Task<DispenserUpdateCounter> IncCounterAsync(int idDispenser, bool increment);
     }
 }

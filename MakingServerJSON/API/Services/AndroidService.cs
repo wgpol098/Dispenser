@@ -90,6 +90,7 @@ namespace WebApplication1.API.Services
             try
             {
                 var result = await _androidRepository.Update(resource);
+                await _androidRepository.UpdateCounterFindByIdRecord(resource.IdRecord);
                 await _unitOfWork.CompleteAsync();
 
                 return true;
@@ -121,13 +122,13 @@ namespace WebApplication1.API.Services
             }
         }
 
-        public async Task<DispenserUpdateCounter> UpdateCounterAsync(AndroidSendIdDispenser androidSendIdDispenser)
+        public async Task<DispenserUpdateCounter> IncCounterAsync(int idDispenser, bool increment)
         {
             try
             {
-                var result = await _androidRepository.SendUpdateCounter(androidSendIdDispenser.IdDispenser);
+                var result = await _androidRepository.UpdateCounter(idDispenser, increment);
 
-                return new DispenserUpdateCounter() { NoUpdate = result };
+                return result;
             }
             catch (Exception)
             {

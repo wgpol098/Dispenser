@@ -70,7 +70,7 @@ namespace WebApplication1.API.Controllers
             if (!ModelState.IsValid)
                 return new DispenserUpdateCounter() { NoUpdate = -1 };
 
-            var result = await _androidService.UpdateCounterAsync(androidSendIdDispenser);
+            var result = await _androidService.IncCounterAsync(androidSendIdDispenser.IdDispenser, false);
 
             return result;
         }
@@ -134,12 +134,12 @@ namespace WebApplication1.API.Controllers
                         };
 
                         await _androidService.SaveAsync(plan);
-
                         dateAndTime = dateAndTime.AddHours(androidSendPost.Periodicity);
                     }
 
                     SprawdzCzyWolne = false;
                 }
+                await _androidService.IncCounterAsync(androidSendPost.IdDispenser, true);
             }
             catch (Exception)
             {

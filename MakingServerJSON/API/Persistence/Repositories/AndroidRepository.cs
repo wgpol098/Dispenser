@@ -20,17 +20,11 @@ namespace WebApplication1.API.Persistence.Repositories
         public async Task AddAsync(Plan dispenser)
         {
             await _context.Plans.AddAsync(dispenser);
-            await UpdateCounter(dispenser.IdDispenser);
         }
 
         public async Task<Dispenser> FindDispenserAsync(int id)
         {
             return await _context.Dispensers.FindAsync(id);
-        }
-
-        public async Task<Plan> FindPlanAsync(int id)
-        {
-            return await _context.Plans.FindAsync(id);
         }
 
         public async Task<IEnumerable<AndroidSendToAppByIdDisp>> ListAllRecordsForDispenserAsync(int androidSendIdDispenser)
@@ -65,11 +59,13 @@ namespace WebApplication1.API.Persistence.Repositories
         public async Task<IEnumerable<AndroidSendToAppByIdDispDoctorPlan>> ListAllRecordsInDoctorPlanAsync(int idDispenser)
         {
             List<AndroidSendToAppByIdDispDoctorPlan> ReturnList = new List<AndroidSendToAppByIdDispDoctorPlan>();
+            List<Plan> TempList = new List<Plan>();
             List<string> ListOfUniqueDescription = new List<string>();
 
             var TempListFromDatabaseHistory = await _context.History.Where(q => q.IdDispenser == idDispenser).ToListAsync();
             var TempListFromDatabasePlans = await _context.Plans.Where(q => q.IdDispenser == idDispenser).ToListAsync();
-            int CounterUpdate = await SendUpdateCounter(idDispenser);
+            int counter = 0;
+            bool jakisbool = false;
 
             TempListFromDatabaseHistory.Sort((q, p) => q.DateAndTime.CompareTo(p.DateAndTime));
             TempListFromDatabasePlans.Sort((q, p) => q.DateAndTime.CompareTo(p.DateAndTime));
@@ -77,7 +73,18 @@ namespace WebApplication1.API.Persistence.Repositories
             foreach (var q in TempListFromDatabasePlans)
             {
                 if (!ListOfUniqueDescription.Contains(q.Description))
+                {
                     ListOfUniqueDescription.Add(q.Description);
+
+                    foreach (var p in TempList)
+                    {
+                        if (q.Description == p.Description || (q.DateAndTime.Hour == p.DateAndTime.Hour && q.DateAndTime.Minute == p.DateAndTime.Minute))
+                            jakisbool = true;
+                    }
+                    if (!jakisbool)
+                        TempList.Add(q);
+
+                }
             }
 
             int Period = 0;
@@ -118,7 +125,8 @@ namespace WebApplication1.API.Persistence.Repositories
                 string start = TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Year + "-" +
                         TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Month + "-" +
                         TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Day;
-                string fh = (TempListFromDatabasePlans.Where(p => p.Description == q).FirstOrDefault().DateAndTime.Hour + "-" + TempListFromDatabasePlans.Where(p => p.Description == q).FirstOrDefault().DateAndTime.Minute).ToString();
+                string fh = (TempListFromDatabasePlans.Where(p => p.Description == q).FirstOrDefault().DateAndTime.Hour + "-" 
+                    + TempListFromDatabasePlans.Where(p => p.Description == q).FirstOrDefault().DateAndTime.Minute).ToString();
 
                 int end = TempListFromDatabasePlans.LastOrDefault().DateAndTime.Day - TempListFromDatabasePlans.FirstOrDefault().DateAndTime.Day;
 
@@ -130,8 +138,9 @@ namespace WebApplication1.API.Persistence.Repositories
                     FirstHour = fh,
                     Periodicity = Period,
                     DaysLeft = end,
-                    NoUpdate = CounterUpdate
+                    IdRecord = TempList.ElementAt(counter).Id
                 };
+                counter++;
                 ReturnList.Add(temp2);
             }
 
@@ -304,7 +313,7 @@ namespace WebApplication1.API.Persistence.Repositories
                     _context.Plans.Remove(q);
                 }
 
-                await UpdateCounter(plan.IdDispenser); //Nie pewny
+                await UpdateCounter(plan.IdDispenser, true); //Nie pewny
                 await _context.SaveChangesAsync();
                 UpdateOkienka(FindDispenserOkienka);
 
@@ -340,7 +349,7 @@ namespace WebApplication1.API.Persistence.Repositories
             //Próba wykasowania
             try
             {
-                var result = await Remove(existingPlan.IdRecord);
+                await Remove(existingPlan.IdRecord);
             }
             catch (Exception)
             {
@@ -398,7 +407,7 @@ namespace WebApplication1.API.Persistence.Repositories
                     SprawdzCzyWolne = false;
                 }
 
-                await UpdateCounter(FindPlan.IdDispenser);  //W tym miejscu może wywalić, bo FindPlan.IdDispenser jest nie pewny
+                await UpdateCounter(FindPlan.IdDispenser, true);  //W tym miejscu może wywalić, bo FindPlan.IdDispenser jest nie pewny
                 await _context.SaveChangesAsync();
 
                 return true;
@@ -406,19 +415,6 @@ namespace WebApplication1.API.Persistence.Repositories
             catch (Exception)
             {
                 return false;
-            }
-        }
-
-        public async Task<int> SendUpdateCounter(int androidSendIdDispenser)
-        {
-            try
-            {
-                Dispenser disp = await _context.Dispensers.FirstOrDefaultAsync(q => q.IdDispenser == androidSendIdDispenser);
-                return disp.NoUpdate;
-            }
-            catch (Exception)
-            {
-                return -1;
             }
         }
 
@@ -427,20 +423,40 @@ namespace WebApplication1.API.Persistence.Repositories
             _context.Dispensers.Update(existingDispenser);
         }
 
-        public async Task<bool> UpdateCounter(int androidSendIdDispenser)
+        public async Task<DispenserUpdateCounter> UpdateCounter(int androidSendIdDispenser, bool increment)
         {
             try
             {
                 Dispenser disp = await _context.Dispensers.FirstOrDefaultAsync(q => q.IdDispenser == androidSendIdDispenser);
-                disp.NoUpdate++;
+                if (increment)
+                {
+                    disp.NoUpdate++;
+                    await _context.SaveChangesAsync();
+                }
 
-                await _context.SaveChangesAsync();
-
-                return true;
+                return new DispenserUpdateCounter() { NoUpdate = disp.NoUpdate };
             }
             catch (Exception)
             {
-                return false;
+                return new DispenserUpdateCounter() { NoUpdate = -1 };
+            }
+        }
+
+        public async Task<DispenserUpdateCounter> UpdateCounterFindByIdRecord(int androidSendIdRecord)
+        {
+            try
+            {
+                Plan plan = await _context.Plans.FirstOrDefaultAsync(q => q.Id == androidSendIdRecord);
+                Dispenser disp = await _context.Dispensers.FirstOrDefaultAsync(q => q.IdDispenser == plan.IdDispenser);
+
+                disp.NoUpdate++;
+                await _context.SaveChangesAsync();
+
+                return new DispenserUpdateCounter() { NoUpdate = disp.NoUpdate };
+            }
+            catch (Exception)
+            {
+                return new DispenserUpdateCounter() { NoUpdate = -1 };
             }
         }
     }
