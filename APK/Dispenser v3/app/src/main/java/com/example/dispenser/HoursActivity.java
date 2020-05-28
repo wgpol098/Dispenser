@@ -50,6 +50,26 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
         {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+
+        LinearLayout linearLayout = findViewById(R.id.linearLayout);
+        linearLayout.removeAllViews();
+
+        //Wysyłanie zapytania na serwer
+        JSONObject json = new JSONObject();
+        try
+        {
+            json.put("idDispenser",IdDispenser);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
 
         Connections connection = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Android/GetPlan","POST",json,true);
         connection.Connect();
@@ -68,33 +88,27 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
             jsonArray = connection.JsonArrayAnswer();
         }
 
-        LinearLayout linearLayout = findViewById(R.id.linearLayout);
         ScrollView scroll = findViewById(R.id.scrollView);
         linearLayout.setOrientation(linearLayout.VERTICAL);
         scroll.setBackgroundResource(R.drawable.bg_gradient);
 
 
-        for(int i=0;i<jsonArray.length();i++)
-        {
-            JSONObject tmp=null;
-            String str1="";
-            String str2="";
-            String str3="";
-            int IdRecord=-2;
-            try
-            {
+        for(int i=0;i<jsonArray.length();i++) {
+            JSONObject tmp = null;
+            String str1 = "";
+            String str2 = "";
+            String str3 = "";
+            int IdRecord = -2;
+            try {
                 tmp = jsonArray.getJSONObject(i);
-                if(tmp!=null)
-                {
+                if (tmp != null) {
                     str1 = tmp.getString("hour");
-                    if(tmp.getString("minutes").length()==1) str2 = 0+ tmp.getString("minutes");
+                    if (tmp.getString("minutes").length() == 1) str2 = 0 + tmp.getString("minutes");
                     else str2 = tmp.getString("minutes");
                     str3 = tmp.getString("description");
                     IdRecord = Integer.parseInt(tmp.getString("idRecord"));
                 }
-            }
-            catch (JSONException e)
-            {
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
 
@@ -109,18 +123,6 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
             linearLayout.addView(button);
         }
 
-        //Jeśli nie ma informacji to napisz, że nie ma żadnych godzin!
-        if(jsonArray.length()==0)
-        {
-            TextView tv = new TextView(this);
-            tv.setText(R.string.no_hour);
-            tv.setTextSize(20);
-            tv.setTextColor(Color.WHITE);
-            tv.setPadding(0,20,0,20);
-            tv.setGravity(Gravity.CENTER_HORIZONTAL);
-            linearLayout.addView(tv);
-        }
-
         //Dodanie na końcu buttona do dodawania godzin
         Button button = new Button(this);
         button.setText(getString(R.string.add));
@@ -130,7 +132,6 @@ public class HoursActivity extends AppCompatActivity implements View.OnClickList
         button.setOnClickListener(this);
         linearLayout.addView(button);
     }
-
     @Override
     public void onClick(View v)
     {
