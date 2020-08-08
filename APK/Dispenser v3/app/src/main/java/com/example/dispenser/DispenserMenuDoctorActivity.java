@@ -1,9 +1,7 @@
 package com.example.dispenser;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,15 +9,12 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.JsonReader;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -89,7 +84,12 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
                 button.setGravity(Gravity.CENTER);
                 button.setOnClickListener(this);
                 button.setOnLongClickListener(this);
-                linearLayout.addView(button);
+                button.setBackgroundResource(R.drawable.bg_rounded_control);
+
+                //Tworzenie layouta
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                layoutParams.setMargins(30, 20, 30, 0);
+                linearLayout.addView(button,layoutParams);
 
                 //Wyświetlanie nazwy dispensera
                 if(!DispenserName.isEmpty()) button.setText(DispenserName);
@@ -130,7 +130,10 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
                             button.setGravity(Gravity.CENTER);
                             button.setOnClickListener((View.OnClickListener) context);
                             button.setOnLongClickListener((View.OnLongClickListener) context);
-                            linearLayout.addView(button);
+                            button.setBackgroundResource(R.drawable.bg_rounded_control);
+                            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                            layoutParams.setMargins(30, 20, 30, 0);
+                            linearLayout.addView(button,layoutParams);
 
                             //Wyświetlanie nazwy dispensera
                             if(!DispenserName.isEmpty()) button.setText(DispenserName);

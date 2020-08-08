@@ -4,8 +4,8 @@
     <string name="password">Hasło</string>
     <string name="email">E-mail</string>
     <string name="DispenserID">Id Dispensera</string>
-    <string name="hour">Godzina</string>
-    <string name="minutes">Minuty</string>
+    <string name="hour">GG</string>
+    <string name="minutes">MM</string>
     <string name="count">Ilość</string>
     <string name="periodicity">Okresowość</string>
     <string name="description">Opis</string>
@@ -46,4 +46,11 @@
     <string name="wrong_login_password">Zły login lub hasło!</string>
     <string name="Days">Dni</string>
     <string name="no_history_plans">Ten dispenser nie ma historii ani planów!</string>
+    <string name="start_date">Data rozpoczęcia</string>
+    <string name="now">Teraz</string>
+    <string name="end_date">Data zakończenia</string>
+    <string name="sign_in_label">Dołącz!</string>
+    <string name="find_dispenser1">Wyszukaj urządzenie</string>
+    <string name="available_devices">Dostępne urządzenia</string>
+    <string name="scan">Skanuj</string>
 </resources>

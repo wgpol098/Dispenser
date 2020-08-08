@@ -20,19 +20,46 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:appComponentFactory"
         tools:targetApi="p">
-        <activity android:name=".HistoryDoctorActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".MainMenuDoctorActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".DispenserMenuDoctorActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".AddDispenserActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".DispenserMenuActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".SettingActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".QrScannerActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".ChangeHourActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".SignInActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".HistoryActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".HoursActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".MainMenuActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".MainActivity" android:screenOrientation="portrait">
+        <activity android:name=".CalendarActivity" />
+        <activity
+            android:name=".HistoryDoctorActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainMenuDoctorActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".DispenserMenuDoctorActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AddDispenserActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".DispenserMenuActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SettingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".QrScannerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ChangeHourActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".SignInActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".HistoryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".HoursActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainMenuActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

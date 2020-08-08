@@ -98,12 +98,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         }
-        //Animacje guziczków
-        final Animation myAnim = AnimationUtils.loadAnimation(this, R.anim.milkshake);
-        Button signB = findViewById(R.id.SignInButton);
-        Button logB = findViewById(R.id.LogInButton);
-        signB.startAnimation(myAnim);
-        logB.startAnimation(myAnim);
     }
 
     public void fdbutton(View v)

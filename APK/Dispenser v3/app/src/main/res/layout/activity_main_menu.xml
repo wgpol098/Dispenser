@@ -33,14 +33,26 @@
         app:layout_constraintTop_toBottomOf="@+id/HistoryButton" />
 
     <Button
+        android:id="@+id/CalendarButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:background="@android:color/transparent"
+        android:onClick="fCalendarButton"
+        android:text="KALYNDORZ"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="@+id/HoursButton"
+        app:layout_constraintTop_toBottomOf="@+id/HoursButton" />
+
+    <Button
         android:id="@+id/SettingButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="22dp"
         android:background="@android:color/transparent"
         android:onClick="fSettingsButton"
         android:text="@string/settings"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/HoursButton"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@+id/CalendarButton"
+        app:layout_constraintTop_toBottomOf="@+id/CalendarButton" />
 </androidx.constraintlayout.widget.ConstraintLayout>

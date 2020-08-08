@@ -40,13 +40,14 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
         if(b!=null) idDispenser = b.getInt("idDispenser");
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onResume()
     {
         super.onResume();
 
         //Zmienna przechowująca informacje ile i która tablica była pusta
-        //0 - wzsystko git
+        //0 - wszystko git
         //1 - brak planów bądź historii
         //2 - brak planów i historii - wtedy musisz pokazać komunikat
         byte blank=0;
@@ -57,7 +58,7 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
         ScrollView scroll = findViewById(R.id.scrollView);
         scroll.setBackgroundResource(R.drawable.bg_gradient);
 
-        //Tworzenie jsona do wysłania jsona o historię i plan danego dispensera
+        //Tworzenie jsona do wysłania rządania o historię i plan danego dispensera
         //Trzeba dodać info, że jest pusty i nie ma żadnych danych
         JSONObject json = new JSONObject();
         try
@@ -76,8 +77,10 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
         button.setText(R.string.add);
         button.setGravity(Gravity.CENTER);
         button.setOnClickListener(this);
-//                button.setOnLongClickListener(this);
-        linearLayout.addView(button);
+        button.setBackgroundResource(R.drawable.bg_rounded_control);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(30, 20, 30, 0);
+        linearLayout.addView(button,layoutParams);
 
 
         //GETDOCTORPLANS
@@ -85,11 +88,7 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
         connection.Connect();
 
         //Jeśli błąd to nie czytam odpowiedzi od serwera
-        if(connection.getResponseCode()!=200)
-        {
-            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connection.Error());
-            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-        }
+        if(connection.getResponseCode()!=200) blank++;
         //Jeśli wszystko poszło i serwer działa to trzeba odczytać odpowiedź
         else
         {
@@ -126,12 +125,17 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
                 //Tworzenie kontrolki
                 TextView tv = new TextView(this);
                 tv.setTextColor(Color.WHITE);
-                tv.setText(description);
+                tv.setText(R.string.description);
+                tv.append(": " + description);
                 tv.setId(idRecord);
                 tv.append(System.getProperty("line.separator"));
-                tv.append(start + " " + firsthour + " - Nał");
+                tv.append(getResources().getString(R.string.start_date));
+                tv.append(": ");
+                tv.append(start + " " + firsthour);
                 tv.append(System.getProperty("line.separator"));
-                tv.append(String.valueOf(periodicity));
+                tv.append(getResources().getString(R.string.end_date) + ": " + getResources().getString(R.string.now));
+                tv.append(System.getProperty("line.separator"));
+                tv.append(getResources().getString(R.string.periodicity) + ": " + periodicity);
                 tv.setOnClickListener(this);
                 //wyświetlanie kiedy nie wziął leku
                 for(int j=0;j<didntTakeArray.length();j++)
@@ -149,7 +153,7 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
                         e.printStackTrace();
                     }
                 }
-                linearLayout.addView(tv);
+                linearLayout.addView(tv,layoutParams);
             }
         }
 
@@ -161,11 +165,7 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
         connection.Connect();
 
         //Jeśli błąd to nie czytam odpowiedzi od serwera
-        if(connection.getResponseCode()!=200)
-        {
-            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connection.Error());
-            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-        }
+        if(connection.getResponseCode()!=200) blank++;
         //Jeśli wszystko poszło i serwer działa to trzeba odczytać odpowiedź
         else
         {
@@ -203,18 +203,41 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
 
                 //Modyfikacja danych
                 firsthour = firsthour.replace("-",":");
-                if(periodicity==0) periodicity=1;
+                //if(periodicity==0) periodicity=1;
 
                 //Tworzenie kontrolki
                 TextView tv = new TextView(this);
-                tv.setText(description);
+                tv.setText(R.string.description);
+                tv.append(": ");
+                tv.append(description);
                 tv.append(System.getProperty("line.separator"));
-                if(start.equals(end)) tv.append(start + " " + firsthour);
-                else tv.append(start + " " + firsthour + " - " + end);
+                tv.append(getResources().getString(R.string.start_date) + ": " + start + " " + firsthour);
                 tv.append(System.getProperty("line.separator"));
-                tv.append(String.valueOf(periodicity*count));
-                if(didntTakeArray.length()==0) tv.setBackgroundColor(Color.GREEN);
-                else tv.setBackgroundColor(Color.RED);
+                tv.append(getResources().getString(R.string.end_date) + ": " + end);
+                tv.append(System.getProperty("line.separator"));
+                if(periodicity != 0)
+                {
+                    tv.append(getResources().getString(R.string.periodicity) + ": " + String.valueOf(periodicity));
+                    tv.append(System.getProperty("line.separator"));
+                }
+                tv.setPadding(10,10,10,10);
+
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+                params.setMargins(10,10,10,10);
+                params.gravity = Gravity.CENTER;
+                //To jest coś takie głupie
+                params.width = 1000;
+                tv.setLayoutParams(params);
+
+                //Tworzenie gradientu dla TextView
+                GradientDrawable gd = new GradientDrawable();
+                gd.setCornerRadius(45);
+                if(didntTakeArray.length() == 0) gd.setColor(Color.GREEN);
+                else gd.setColor(Color.rgb(255,50,50));
+                gd.setStroke(20,Color.alpha(0));
+                gd.setStroke(2, Color.BLACK);
+
+                tv.setBackground(gd);
                 //wyświetlanie kiedy nie wziął leku
                 for(int j=0;j<didntTakeArray.length();j++)
                 {
@@ -222,9 +245,8 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
                     try
                     {
                         jtmp = didntTakeArray.getJSONObject(j);
-                        String stmp = jtmp.getString("date");
                         tv.append(System.getProperty("line.separator"));
-                        tv.append(stmp);
+                        tv.append(jtmp.getString("date"));
                     }
                     catch (JSONException e)
                     {

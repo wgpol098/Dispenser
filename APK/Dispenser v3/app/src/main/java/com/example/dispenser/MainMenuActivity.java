@@ -50,6 +50,12 @@ public class MainMenuActivity extends AppCompatActivity
         btn.setVisibility(View.INVISIBLE);
     }
 
+    public void fCalendarButton(View v)
+    {
+        Intent intent = new Intent(this,CalendarActivity.class);
+        intent.putExtra("idDispenser",IdDispenser);
+        startActivity(intent);
+    }
     public void fSettingsButton(View v)
     {
         Intent intent = new Intent(this,SettingActivity.class);
