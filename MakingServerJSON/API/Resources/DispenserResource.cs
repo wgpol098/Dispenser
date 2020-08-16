@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace WebApplication1.API.Resources
+﻿namespace WebApplication1.API.Resources
 {
     public class DispenserResource
     {

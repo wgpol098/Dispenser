@@ -489,3 +489,5 @@ D:\Programowanie\MakingServer\ServerProject\obj\Debug\netcoreapp3.1\WebApplicati
 D:\Programowanie\MakingServer\ServerProject\obj\Debug\netcoreapp3.1\WebApplication1.dll
 D:\Programowanie\MakingServer\ServerProject\obj\Debug\netcoreapp3.1\WebApplication1.pdb
 D:\Programowanie\MakingServer\ServerProject\obj\Debug\netcoreapp3.1\WebApplication1.csprojAssemblyReference.cache
+D:\Programowanie\MakingServer\ServerProject\obj\Debug\netcoreapp3.1\WebApplication1.csproj.CoreCompileInputs.cache
+D:\Programowanie\MakingServer\ServerProject\obj\Debug\netcoreapp3.1\WebApplication1.genruntimeconfig.cache

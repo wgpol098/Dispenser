@@ -14,6 +14,8 @@ namespace WebApplication1.API.Domain.Services
         Task<AndroidResponse> SaveAsync(Plan dispenser);
         Task<Dispenser> FindOkienka(int idDispenser);
         Task<DispenserResponse> UpdateDispenserOkienkaAsync(string v, int id);
+        Task<IEnumerable<AndroidSendToAppGetDayInfo>> ListDayInfo(AndroidSendGetDayInfo androidSendGetDayInfo);
+        Task<IEnumerable<AndroidSendToAppCallendarInfo>> ListCallendarInfo(AndroidSendCallendarInfo androidSendCallendarInfo);
         Task<bool> UpdateAsync(AndroidSendPostUpdate resource);
         Task<bool> DeleteAsync(AndroidSendIdRecord androidSendIdRecord);
         Task<IEnumerable<AndroidSendToAppByIdDispDoctorHistory>> ListHistoryPlanAsync(int idDispenser);

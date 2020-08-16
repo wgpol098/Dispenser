@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using System;
 using System.Collections.Generic;
@@ -458,6 +459,98 @@ namespace WebApplication1.API.Persistence.Repositories
             {
                 return new DispenserUpdateCounter() { NoUpdate = -1 };
             }
+        }
+
+        public async Task<IEnumerable<AndroidSendToAppGetDayInfo>> ListDayInfoAsync(AndroidSendGetDayInfo androidSendGetDayInfo)
+        {
+            DateTime DateAndTime = DateTime.Parse(androidSendGetDayInfo.DateAndTime);
+
+            List<Plan> plans = new List<Plan>();
+            List<Historia> historias = new List<Historia>();
+            List<AndroidSendToAppGetDayInfo> lista = new List<AndroidSendToAppGetDayInfo>();
+
+            if (DateAndTime > DateTime.Today)            //Dni dalsze od dzisiaj, pobieranie danych z Plans
+            {
+                plans = await _context.Plans.Where(q => q.IdDispenser == androidSendGetDayInfo.IdDispenser && q.DateAndTime.Year == DateAndTime.Year &&
+                q.DateAndTime.Month == DateAndTime.Month && q.DateAndTime.Day == DateAndTime.Day).ToListAsync();
+                
+            } else if (DateAndTime < DateTime.Today)    //Dni wczesniejsze od dzisiaj, pobieranie danych z History
+            {
+                historias = await _context.History.Where(q => q.IdDispenser == androidSendGetDayInfo.IdDispenser && q.DateAndTime.Year == DateAndTime.Year &&
+                q.DateAndTime.Month == DateAndTime.Month && q.DateAndTime.Day == DateAndTime.Day).ToListAsync();
+            }
+            else                                        //Dzień dzisiejszy, pobieranie danych z Plans oraz z History
+            {
+                plans = await _context.Plans.Where(q => q.IdDispenser == androidSendGetDayInfo.IdDispenser && q.DateAndTime.Year == DateTime.Now.Year &&
+                q.DateAndTime.Month == DateTime.Now.Month && q.DateAndTime.Day == DateTime.Now.Day).ToListAsync();
+                historias = await _context.History.Where(q => q.IdDispenser == androidSendGetDayInfo.IdDispenser && q.DateAndTime.Year == DateTime.Now.Year &&
+                q.DateAndTime.Month == DateTime.Now.Month && q.DateAndTime.Day == DateTime.Now.Day).ToListAsync();
+            }
+
+            foreach (var q in plans)
+            {
+                var temp = new AndroidSendToAppGetDayInfo()
+                {
+                    Description = q.Description,
+                    Hours = q.DateAndTime.Hour,
+                    NoWindow = q.NoWindow,
+                    Flag = -2,
+                    IdRecord = q.Id,
+                    Minutes = q.DateAndTime.Minute,
+                    TableFlag = 1
+                };
+                lista.Add(temp);
+            }
+
+            foreach (var q in historias)
+            {
+                var temp = new AndroidSendToAppGetDayInfo()
+                {
+                    Description = q.Description,
+                    Hours = q.DateAndTime.Hour,
+                    NoWindow = q.NoWindow,
+                    Flag = q.Flag,
+                    IdRecord = q.Id,
+                    Minutes = q.DateAndTime.Minute,
+                    TableFlag = 0
+                };
+                lista.Add(temp);
+            }
+
+            return lista;
+        }
+
+        public async Task<IEnumerable<AndroidSendToAppCallendarInfo>> ListCallendarInfoAsync(AndroidSendCallendarInfo androidSendCallendarInfo)
+        {
+            List<AndroidSendToAppCallendarInfo> lista = new List<AndroidSendToAppCallendarInfo>();
+
+            List<Plan> plans = await _context.Plans.Where(q => q.IdDispenser == androidSendCallendarInfo.IdDispenser && 
+            q.DateAndTime.Month == androidSendCallendarInfo.Month && q.DateAndTime.Year == androidSendCallendarInfo.Year).ToListAsync();
+
+            List<Historia> historias = await _context.History.Where(q => q.IdDispenser == androidSendCallendarInfo.IdDispenser &&
+            q.DateAndTime.Month == androidSendCallendarInfo.Month && q.DateAndTime.Year == androidSendCallendarInfo.Year).ToListAsync();
+
+            foreach (var q in plans)
+            {
+                var temp = new AndroidSendToAppCallendarInfo()
+                {
+                    DateAndTime = q.DateAndTime,
+                    Flag = -2,
+                };
+                lista.Add(temp);
+            }
+
+            foreach (var q in historias)
+            {
+                var temp = new AndroidSendToAppCallendarInfo()
+                {
+                    DateAndTime = q.DateAndTime,
+                    Flag = q.Flag
+                };
+                lista.Add(temp);
+            }
+
+            return lista;
         }
     }
 }

@@ -135,5 +135,15 @@ namespace WebApplication1.API.Services
                 return new DispenserUpdateCounter() { NoUpdate = -1 };
             }
         }
+
+        public async Task<IEnumerable<AndroidSendToAppGetDayInfo>> ListDayInfo(AndroidSendGetDayInfo androidSendGetDayInfo)
+        {
+            return await _androidRepository.ListDayInfoAsync(androidSendGetDayInfo);
+        }
+
+        public async Task<IEnumerable<AndroidSendToAppCallendarInfo>> ListCallendarInfo(AndroidSendCallendarInfo androidSendCallendarInfo)
+        {
+            return await _androidRepository.ListCallendarInfoAsync(androidSendCallendarInfo);
+        }
     }
 }

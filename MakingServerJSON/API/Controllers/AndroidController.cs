@@ -64,6 +64,20 @@ namespace WebApplication1.API.Controllers
             return disp;
         }
 
+        [HttpPost("GetDayInfo")]
+        public async Task<IEnumerable<AndroidSendToAppGetDayInfo>> GetDayInfo([FromBody] AndroidSendGetDayInfo androidSendGetDayInfo)
+        {
+            var disp = await _androidService.ListDayInfo(androidSendGetDayInfo);
+            return disp;
+        }
+
+        [HttpPost("GetCallendarInfo")]
+        public async Task<IEnumerable<AndroidSendToAppCallendarInfo>> GetCallendarInfo([FromBody] AndroidSendCallendarInfo androidSendCallendarInfo)
+        {
+            var disp = await _androidService.ListCallendarInfo(androidSendCallendarInfo);
+            return disp;
+        }
+
         [HttpPost("UpdateCounter")]
         public async Task<DispenserUpdateCounter> UpdateCounterAsync([FromBody] AndroidSendIdDispenser androidSendIdDispenser)
         {

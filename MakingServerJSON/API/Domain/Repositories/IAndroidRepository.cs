@@ -12,6 +12,8 @@ namespace WebApplication1.API.Domain.Repositories
         Task<IEnumerable<AndroidSendToAppByIdDisp>> ListAllRecordsForDispenserAsync(int androidSendIdDispenser);
         Task<IEnumerable<AndroidSendToAppByIdDispHistory>> ListAllRecordsInHistoryAsync(int androidSendIdDispenser);
         Task<AndroidSendToAppByIdRecord> ListAllRecordsInPlansByIdRecordAsync(int androidSendIdDispenser);
+        Task<IEnumerable<AndroidSendToAppGetDayInfo>> ListDayInfoAsync(AndroidSendGetDayInfo androidSendIdDispenser);
+        Task<IEnumerable<AndroidSendToAppCallendarInfo>> ListCallendarInfoAsync(AndroidSendCallendarInfo androidSendIdDispenser);
         Task AddAsync(Plan dispenser);
         Task<Dispenser> ReturnDispenserFromTable(int idDispenser);
         Task<Dispenser> FindDispenserAsync(int id);
