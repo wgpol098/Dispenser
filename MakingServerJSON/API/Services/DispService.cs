@@ -20,11 +20,45 @@ namespace WebApplication1.API.Services
             _unitOfWork = unitOfWork;
         }
 
+        public async Task<PresentationResponse> ChangeRecordInPresentationTable(DispSendPres dispSendPres)
+        {
+            var existingRecord = await _dispRepository.FindPrezRecordByNoWindowAsync(dispSendPres.NumberWindow);
+
+            if (existingRecord == null)
+                return new PresentationResponse("PresentationRecord not found.");
+
+            existingRecord.Flag = dispSendPres.WindowFlag;
+
+            try
+            {
+                _dispRepository.ChangeRecordInPresentationTableAsync(existingRecord);
+                await _unitOfWork.CompleteAsync();
+
+                return new PresentationResponse(existingRecord);
+            }
+            catch (Exception ex)
+            {
+                return new PresentationResponse($"An error occurred when saving the record of PresentationRecord: {ex.Message}");
+            }
+        }
+
         public async Task<IEnumerable<Plan>> ListDatesAsync(DispSendToServerGET dispSendToServer)
         {
             try
             {
                 return await _dispRepository.ListAllDatesAsync(dispSendToServer);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<Presentation>> ListPresentationGet()
+        {
+            try
+            {
+                return await _dispRepository.ListAllRecordsPresentationAsync();
             }
             catch (Exception)
             {

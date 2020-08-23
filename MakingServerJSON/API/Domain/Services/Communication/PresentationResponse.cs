@@ -2,14 +2,14 @@
 
 namespace WebApplication1.API.Domain.Services.Communication
 {
-    public class DispResponse : BaseResponse<Historia>
+    public class PresentationResponse : BaseResponse<Presentation>
     {
         /// <summary>
         /// Creates a success response.
         /// </summary>
-        /// <param name="dispenser">Saved dispenser.</param>
+        /// <param name="presentation">Saved dispenser.</param>
         /// <returns>Response.</returns>
-        public DispResponse(Historia dispenser) : base(dispenser)
+        public PresentationResponse(Presentation presentation) : base(presentation)
         { }
 
         /// <summary>
@@ -17,7 +17,7 @@ namespace WebApplication1.API.Domain.Services.Communication
         /// </summary>
         /// <param name="message">Error message.</param>
         /// <returns>Response.</returns>
-        public DispResponse(string message) : base(message)
+        public PresentationResponse(string message) : base(message)
         { }
     }
 }

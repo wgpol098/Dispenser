@@ -45,5 +45,27 @@ namespace WebApplication1.API.Controllers
 
             return Ok();
         }
+
+        [HttpPost("PresentationPost")]
+        public async Task<IActionResult> PrezentationPost ([FromBody] DispSendPres dispSendPres)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState.GetErrorMessages());
+
+            var result = await _dispService.ChangeRecordInPresentationTable(dispSendPres);
+
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            return Ok();
+        }
+
+        [HttpGet("PresentationGet")]
+        public async Task<IEnumerable<Presentation>> PresentationGet()
+        {
+            var records = await _dispService.ListPresentationGet();
+
+            return records;
+        }
     }
 }

@@ -9,6 +9,8 @@ namespace WebApplication1.API.Domain.Services
     public interface IDispService
     {
         Task<IEnumerable<Plan>> ListDatesAsync(DispSendToServerGET dispSendToServer);
+        Task<IEnumerable<Presentation>> ListPresentationGet();
         Task<DispResponse> SaveHistoryRecordAsync(Historia disp);
+        Task<PresentationResponse> ChangeRecordInPresentationTable(DispSendPres dispSendPres);
     }
 }

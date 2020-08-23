@@ -10,6 +10,7 @@ namespace WebApplication1.API.Persistence.Contexts
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Historia> History { get; set; }
         public DbSet<Plan> Plans { get; set; }
+        public DbSet<Presentation> Presentations { get; set; }
         public DbSet<ListOfDispenser> ListOfDispensers { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {}
@@ -128,6 +129,26 @@ namespace WebApplication1.API.Persistence.Contexts
                 new ListOfDispenser { Id = 14, IdDispenser = 109, IdAccount = 7, Name = "n" },
                 new ListOfDispenser { Id = 15, IdDispenser = 102, IdAccount = 8, Name = "o" },
                 new ListOfDispenser { Id = 16, IdDispenser = 109, IdAccount = 8, Name = "p" }
+            );
+
+            builder.Entity<Presentation>().ToTable("PresentationTable");
+            builder.Entity<Presentation>().HasKey(p => p.Id);
+            builder.Entity<Presentation>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+
+            builder.Entity<Presentation>().HasData
+            (
+                new Presentation { Id = 1, Flag = 0},
+                new Presentation { Id = 2, Flag = 0},
+                new Presentation { Id = 3, Flag = 1},
+                new Presentation { Id = 4, Flag = -1},
+                new Presentation { Id = 5, Flag = -1},
+                new Presentation { Id = 6, Flag = 1},
+                new Presentation { Id = 7, Flag = 1},
+                new Presentation { Id = 8, Flag = 1},
+                new Presentation { Id = 9, Flag = 0},
+                new Presentation { Id = 10, Flag = -1},
+                new Presentation { Id = 11, Flag = 0},
+                new Presentation { Id = 12, Flag = 0}
             );
         }
     }

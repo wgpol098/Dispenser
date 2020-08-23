@@ -64,9 +64,24 @@ namespace WebApplication1.API.Persistence.Repositories
             }
         }
 
+        public void ChangeRecordInPresentationTableAsync(Presentation presentation)
+        {
+            _context.Presentations.Update(presentation);
+        }
+
+        public async Task<Presentation> FindPrezRecordByNoWindowAsync(int NoWindow)
+        {
+            return await _context.Presentations.FirstOrDefaultAsync(q => q.Id == NoWindow);
+        }
+
         public async Task<IEnumerable<Plan>> ListAllDatesAsync(DispSendToServerGET dispSendToServer)
         {
             return await _context.Plans.Where(q => q.IdDispenser == dispSendToServer.IdDispenser).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Presentation>> ListAllRecordsPresentationAsync()
+        {
+            return await _context.Presentations.ToListAsync();
         }
 
         //Powtórzenie metody z AndroidRep - najwyżej później usunąć
