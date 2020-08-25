@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_gradient"
+    tools:context=".ChangeHourActivity">
+
+    <EditText
+        android:id="@+id/MinutesTextBox"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:backgroundTint="@color/white"
+        android:digits="1234567890"
+        android:ems="10"
+        android:hint="@string/minutes"
+        android:inputType="numberDecimal"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textColorHint="@color/whitehint"
+        android:textSize="30dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/HoursTextBox"
+        app:layout_constraintStart_toStartOf="@+id/textView2" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="102dp"
+        android:layout_marginEnd="218dp"
+        android:layout_marginRight="218dp"
+        android:layout_marginBottom="488dp"
+        android:text=":"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/OkButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/HoursTextBox"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/HoursTextBox"
+        android:layout_width="48dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="123dp"
+        android:layout_marginLeft="123dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginBottom="73dp"
+        android:backgroundTint="@color/white"
+        android:digits="1234567890"
+        android:ems="10"
+        android:hint="@string/hour"
+        android:inputType="numberDecimal"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textColorHint="@color/whitehint"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/DescriptionTextBox"
+        app:layout_constraintEnd_toStartOf="@+id/textView2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/CountTextBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:digits="1234567890"
+        android:ems="10"
+        android:hint="@string/count"
+        android:inputType="numberDecimal"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textColorHint="@color/whitehint"
+        app:layout_constraintBottom_toTopOf="@+id/PeriodicityTextBox"
+        app:layout_constraintStart_toStartOf="@+id/DescriptionTextBox"
+        app:layout_constraintTop_toBottomOf="@+id/DescriptionTextBox" />
+
+    <EditText
+        android:id="@+id/PeriodicityTextBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="118dp"
+        android:backgroundTint="@color/white"
+        android:digits="1234567890"
+        android:ems="10"
+        android:hint="@string/periodicity"
+        android:inputType="numberDecimal"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textColorHint="@color/whitehint"
+        app:layout_constraintBottom_toTopOf="@+id/DaysTextBox"
+        app:layout_constraintStart_toStartOf="@+id/CountTextBox"
+        app:layout_constraintTop_toBottomOf="@+id/CountTextBox" />
+
+    <EditText
+        android:id="@+id/DescriptionTextBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="19dp"
+        android:backgroundTint="@color/white"
+        android:ems="10"
+        android:hint="@string/description"
+        android:inputType="textPersonName"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textColorHint="@color/whitehint"
+        app:layout_constraintBottom_toTopOf="@+id/CountTextBox"
+        app:layout_constraintEnd_toEndOf="@+id/textView2"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintTop_toBottomOf="@+id/HoursTextBox" />
+
+    <Button
+        android:id="@+id/OkButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="51dp"
+        android:background="@android:color/transparent"
+        android:onClick="fOkButton"
+        android:text="@string/add"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+    <EditText
+        android:id="@+id/DaysTextBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="133dp"
+        android:backgroundTint="@color/white"
+        android:ems="10"
+        android:hint="@string/Days"
+        android:inputType="textPersonName"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textColorHint="@color/whitehint"
+        app:layout_constraintBottom_toTopOf="@+id/OkButton"
+        app:layout_constraintEnd_toEndOf="@+id/PeriodicityTextBox"
+        app:layout_constraintStart_toStartOf="@+id/PeriodicityTextBox"
+        app:layout_constraintTop_toBottomOf="@+id/PeriodicityTextBox" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
