@@ -1,11 +1,6 @@
 package com.example.dispenser;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
@@ -15,7 +10,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,7 +40,7 @@ public class SignInActivity extends AppCompatActivity
                 if(confirm_password.getText().toString().equals(password.getText().toString())) same=true;
 
                 TextView tv = findViewById(R.id.wrongPasswordLabel2);
-                if(same==true)
+                if(same)
                 {
                     tv.setVisibility(View.INVISIBLE);
                     cpassword_flag=true;
@@ -72,13 +66,11 @@ public class SignInActivity extends AppCompatActivity
             {
                 boolean number=false;
                 boolean Uletter=false;
-                boolean Lletter=false;
+                boolean Letter=false;
                 boolean Special=false;
-                boolean quantity=false;
 
                 if(s.length()>7)
                 {
-                    quantity = true;
                     for(int i=0;i<s.length();i++)
                     {
                         if(!Character.isLetterOrDigit(s.charAt(i))) Special=true;
@@ -86,14 +78,13 @@ public class SignInActivity extends AppCompatActivity
                         {
                             if(Character.isUpperCase(s.charAt(i))) Uletter = true;
                             if(Character.isDigit(s.charAt(i))) number = true;
-                            if(Character.isLowerCase(s.charAt(i))) Lletter = true;
+                            if(Character.isLowerCase(s.charAt(i))) Letter = true;
                         }
                     }
                 }
 
-
                 TextView tv = findViewById(R.id.wrongPasswordLabel);
-                if(!Uletter || !number || !Lletter || !Special || !quantity)
+                if(!Uletter || !number || !Letter || !Special)
                 {
                     tv.setVisibility(View.VISIBLE);
                     password_flag=false;
@@ -124,8 +115,7 @@ public class SignInActivity extends AppCompatActivity
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
-                Boolean real=false;
-                Boolean dot=false;
+                boolean real=false, dot=false;
                 for(int i=0;i<s.length();i++)
                 {
                     if(s.charAt(i)=='@') real = true;
@@ -142,7 +132,7 @@ public class SignInActivity extends AppCompatActivity
                 if(real && dot)
                 {
                     tv.setVisibility(View.INVISIBLE);
-                    email.setTextColor(Color.WHITE);
+                    email.setTextColor(Color.BLACK);
                     email_flag=true;
                 }
             }
@@ -175,7 +165,7 @@ public class SignInActivity extends AppCompatActivity
                 tv.setVisibility(View.VISIBLE);
             }
 
-            DialogFragment dialog = new MyDialog("Bład","Coś jest nie tak");
+            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),getResources().getString(R.string.something_went_wrong));
             dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
         }
         else
@@ -183,7 +173,7 @@ public class SignInActivity extends AppCompatActivity
             //Sprawdzenie czy wprowadzone dane są prawidłowe
             if(!email_flag || !password_flag || !cpassword_flag)
             {
-                DialogFragment dialog = new MyDialog("Bład","Podałeś zły email!");
+                DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),getResources().getString(R.string.wrong_email));
                 dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
             }
             else
@@ -214,7 +204,6 @@ public class SignInActivity extends AppCompatActivity
                 Connections connection = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Account/register","POST",json,false);
                 connection.Connect();
 
-                //Jeśli wszystko git to dodano użytkownika
                 if(connection.getResponseCode()==200)
                 {
                     Toast toast = Toast.makeText(this,R.string.sign_in_success,Toast.LENGTH_LONG);
@@ -223,7 +212,7 @@ public class SignInActivity extends AppCompatActivity
                 }
                 else
                 {
-                    DialogFragment dialog = new MyDialog("Error","Podany użytkownik już istnieje w bazie danych");
+                    DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),getResources().getString(R.string.user_already_exists));
                     dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
                 }
             }

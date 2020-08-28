@@ -32,7 +32,6 @@ public class AddDispenserActivity extends AppCompatActivity {
         Bundle b = getIntent().getExtras();
         if(b!=null)
         {
-            //Jeśli user nie jest zapamiętany
             idDispenser = b.getInt("QrScan");
             idDispensers = b.getString("idDispenser");
             login = b.getString("login");
@@ -78,7 +77,8 @@ public class AddDispenserActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
-                idDispenser = Integer.parseInt(s.toString());
+                if (s.length() != 0) idDispenser = Integer.parseInt(s.toString());
+                else idDispenser = 0;
                 ValidationCodeGenerator val = new ValidationCodeGenerator(idDispenser);
                 val.Generate();
                 ControlSum = val.getValidationCode();
@@ -95,9 +95,31 @@ public class AddDispenserActivity extends AppCompatActivity {
     {
         EditText tv = findViewById(R.id.MD5TextBox);
         EditText DispenserName = findViewById(R.id.dispenserNameTextBox);
+        Boolean flag = false;
 
-        //Sprawdzanie czy user podał w ogóle kod weryfikacyjny i czy jest on prawidłowy
-        if(!tv.getText().toString().isEmpty() && ControlSum == Integer.parseInt(tv.getText().toString()))
+        //Może sprawdzać czy dany dispenser należy do usera
+        try
+        {
+            JSONArray jsonArray = new JSONArray(idDispensers);
+            int tmp;
+            JSONObject json;
+            for(int i=0;i<jsonArray.length();i++)
+            {
+                tmp = jsonArray.getJSONObject(i).getInt("idDispenser");
+                if(tmp == idDispenser)
+                {
+                    flag = true;
+                    break;
+                }
+            }
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
+        //Sprawdzanie czy user podał w ogóle kod weryfikacyjny i czy jest on prawidłowy i czy nie istnieje
+        if(!tv.getText().toString().isEmpty() && ControlSum == Integer.parseInt(tv.getText().toString()) && !flag)
         {
             //Tworzenie jsona do wysłania elementów
             JSONObject json = new JSONObject();
@@ -146,8 +168,6 @@ public class AddDispenserActivity extends AppCompatActivity {
                 String dispenserID = sharedPref.getString("IdDispenser", "");
 
                 Intent intent = new Intent(this,DispenserMenuDoctorActivity.class);
-
-                //TU POWINIENES SPRAWDZIC CZY USER JEST ZAPAMIETANY CZY NIE
                 intent.putExtra("IdDispenser", JsonArray.toString());
                 intent.putExtra("login",login);
 
@@ -162,8 +182,16 @@ public class AddDispenserActivity extends AppCompatActivity {
         }
         else
         {
-            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error), getString(R.string.wrong_validation_code));
-            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+            if(!flag)
+            {
+                DialogFragment dialog = new MyDialog(getResources().getString(R.string.error), getString(R.string.wrong_validation_code));
+                dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+            }
+            else
+            {
+                DialogFragment dialog = new MyDialog(getResources().getString(R.string.error), getString(R.string.dispenser_belongs));
+                dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+            }
         }
     }
 }

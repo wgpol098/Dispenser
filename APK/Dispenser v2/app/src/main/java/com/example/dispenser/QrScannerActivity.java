@@ -1,12 +1,10 @@
 package com.example.dispenser;
-
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.SparseArray;
 import android.view.View;
-import android.widget.Toast;
 import com.google.android.gms.vision.barcode.Barcode;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,22 +72,15 @@ public class QrScannerActivity extends AppCompatActivity implements BarcodeReade
                 {
                     JSONObject json = JsonArray.getJSONObject(i);
                     int tmp = json.getInt("idDispenser");
+                    //jeśli jest na liście to
                     if(tmp == Integer.parseInt(barcode.displayValue))
                     {
-                        //jeśli jest to user
-                        if(user=true)
-                        {
-                            Toast toast = Toast.makeText(this, R.string.dispenser_belongs, Toast.LENGTH_LONG);
-                            toast.show();
-                        }
-                        //jeśli jest to lekarz
-                        else
-                        {
-                            finish();
-                            Intent intent = new Intent(this,MainMenuDoctorActivity.class);
-                            intent.putExtra("idDispenser",tmp);
-                            startActivity(intent);
-                        }
+                        finish();
+                        Intent intent;
+                        if(user) intent = new Intent(this,CalendarActivity.class);
+                        else intent = new Intent(this,MainMenuDoctorActivity.class);
+                        intent.putExtra("idDispenser",tmp);
+                        startActivity(intent);
                     }
                 }
             }
@@ -101,9 +92,7 @@ public class QrScannerActivity extends AppCompatActivity implements BarcodeReade
         //jeśli jest to nowy dispenser dla użytkownika
         else
         {
-            //jeszcze się zastanów
             finish();
-
             Intent intent = new Intent(this,AddDispenserActivity.class);
             intent.putExtra("QrScan",barcode.displayValue);
             intent.putExtra("idDispenser",idDispenser);
@@ -113,18 +102,11 @@ public class QrScannerActivity extends AppCompatActivity implements BarcodeReade
     }
 
     @Override
-    public void onScannedMultiple(List<Barcode> barcodes)
-    {
-
-    }
+    public void onScannedMultiple(List<Barcode> barcodes) {}
     @Override
-    public void onBitmapScanned(SparseArray<Barcode> sparseArray) {
-
-    }
+    public void onBitmapScanned(SparseArray<Barcode> sparseArray) {}
     @Override
-    public void onScanError(String errorMessage) {
-
-    }
+    public void onScanError(String errorMessage) {}
     @Override
     public void onCameraPermissionDenied()
     {

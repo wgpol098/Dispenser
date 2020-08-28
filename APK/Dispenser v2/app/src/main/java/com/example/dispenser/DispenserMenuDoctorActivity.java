@@ -1,5 +1,4 @@
 package com.example.dispenser;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import android.content.Context;
@@ -22,7 +21,7 @@ import org.json.JSONObject;
 public class DispenserMenuDoctorActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
     private String idDispenser;
     private String login;
-    private Context context;
+    private Context context = this;
     private boolean doctor = false;
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -30,9 +29,6 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
         super.onCreate(savedInstanceState);
         getSupportActionBar().hide();
         setContentView(R.layout.activity_dispenser_menu_doctor);
-        context = this;
-
-        //Musisz sprawdzać czy jest w SharedPreferences też
 
         //Czytanie przekazanych danych
         Bundle b = getIntent().getExtras();
@@ -125,7 +121,7 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
 
                 //Wyświetlanie nazwy dispensera
                 if(!DispenserName.isEmpty()) button.setText(DispenserName);
-                if(DispenserName=="null") button.setText(String.valueOf(iddispenser));
+                if(DispenserName.equals("null")) button.setText(String.valueOf(iddispenser));
             }
         }
 
@@ -145,10 +141,10 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
 
                     JSONArray JsonArray = new JSONArray(idDispenser);
                     String text = find.getText().toString();
-
+                    JSONObject json;
                     for(int i=0;i<JsonArray.length();i++)
                     {
-                        JSONObject json = JsonArray.getJSONObject(i);
+                        json = JsonArray.getJSONObject(i);
                         String tmp = String.valueOf(json.getInt("idDispenser"));
                         int id = json.getInt("idDispenser");
                         String DispenserName = json.getString("name");
@@ -169,7 +165,7 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
 
                             //Wyświetlanie nazwy dispensera
                             if(!DispenserName.isEmpty()) button.setText(DispenserName);
-                            if(DispenserName=="null") button.setText(String.valueOf(id));
+                            if(DispenserName.equals("null")) button.setText(String.valueOf(id));
                         }
                     }
                 }
@@ -188,10 +184,6 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
         Intent intent = new Intent(this,QrScannerActivity.class);
         intent.putExtra("idDispenser",idDispenser);
         intent.putExtra("login",login);
-
-
-
-        //ACZKOLWIEK MASZ TO DO SPRAWDZENIA
         intent.putExtra("user",!doctor);
         startActivity(intent);
     }
@@ -202,9 +194,7 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
         SharedPreferences.Editor editor = sharedpref.edit();
         editor.putString("login",null);
         editor.putString("password",null);
-        editor.putString("IdDispenser",null);
-        editor.commit();
-
+        editor.apply();
         finish();
         Intent intent = new Intent(this,MainActivity.class);
         startActivity(intent);
@@ -213,22 +203,12 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
     @Override
     public void onClick(View v)
     {
-        //jeśli nie jest doktorem to odpal kalendarz
-        if (doctor == false)
-        {
-            Button btn = (Button)v;
-            Intent intent = new Intent(this,CalendarActivity.class);
-            intent.putExtra("idDispenser",btn.getId());
-            startActivity(intent);
-        }
-        //Jeśli nie jest doktorem
-        else
-        {
-            Button btn = (Button)v;
-            Intent intent = new Intent(this,MainMenuDoctorActivity.class);
-            intent.putExtra("idDispenser",btn.getId());
-            startActivity(intent);
-        }
+        Button btn = (Button)v;
+        Intent intent;
+        if (!doctor) intent = new Intent(this,CalendarActivity.class);
+        else intent = new Intent(this,MainMenuDoctorActivity.class);
+        intent.putExtra("idDispenser",btn.getId());
+        startActivity(intent);
     }
 
     @Override
@@ -283,9 +263,8 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
                 JSONArray jsonArray1 = new JSONArray();
                 for(int i=0;i<jsonArray.length();i++)
                 {
-                    JSONObject json1 = jsonArray.getJSONObject(i);
-                    int id = json1.getInt("idDispenser");
-                    if(id != v.getId()) jsonArray1.put(json1);
+                    json = jsonArray.getJSONObject(i);
+                    if(json.getInt("idDispenser") != v.getId()) jsonArray1.put(json);
                 }
                 idDispenser = jsonArray1.toString();
             }

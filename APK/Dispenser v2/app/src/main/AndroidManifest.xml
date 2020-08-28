@@ -35,12 +35,6 @@
             android:name=".AddDispenserActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".DispenserMenuActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".SettingActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".QrScannerActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -48,15 +42,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".SignInActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".HistoryActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".HoursActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".MainMenuActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"

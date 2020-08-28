@@ -8,19 +8,6 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/DiodaButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="64dp"
-        android:layout_marginLeft="64dp"
-        android:layout_marginBottom="15dp"
-        android:onClick="fdbutton"
-        android:text="Włącz"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/Title"
-        app:layout_constraintStart_toStartOf="@+id/Title" />
-
-    <Button
         android:id="@+id/LogInButton"
         android:layout_width="270dp"
         android:layout_height="45dp"

@@ -10,7 +10,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.TableRow;
 import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,11 +49,9 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
         //2 - brak planów i historii - wtedy musisz pokazać komunikat
         byte blank=0;
 
-        //obkiety do wstawiania danych
+        //obiekty do wstawiania danych
         LinearLayout linearLayout = findViewById(R.id.linearLayout);
         linearLayout.removeAllViews();
-        ScrollView scroll = findViewById(R.id.scrollView);
-        scroll.setBackgroundResource(R.drawable.bg_gradient);
 
         //Tworzenie jsona do wysłania rządania o historię i plan danego dispensera
         //Trzeba dodać info, że jest pusty i nie ma żadnych danych
@@ -78,6 +76,18 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(30, 20, 30, 0);
         linearLayout.addView(button,layoutParams);
+
+        //Tworzenie labela do zaznaczenia, że jest to plan
+        TextView tv = new TextView(this);
+        tv.setTextSize(20);
+        tv.setTextColor(Color.WHITE);
+        tv.setText(R.string.plan);
+        linearLayout.addView(tv,layoutParams);
+
+        TableRow tablerow = new TableRow(this);
+        tablerow.setBackgroundColor(Color.WHITE);
+        tablerow.setMinimumHeight(4);
+        linearLayout.addView(tablerow,layoutParams);
 
 
         //GETDOCTORPLANS
@@ -120,7 +130,7 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
                 }
 
                 //Tworzenie kontrolki
-                TextView tv = new TextView(this);
+                tv = new TextView(this);
                 tv.setTextColor(Color.WHITE);
                 tv.setText(R.string.description);
                 tv.append(": " + description);
@@ -128,7 +138,7 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
                 tv.append(System.getProperty("line.separator"));
                 tv.append(getResources().getString(R.string.start_date));
                 tv.append(": ");
-                tv.append(start + " " + firsthour);
+                tv.append(start.replace('-','.') + " " + firsthour.replace('-',':'));
                 tv.append(System.getProperty("line.separator"));
                 tv.append(getResources().getString(R.string.end_date) + ": " + getResources().getString(R.string.now));
                 tv.append(System.getProperty("line.separator"));
@@ -154,7 +164,17 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
             }
         }
 
+        //Tworzenie labela do zaznaczenia, że jest to Historia
+        tv = new TextView(this);
+        tv.setTextSize(20);
+        tv.setTextColor(Color.WHITE);
+        tv.setText(R.string.history);
+        linearLayout.addView(tv,layoutParams);
 
+        tablerow = new TableRow(this);
+        tablerow.setBackgroundColor(Color.WHITE);
+        tablerow.setMinimumHeight(4);
+        linearLayout.addView(tablerow,layoutParams);
 
         //GETDOCTORHISTORY
         //Wysyłanie zapytania do serwera
@@ -203,7 +223,7 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
                 //if(periodicity==0) periodicity=1;
 
                 //Tworzenie kontrolki
-                TextView tv = new TextView(this);
+                tv = new TextView(this);
                 tv.setText(R.string.description);
                 tv.append(": ");
                 tv.append(description);
@@ -259,7 +279,7 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
         //Jeśli dispenser nie ma planów ani historii to wyświetl napisik
         if(blank==2)
         {
-            TextView tv = new TextView(this);
+            tv = new TextView(this);
             tv.setText(R.string.no_history_plans);
             tv.setTextSize(20);
             tv.setTextColor(Color.BLACK);

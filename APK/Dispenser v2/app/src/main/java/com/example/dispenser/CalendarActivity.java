@@ -1,28 +1,19 @@
 package com.example.dispenser;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.lang.reflect.Field;
 import java.util.Calendar;
 
 public class CalendarActivity extends AppCompatActivity
@@ -42,13 +33,6 @@ public class CalendarActivity extends AppCompatActivity
         if(b != null) idDispenser = b.getInt("idDispenser");
 
         calendarView = findViewById(R.id.calendarView);
-
-        //Czytanie danych dla całego kalendarza
-        //idDispenser
-        //month
-        //year
-        //Tworzenie jsona do wysłania zapytania na serwer
-
         JSONObject json = new JSONObject();
         try
         {
@@ -102,17 +86,23 @@ public class CalendarActivity extends AppCompatActivity
         });
     }
 
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        RefreshDayInfo(ActualDate);
+    }
+
     private void RefreshDayInfo(String Date)
     {
         //Czyszczenie danych z linearLayout
         LinearLayout linearLayout = findViewById(R.id.LinearLayout);
         linearLayout.removeAllViews();
 
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(30, 20, 30, 0);
 
-
-
-        //Dodawanie buttona do dodawania godzin
-        //Zmień to bo to wręcz okropnie wygląda tu
+        //Tworzenie buttonów
         Button button = new Button(this);
         button.setText(getString(R.string.add));
         button.setId(-1);
@@ -130,7 +120,7 @@ public class CalendarActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
-        linearLayout.addView(button);
+        linearLayout.addView(button,layoutParams);
 
         //Tworzenie jsona do wysłania na serwer
         JSONObject json = new JSONObject();
@@ -171,7 +161,6 @@ public class CalendarActivity extends AppCompatActivity
                 try
                 {
                     tmp = jsonArray.getJSONObject(i);
-
                     if (tmp != null)
                     {
                         str1 = tmp.getString("hours");
@@ -240,10 +229,8 @@ public class CalendarActivity extends AppCompatActivity
                         return true;
                     }
                 });
-                linearLayout.addView(button);
+                linearLayout.addView(button,layoutParams);
             }
-            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),jsonArray.toString());
-            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
         }
     }
 }

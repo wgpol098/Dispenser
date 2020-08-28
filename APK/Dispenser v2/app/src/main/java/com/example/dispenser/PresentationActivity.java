@@ -1,18 +1,12 @@
 package com.example.dispenser;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.google.android.gms.tasks.Task;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,8 +48,7 @@ public class PresentationActivity extends AppCompatActivity
         EditText tmp = findViewById(R.id.NumberEditText);
         try
         {
-            //Ale tu burdel się zrobił z tymi castami:c
-            json.put("numberWindow", Integer.valueOf(String.valueOf(tmp.getText())));
+            json.put("numberWindow", Integer.valueOf(tmp.getText().toString()));
             json.put("windowFlag", 1);
         }
         catch (JSONException e)
@@ -93,11 +86,14 @@ public class PresentationActivity extends AppCompatActivity
         //Tutaj ładne wyświetlanie tych danych w TextView
         else {
             JsonArrayAnswer = connection.JsonArrayAnswer();
-            String answer = "";
+            StringBuilder answer = new StringBuilder();
             String tmp = null;
-            for (int i = 0; i < JsonArrayAnswer.length(); i++) {
-                try {
-                    JSONObject json = JsonArrayAnswer.getJSONObject(i);
+            JSONObject json;
+            for (int i = 0; i < JsonArrayAnswer.length(); i++)
+            {
+                try
+                {
+                    json = JsonArrayAnswer.getJSONObject(i);
                     //Informacja jakie jest to okno
                     //1 - ma się zapalić
                     // 0 - nie pali się
@@ -105,16 +101,15 @@ public class PresentationActivity extends AppCompatActivity
                     if (json.getInt("flag") == 0) tmp = "OFF";
                     else if (json.getInt("flag") == 1) tmp = "ON";
                     else if (json.getInt("flag") == -1) tmp = "OPEN";
-                    answer += "LED " + json.getInt("id") + " " + tmp + "\n";
+                    answer.append("LED ").append(json.getInt("id")).append(" ").append(tmp).append("\n");
                 }
                 catch (JSONException e)
                 {
                     e.printStackTrace();
                 }
             }
-
             TextView info = findViewById(R.id.InformationTextView);
-            info.setText(answer);
+            info.setText(answer.toString());
         }
     }
 }

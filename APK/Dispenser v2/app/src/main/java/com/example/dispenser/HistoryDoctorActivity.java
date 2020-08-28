@@ -1,16 +1,10 @@
 package com.example.dispenser;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -39,7 +33,6 @@ public class HistoryDoctorActivity extends AppCompatActivity
             try
             {
                 json= new JSONObject(b.getString("info"));
-
                 //Odczytywanie przekazanych danych
                 description = json.getString("description");
                 start = json.getString("start");
