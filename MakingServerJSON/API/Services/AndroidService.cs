@@ -89,8 +89,15 @@ namespace WebApplication1.API.Services
         {
             try
             {
+                int? iddispenser = _androidRepository.GetIdDispenserByIdRecord(resource.IdRecord);
+
+                if (iddispenser == null)
+                {
+                    return false;
+                }
+
                 var result = await _androidRepository.Update(resource);
-                await _androidRepository.UpdateCounterFindByIdRecord(resource.IdRecord);
+                await _androidRepository.UpdateCounterFindByIdDisp((int)iddispenser);
                 await _unitOfWork.CompleteAsync();
 
                 return true;

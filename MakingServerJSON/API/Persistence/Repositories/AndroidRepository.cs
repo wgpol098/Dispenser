@@ -402,7 +402,7 @@ namespace WebApplication1.API.Persistence.Repositories
 
                         await AddAsync(plan);
 
-                        dateAndTime.AddHours(existingPlan.Periodicity);
+                        dateAndTime = dateAndTime.AddHours(existingPlan.Periodicity);
                     }
 
                     SprawdzCzyWolne = false;
@@ -443,12 +443,12 @@ namespace WebApplication1.API.Persistence.Repositories
             }
         }
 
-        public async Task<DispenserUpdateCounter> UpdateCounterFindByIdRecord(int androidSendIdRecord)
+        public async Task<DispenserUpdateCounter> UpdateCounterFindByIdDisp(int androidSendIdRecord)
         {
             try
             {
-                Plan plan = await _context.Plans.FirstOrDefaultAsync(q => q.Id == androidSendIdRecord);
-                Dispenser disp = await _context.Dispensers.FirstOrDefaultAsync(q => q.IdDispenser == plan.IdDispenser);
+                //Plan plan = await _context.Plans.FirstOrDefaultAsync(q => q.IdDis == androidSendIdRecord);
+                Dispenser disp = await _context.Dispensers.FirstOrDefaultAsync(q => q.IdDispenser == androidSendIdRecord);
 
                 disp.NoUpdate++;
                 await _context.SaveChangesAsync();
@@ -551,6 +551,11 @@ namespace WebApplication1.API.Persistence.Repositories
             }
 
             return lista;
+        }
+
+        public int GetIdDispenserByIdRecord(int idRecord)
+        {
+            return _context.Plans.FirstOrDefault(q => q.Id == idRecord).IdDispenser;
         }
     }
 }

@@ -16,6 +16,7 @@ namespace WebApplication1.API.Domain.Repositories
         Task<IEnumerable<AndroidSendToAppCallendarInfo>> ListCallendarInfoAsync(AndroidSendCallendarInfo androidSendIdDispenser);
         Task AddAsync(Plan dispenser);
         Task<Dispenser> ReturnDispenserFromTable(int idDispenser);
+        int GetIdDispenserByIdRecord(int idRecord);
         Task<Dispenser> FindDispenserAsync(int id);
         Task<bool> Remove(int existingPlan);
         Task<bool> Update(AndroidSendPostUpdate existingPlan);
@@ -24,6 +25,6 @@ namespace WebApplication1.API.Domain.Repositories
         Task<IEnumerable<AndroidSendToAppByIdDispDoctorPlan>> ListAllRecordsInDoctorPlanAsync(int idDispenser);
         Task<AndroidSendToAppByDispWindows> ListAllRecordsOfWindows(int idDispenser);
         Task<DispenserUpdateCounter> UpdateCounter(int androidSendIdDispenser, bool increment);
-        Task<DispenserUpdateCounter> UpdateCounterFindByIdRecord(int androidSendIdRecord);
+        Task<DispenserUpdateCounter> UpdateCounterFindByIdDisp(int androidSendIdRecord);
     }
 }
