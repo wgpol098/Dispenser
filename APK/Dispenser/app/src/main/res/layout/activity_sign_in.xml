@@ -26,8 +26,10 @@
 
     <EditText
         android:id="@+id/EmailTextBox"
-        android:layout_width="260dp"
+        android:layout_width="0dp"
         android:layout_height="57dp"
+        android:layout_marginStart="75dp"
+        android:layout_marginLeft="75dp"
         android:layout_marginEnd="76dp"
         android:layout_marginRight="76dp"
         android:background="@drawable/bg_rounded_control"
@@ -41,13 +43,18 @@
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:textColorHint="@color/whitehint"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/wrongEmailLabel" />
 
     <EditText
         android:id="@+id/PasswordTextBox"
-        android:layout_width="260dp"
+        android:layout_width="0dp"
         android:layout_height="57dp"
+        android:layout_marginStart="75dp"
+        android:layout_marginLeft="75dp"
         android:layout_marginTop="32dp"
+        android:layout_marginEnd="76dp"
+        android:layout_marginRight="76dp"
         android:background="@drawable/bg_rounded_control"
         android:backgroundTint="@color/white"
         android:ems="10"
@@ -58,14 +65,19 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:textColorHint="@color/whitehint"
-        app:layout_constraintEnd_toEndOf="@+id/EmailTextBox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/EmailTextBox" />
 
     <EditText
         android:id="@+id/NameTextBox"
-        android:layout_width="260dp"
+        android:layout_width="0dp"
         android:layout_height="57dp"
-        android:layout_marginTop="121dp"
+        android:layout_marginStart="75dp"
+        android:layout_marginLeft="75dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="76dp"
+        android:layout_marginRight="76dp"
         android:background="@drawable/bg_rounded_control"
         android:backgroundTint="@color/white"
         android:ems="10"
@@ -76,12 +88,13 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:textColorHint="@color/whitehint"
-        app:layout_constraintEnd_toEndOf="@+id/PasswordTextBox"
-        app:layout_constraintTop_toBottomOf="@+id/PasswordTextBox" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/confirmPasswordTextBox" />
 
     <Button
         android:id="@+id/SignInButton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="52dp"
         android:background="@android:color/transparent"
@@ -95,11 +108,14 @@
     <CheckBox
         android:id="@+id/DoctorCheckbox"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="32dp"
         android:layout_marginTop="32dp"
+        android:layout_marginEnd="178dp"
+        android:layout_marginRight="178dp"
         android:buttonTint="@color/white"
-        android:textColor="@color/white"
         android:text="@string/doctor_account"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/NameTextBox"
         app:layout_constraintTop_toBottomOf="@+id/NameTextBox" />
 
@@ -143,10 +159,13 @@
 
     <EditText
         android:id="@+id/confirmPasswordTextBox"
-        android:layout_width="260dp"
+        android:layout_width="0dp"
         android:layout_height="57dp"
-        android:layout_marginStart="0dp"
+        android:layout_marginStart="75dp"
+        android:layout_marginLeft="75dp"
         android:layout_marginTop="32dp"
+        android:layout_marginEnd="76dp"
+        android:layout_marginRight="76dp"
         android:background="@drawable/bg_rounded_control"
         android:backgroundTint="@color/white"
         android:ems="10"
@@ -157,7 +176,8 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:textColorHint="@color/whitehint"
-        app:layout_constraintStart_toStartOf="@+id/PasswordTextBox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/PasswordTextBox" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

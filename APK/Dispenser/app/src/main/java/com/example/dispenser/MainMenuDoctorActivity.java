@@ -76,8 +76,11 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
         button.setGravity(Gravity.CENTER);
         button.setOnClickListener(this);
         button.setBackgroundResource(R.drawable.bg_rounded_control);
+
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(30, 20, 30, 0);
+        layoutParams.gravity = Gravity.CENTER;
+        layoutParams.width = 3000;
         linearLayout.addView(button,layoutParams);
 
         //GETDOCTORPLANS
@@ -97,13 +100,15 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
                 tv.setTextSize(20);
                 tv.setTextColor(Color.WHITE);
                 tv.setText(R.string.plan);
-                linearLayout.addView(tv,layoutParams);
+                tv.setPadding(20,20,20,20);
+                tv.setGravity(Gravity.CENTER);
+                linearLayout.addView(tv);
 
                 //Creating and adding line
                 TableRow tablerow = new TableRow(this);
                 tablerow.setBackgroundColor(Color.WHITE);
                 tablerow.setMinimumHeight(4);
-                linearLayout.addView(tablerow,layoutParams);
+                linearLayout.addView(tablerow, layoutParams);
             }
 
             //Creating controls to showing data from server
@@ -150,11 +155,21 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
                 tv.append(getResources().getString(R.string.periodicity) + ": " + periodicity);
                 tv.setOnClickListener(this);
 
+                //Creating gradient to textview
+                GradientDrawable gd = new GradientDrawable();
+                gd.setColor(Color.rgb(190,220,235));
+                gd.setStroke(20,Color.alpha(0));
+                gd.setStroke(2, Color.BLACK);
+                tv.setPadding(20,20,20,20);
+                tv.setTextColor(Color.rgb(0,0,0));
+                tv.setBackground(gd);
+                tv.setGravity(Gravity.CENTER);
+
                 //Showing when they didn't take a drug
                 JSONObject jtmp;
                 if(didntTakeArray.length() != 0)
                 {
-                    tv.append(System.getProperty("line.separator"));
+                    tv.append(System.getProperty("line.separator") + System.getProperty("line.separator"));
                     tv.append(getResources().getString(R.string.didnt_take));
                 }
                 for(int j=0;j<didntTakeArray.length();j++)
@@ -192,6 +207,8 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
                 tv.setTextSize(20);
                 tv.setTextColor(Color.WHITE);
                 tv.setText(R.string.history);
+                tv.setPadding(20,20,20,20);
+                tv.setGravity(Gravity.CENTER);
                 linearLayout.addView(tv,layoutParams);
 
                 TableRow tablerow = new TableRow(this);
@@ -230,19 +247,23 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
                 tv.setText(R.string.description);
                 tv.append(": ");
                 tv.append(description + System.getProperty("line.separator"));
-                tv.append(getResources().getString(R.string.start_date) + ": " + start.replace('-','.') + " " + firsthour + System.getProperty("line.separator"));
-                tv.append(getResources().getString(R.string.end_date) + ": " + end.replace('-','.'));
+                tv.append(getResources().getString(R.string.start_date) + ": " + start.replace('-','.') + " " + firsthour);
+                if(end.length() != 0)
+                {
+                    tv.append(System.getProperty("line.separator"));
+                    tv.append(getResources().getString(R.string.end_date) + ": " + end.replace('-','.'));
+                }
                 if(periodicity != 0)
                 {
                     tv.append(System.getProperty("line.separator"));
                     tv.append(getResources().getString(R.string.periodicity) + ": " + periodicity);
                 }
-                tv.setPadding(10,10,10,10);
+                tv.setPadding(20,20,20,20);
 
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
-                params.setMargins(10,10,10,10);
+                params.setMargins(0,10,0,10);
                 params.gravity = Gravity.CENTER;
-                params.width = 1000;
+                params.width = 3000;
                 tv.setLayoutParams(params);
 
                 //!!!!!!!!!!!!!!
@@ -251,15 +272,19 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
 
                 //Creating gradient to textview
                 GradientDrawable gd = new GradientDrawable();
-                gd.setCornerRadius(45);
-                if(didntTakeArray.length() == 0) gd.setColor(Color.GREEN);
+                if(didntTakeArray.length() == 0)
+                {
+                    gd.setColor(Color.rgb(80,180,50));
+                    tv.setTextColor(Color.rgb(0,0,0));
+                }
                 else
                 {
-                    gd.setColor(Color.rgb(255,50,50));
+                    gd.setColor(Color.rgb(200,0,0));
                     tv.setTextColor(Color.WHITE);
                 }
                 gd.setStroke(20,Color.alpha(0));
                 gd.setStroke(2, Color.BLACK);
+                tv.setGravity(Gravity.CENTER);
                 tv.setBackground(gd);
 
                 //Showing when user didn't take this drug
@@ -303,7 +328,6 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
         //-1 - adding button
         // <-1 - Plan item
         int id = v.getId();
-
         //If it is add button
         if(id==-1)
         {
