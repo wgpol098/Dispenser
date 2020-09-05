@@ -1,9 +1,8 @@
 package com.example.dispenser;
-
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -13,17 +12,19 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.TableRow;
 import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import static java.lang.StrictMath.abs;
 
 public class MainMenuDoctorActivity extends AppCompatActivity implements View.OnClickListener
 {
-    //Trzymanie otrzymanych danych o historii
     int idDispenser=0;
     JSONArray ArrayHistory;
     JSONArray ArrayPlans;
@@ -32,10 +33,13 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+        {
+            Objects.requireNonNull(getSupportActionBar()).hide();
+        }
         setContentView(R.layout.activity_main_menu_doctor);
 
-        //Pobieranie przekazanych danych
+        //Downloading data from before activity
         Bundle b = getIntent().getExtras();
         if(b!=null) idDispenser = b.getInt("idDispenser");
     }
@@ -45,21 +49,16 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
     public void onResume()
     {
         super.onResume();
-
-        //Zmienna przechowująca informacje ile i która tablica była pusta
-        //0 - wszystko git
-        //1 - brak planów bądź historii
-        //2 - brak planów i historii - wtedy musisz pokazać komunikat
+        //Information about data
+        //0 - all ok
+        //1 - empty plan or history
+        //2 - empty plan and history
         byte blank=0;
 
-        //obkiety do wstawiania danych
         LinearLayout linearLayout = findViewById(R.id.linearLayout);
         linearLayout.removeAllViews();
-        ScrollView scroll = findViewById(R.id.scrollView);
-        scroll.setBackgroundResource(R.drawable.bg_gradient);
+        TextView tv;
 
-        //Tworzenie jsona do wysłania rządania o historię i plan danego dispensera
-        //Trzeba dodać info, że jest pusty i nie ma żadnych danych
         JSONObject json = new JSONObject();
         try
         {
@@ -82,31 +81,39 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
         layoutParams.setMargins(30, 20, 30, 0);
         linearLayout.addView(button,layoutParams);
 
-
         //GETDOCTORPLANS
         Connections connection = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Android/GetDoctorPlan","POST",json,true);
         connection.Connect();
 
-        //Jeśli błąd to nie czytam odpowiedzi od serwera
         if(connection.getResponseCode()!=200) blank++;
-        //Jeśli wszystko poszło i serwer działa to trzeba odczytać odpowiedź
         else
         {
             JSONArray JsonArray = connection.JsonArrayAnswer();
             ArrayPlans = JsonArray;
             if(JsonArray.length()==0) blank++;
+            else
+            {
+                //Plan Label
+                tv = new TextView(this);
+                tv.setTextSize(20);
+                tv.setTextColor(Color.WHITE);
+                tv.setText(R.string.plan);
+                linearLayout.addView(tv,layoutParams);
 
-            //Odczytywanie danych i tworzenie kontrolek do wyświetlania danych
+                //Creating and adding line
+                TableRow tablerow = new TableRow(this);
+                tablerow.setBackgroundColor(Color.WHITE);
+                tablerow.setMinimumHeight(4);
+                linearLayout.addView(tablerow,layoutParams);
+            }
+
+            //Creating controls to showing data from server
             for(int i=0;i<JsonArray.length();i++)
             {
-                //Odczytywanie danych o konkretnym leku
-                String description = "";
-                String start = "";
-                String firsthour = "";
-                int periodicity = 0;
-                int idRecord = 0;
+                //Reading drug data
+                String description = "", start = "", firsthour = "";
+                int periodicity = 0, idRecord = 0, daysLeft = 0;
                 JSONArray didntTakeArray = new JSONArray();
-
                 try
                 {
                     JSONObject json1 = JsonArray.getJSONObject(i);
@@ -116,37 +123,49 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
                     periodicity = json1.getInt("periodicity");
                     didntTakeArray = json1.getJSONArray("tabDidnttake");
                     idRecord = json1.getInt("idRecord") * -1;
+                    daysLeft = json1.getInt("daysLeft");
                 }
                 catch (JSONException e)
                 {
                     e.printStackTrace();
                 }
 
-                //Tworzenie kontrolki
-                TextView tv = new TextView(this);
+                //Creating control
+                tv = new TextView(this);
                 tv.setTextColor(Color.WHITE);
-                tv.setText(R.string.description);
-                tv.append(": " + description);
                 tv.setId(idRecord);
-                tv.append(System.getProperty("line.separator"));
+                tv.setText(R.string.description);
+                tv.append(": " + description + System.getProperty("line.separator"));
                 tv.append(getResources().getString(R.string.start_date));
                 tv.append(": ");
-                tv.append(start + " " + firsthour);
-                tv.append(System.getProperty("line.separator"));
-                tv.append(getResources().getString(R.string.end_date) + ": " + getResources().getString(R.string.now));
-                tv.append(System.getProperty("line.separator"));
+                String[] tmp = start.split("-");
+                for(int k=0;k<3;k++) if(tmp[k].length() == 1) tmp[k] = "0" + tmp[k];
+                String[] tmp1 = firsthour.split("-");
+                for(int k=0;k<2;k++) if(tmp1[k].length() == 1) tmp1[k] = "0" + tmp1[k];
+                tv.append(tmp[0] + "." + tmp[1] + "." + tmp[2] + " " + tmp1[0] + ":" + tmp1[1] + System.getProperty("line.separator"));
+
+                //Drug days left
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter= new SimpleDateFormat("yyyy.MM.dd");
+                Date date = new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(daysLeft));
+                tv.append(getResources().getString(R.string.end_date) + ": " + formatter.format(date) + System.getProperty("line.separator"));
                 tv.append(getResources().getString(R.string.periodicity) + ": " + periodicity);
                 tv.setOnClickListener(this);
-                //wyświetlanie kiedy nie wziął leku
+
+                //Showing when they didn't take a drug
+                JSONObject jtmp;
+                if(didntTakeArray.length() != 0)
+                {
+                    tv.append(System.getProperty("line.separator"));
+                    tv.append(getResources().getString(R.string.didnt_take));
+                }
                 for(int j=0;j<didntTakeArray.length();j++)
                 {
-                    JSONObject jtmp;
                     try
                     {
                         jtmp = didntTakeArray.getJSONObject(j);
-                        String stmp = jtmp.getString("date");
-                        tv.append(System.getProperty("line.separator"));
-                        tv.append(stmp);
+                        tmp = jtmp.getString("date").split("-");
+                        for(int k=1;k<tmp.length;k++) if(tmp[k].length() == 1) tmp[k] = "0" + tmp[k];
+                        tv.append(System.getProperty("line.separator") + tmp[0] + "." + tmp[1] + "." + tmp[2] + " " + tmp[3] + ":" + tmp[4]);
                     }
                     catch (JSONException e)
                     {
@@ -157,34 +176,38 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
             }
         }
 
-
-
         //GETDOCTORHISTORY
-        //Wysyłanie zapytania do serwera
         connection = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Android/GetDoctorHistory","POST",json,true);
         connection.Connect();
 
-        //Jeśli błąd to nie czytam odpowiedzi od serwera
         if(connection.getResponseCode()!=200) blank++;
-        //Jeśli wszystko poszło i serwer działa to trzeba odczytać odpowiedź
         else
         {
             JSONArray JsonArray = connection.JsonArrayAnswer();
             ArrayHistory = JsonArray;
             if(JsonArray.length()==0) blank++;
+            else
+            {
+                //Creating history label
+                tv = new TextView(this);
+                tv.setTextSize(20);
+                tv.setTextColor(Color.WHITE);
+                tv.setText(R.string.history);
+                linearLayout.addView(tv,layoutParams);
 
-            //Tworzenie kontrolek, które wyświetlają dane z serwera
+                TableRow tablerow = new TableRow(this);
+                tablerow.setBackgroundColor(Color.WHITE);
+                tablerow.setMinimumHeight(4);
+                linearLayout.addView(tablerow,layoutParams);
+            }
+
+            //Creating controls to showing data from server
             for(int i=JsonArray.length()-1;0<=i;i--)
             {
                 //Odczytywanie danych o konkretnym leku
-                String description = "";
-                String start = "";
-                String end = "";
-                String firsthour = "";
-                int periodicity = 0;
-                int count = 0;
+                String description = "", start = "", end = "", firsthour = "";
+                int periodicity = 0;// count = 0;
                 JSONArray didntTakeArray = new JSONArray();
-
                 try
                 {
                     JSONObject json1 = JsonArray.getJSONObject(i);
@@ -193,7 +216,7 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
                     end = json1.getString("end");
                     firsthour = json1.getString("firstHour");
                     periodicity = json1.getInt("periodicity");
-                    count = json1.getInt("count");
+                    //count = json1.getInt("count");
                     didntTakeArray = json1.getJSONArray("tabDidnttake");
                 }
                 catch (JSONException e)
@@ -201,71 +224,74 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
                     e.printStackTrace();
                 }
 
-                //Modyfikacja danych
+                //Modifying data
                 firsthour = firsthour.replace("-",":");
-                //if(periodicity==0) periodicity=1;
-
-                //Tworzenie kontrolki
-                TextView tv = new TextView(this);
+                //Creating control
+                tv = new TextView(this);
                 tv.setText(R.string.description);
                 tv.append(": ");
-                tv.append(description);
-                tv.append(System.getProperty("line.separator"));
-                tv.append(getResources().getString(R.string.start_date) + ": " + start + " " + firsthour);
-                tv.append(System.getProperty("line.separator"));
-                tv.append(getResources().getString(R.string.end_date) + ": " + end);
-                tv.append(System.getProperty("line.separator"));
+                tv.append(description + System.getProperty("line.separator"));
+                tv.append(getResources().getString(R.string.start_date) + ": " + start.replace('-','.') + " " + firsthour + System.getProperty("line.separator"));
+                tv.append(getResources().getString(R.string.end_date) + ": " + end.replace('-','.'));
                 if(periodicity != 0)
                 {
-                    tv.append(getResources().getString(R.string.periodicity) + ": " + String.valueOf(periodicity));
                     tv.append(System.getProperty("line.separator"));
+                    tv.append(getResources().getString(R.string.periodicity) + ": " + periodicity);
                 }
                 tv.setPadding(10,10,10,10);
 
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
                 params.setMargins(10,10,10,10);
                 params.gravity = Gravity.CENTER;
-                //To jest coś takie głupie
                 params.width = 1000;
                 tv.setLayoutParams(params);
 
-                //Tworzenie gradientu dla TextView
+                //!!!!!!!!!!!!!!
+                //TRZEBA ZROBIC LICZENIE KIEDY SIE SPÓŹNIL Z LEKIEM!!!!!!!!!!!!!!!
+                //!!!!!!!!!!!!!!
+
+                //Creating gradient to textview
                 GradientDrawable gd = new GradientDrawable();
                 gd.setCornerRadius(45);
                 if(didntTakeArray.length() == 0) gd.setColor(Color.GREEN);
-                else gd.setColor(Color.rgb(255,50,50));
+                else
+                {
+                    gd.setColor(Color.rgb(255,50,50));
+                    tv.setTextColor(Color.WHITE);
+                }
                 gd.setStroke(20,Color.alpha(0));
                 gd.setStroke(2, Color.BLACK);
-
                 tv.setBackground(gd);
-                //wyświetlanie kiedy nie wziął leku
+
+                //Showing when user didn't take this drug
+                if(didntTakeArray.length() != 0) tv.append(System.getProperty("line.separator") + System.getProperty("line.separator") + getResources().getString(R.string.didnt_take));
                 for(int j=0;j<didntTakeArray.length();j++)
                 {
-                    JSONObject jtmp;
                     try
                     {
-                        jtmp = didntTakeArray.getJSONObject(j);
+                        JSONObject jtmp = didntTakeArray.getJSONObject(j);
                         tv.append(System.getProperty("line.separator"));
-                        tv.append(jtmp.getString("date"));
+                        String[] tmp = jtmp.getString("date").split("-");
+                        for(int k=1;k<5;k++) if(tmp[k].length() == 1) tmp[k] = "0" + tmp[k];
+                        tv.append(tmp[0] + "." + tmp[1] + "." + tmp[2] + " " + tmp[3] + ":" + tmp[4]);
                     }
                     catch (JSONException e)
                     {
                         e.printStackTrace();
                     }
                 }
-                tv.setOnClickListener(this);
                 tv.setId(i);
                 linearLayout.addView(tv);
             }
         }
 
-        //Jeśli dispenser nie ma planów ani historii to wyświetl napisik
+        //If dispenser don't have any plan and history
         if(blank==2)
         {
-            TextView tv = new TextView(this);
+            tv = new TextView(this);
             tv.setText(R.string.no_history_plans);
             tv.setTextSize(20);
-            tv.setTextColor(Color.BLACK);
+            tv.setTextColor(Color.WHITE);
             tv.setPadding(0,20,0,20);
             tv.setGravity(Gravity.CENTER_HORIZONTAL);
             linearLayout.addView(tv);
@@ -274,48 +300,25 @@ public class MainMenuDoctorActivity extends AppCompatActivity implements View.On
     @Override
     public void onClick(View v)
     {
-
-        //Odczytywanie jakie Id ma button i sprawdzanie czy to jest historia czy to jest plan
-        //-1 - dodawanie elementu
-        // >=0 - element historii
-        // <-1 - element planu
+        //Button ID
+        //-1 - adding button
+        // <-1 - Plan item
         int id = v.getId();
 
-        //jeśli jest to element historii
-        if(id>=0)
-        {
-            JSONObject json=null;
-
-            try
-            {
-                json = ArrayHistory.getJSONObject(id);
-            }
-            catch (JSONException e)
-            {
-                e.printStackTrace();
-            }
-
-            Intent intent = new Intent(this,HistoryDoctorActivity.class);
-            intent.putExtra("info",json.toString());
-            startActivity(intent);
-        }
-        //jeśli jest to button od dodawania
-        else if(id==-1)
+        //If it is add button
+        if(id==-1)
         {
             Intent intent = new Intent(this,ChangeHourActivity.class);
-            intent.putExtra("idRecord",-1);
-            intent.putExtra("IdDispenser",idDispenser);
+            intent.putExtra("idRecord",-1).putExtra("IdDispenser",idDispenser);
             startActivity(intent);
         }
-        //jesli jest to element planu
+        //if it is Plan Item
         else
         {
             id = abs(id);
             Intent intent = new Intent(this,ChangeHourActivity.class);
-            intent.putExtra("idRecord",id);
-            intent.putExtra("IdDispenser",idDispenser);
+            intent.putExtra("idRecord",id).putExtra("IdDispenser",idDispenser);
             startActivity(intent);
         }
-
     }
 }

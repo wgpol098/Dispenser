@@ -1,13 +1,9 @@
 package com.example.dispenser;
-
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.JsonReader;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,8 +12,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class Connections {
     private String URL;
@@ -45,32 +39,33 @@ public class Connections {
             public void run()
             {
                 HttpURLConnection ASPNETConnection = null;
-                try {
+                try
+                {
                     URL ASPNETURL = new URL(URL);
                     ASPNETConnection = (HttpURLConnection) ASPNETURL.openConnection();
                     ASPNETConnection.setReadTimeout(2000);
 
-                    //Żądania połączenia
                     ASPNETConnection.setRequestProperty("Content-Type", "application/json");
                     ASPNETConnection.setRequestProperty("accept", "application/json");
                     ASPNETConnection.setRequestMethod(Method);
-                    ASPNETConnection.setDoOutput(true);
 
-                    //Wprowadzanie Jsona do wysłania
-                    DataOutputStream wr = new DataOutputStream(ASPNETConnection.getOutputStream());
-                    wr.writeBytes(Json.toString());
-                    wr.flush();
-                    wr.close();
+                    if (!Method.equals("GET"))
+                    {
+                        ASPNETConnection.setDoOutput(true);
+                        DataOutputStream wr = new DataOutputStream(ASPNETConnection.getOutputStream());
+                        wr.writeBytes(Json.toString());
+                        wr.flush();
+                        wr.close();
+                    }
 
-                    if (answer == true)
+                    if (answer)
                     {
                         InputStream responseBody = ASPNETConnection.getInputStream();
-
                         StringBuilder sb = new StringBuilder();
-
                         String line;
                         BufferedReader br = new BufferedReader(new InputStreamReader(responseBody));
-                        while ((line = br.readLine()) != null) {
+                        while ((line = br.readLine()) != null)
+                        {
                             sb.append(line);
                         }
                         try
@@ -96,12 +91,12 @@ public class Connections {
                 }
                 catch (MalformedURLException e)
                 {
-                    //Zły URL
+                    //Bad URL
                     ResponseCode = -1;
                 }
                 catch (IOException e)
                 {
-                    //Problemy z internetem
+                    //Problems with internet
                     ResponseCode = -2;
                 }
                 finally
@@ -111,7 +106,6 @@ public class Connections {
             }
         });
 
-        //To powoduje te dziwne rzeczy, które się tu dzieją jak naciśniesz drugi raz
         try
         {
             int s=0;
@@ -128,21 +122,9 @@ public class Connections {
         }
     }
 
-    public int getResponseCode()
-    {
-        return ResponseCode;
-    }
-
-    public JSONObject JsonAnswer()
-    {
-        return JsonAnswer;
-    }
-
-    public JSONArray JsonArrayAnswer()
-    {
-        return JsonArrayAnswer;
-    }
-
+    public int getResponseCode() { return ResponseCode; }
+    public JSONObject JsonAnswer() { return JsonAnswer; }
+    public JSONArray JsonArrayAnswer() { return JsonArrayAnswer; }
     public String Error()
     {
         if(ResponseCode==-1) return context.getResources().getString(R.string.server_not_responding);

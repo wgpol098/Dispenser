@@ -28,7 +28,7 @@
     <string name="Name_hint">Imię i nazwisko (opcjonalnie)</string>
     <string name="yes">Tak</string>
     <string name="cancel">Anuluj</string>
-    <string name="doctor_account">Konto doktora</string>
+    <string name="doctor_account">Czy jest to konto doktora?</string>
     <string name="validation_code">Kod weryfikujący</string>
     <string name="wrong_validation_code">Zły kod weryfikujący</string>
     <string name="dispenser_name">Nazwa dispensera (opcjonalnie)</string>
@@ -53,4 +53,9 @@
     <string name="find_dispenser1">Wyszukaj urządzenie</string>
     <string name="available_devices">Dostępne urządzenia</string>
     <string name="scan">Skanuj</string>
+    <string name="presentation">Prezentacja</string>
+    <string name="plan">Plan</string>
+    <string name="something_went_wrong">Coś poszło nie tak</string>
+    <string name="user_already_exists">Użytkownik już istnieje</string>
+    <string name="didnt_take">Nie wziął:</string>
 </resources>

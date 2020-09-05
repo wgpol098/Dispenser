@@ -2,6 +2,7 @@ package com.example.dispenser;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Objects;
 
 public class PresentationActivity extends AppCompatActivity
 {
@@ -20,10 +23,13 @@ public class PresentationActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+        {
+            Objects.requireNonNull(getSupportActionBar()).hide();
+        }
         setContentView(R.layout.activity_presentation);
 
-        //Tworzenie wątku do odświeżania danych
+        //New thread to refreshing data
         handler = new Handler();
         task = new Runnable()
         {
@@ -36,31 +42,25 @@ public class PresentationActivity extends AppCompatActivity
         task.run();
     }
 
-    //Wysyłanie POST, który zmienia w tabeli flagi w oknach
-    //Ja tylko wysyłam numer kontroki i ona zmienia status na zapalony
-    //Nic więcej nie robię
+    //Sending POST to change LED status
     public void fSendButton(View v)
     {
-        //Tworzenie jsona
         JSONObject json = new JSONObject();
 
-        //Pobranie danych
+        //Download data
         EditText tmp = findViewById(R.id.NumberEditText);
         try
         {
-            json.put("numberWindow", Integer.valueOf(tmp.getText().toString()));
-            json.put("windowFlag", 1);
+            json.put("numberWindow", Integer.valueOf(tmp.getText().toString())).put("windowFlag", 1);
         }
         catch (JSONException e)
         {
             e.printStackTrace();
         }
 
-        //Wysyłanie zapytania na serwer
         Connections connection = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Disp/PresentationPost","POST",json,false);
         connection.Connect();
 
-        //Jeśli jest błąd to wyświetl
         if(connection.getResponseCode()!=200)
         {
             DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connection.Error());
@@ -70,20 +70,16 @@ public class PresentationActivity extends AppCompatActivity
 
     private void Refresh()
     {
-        //Trzeba pobrać aktualnie przechowywane w bazie danych dane
-        //Wysyłanie zapytania o aktualne dane
+        //Sending request for actual LED status data
         Connections connection = new Connections(elo,"http://panda.fizyka.umk.pl:9092/api/Disp/PresentationGet","GET",new JSONObject(),true);
         connection.Connect();
 
-        //Czytanie odpowiedzi od serwera
         JSONArray JsonArrayAnswer;
-
         if(connection.getResponseCode() != 200)
         {
             DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connection.Error());
             dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
         }
-        //Tutaj ładne wyświetlanie tych danych w TextView
         else {
             JsonArrayAnswer = connection.JsonArrayAnswer();
             StringBuilder answer = new StringBuilder();
@@ -94,10 +90,9 @@ public class PresentationActivity extends AppCompatActivity
                 try
                 {
                     json = JsonArrayAnswer.getJSONObject(i);
-                    //Informacja jakie jest to okno
-                    //1 - ma się zapalić
-                    // 0 - nie pali się
-                    //-1 ktoś otworzył pudełko i nie pali się
+                    //1 - LED ON
+                    // 0 - LED OFF
+                    //-1 LED OPEN
                     if (json.getInt("flag") == 0) tmp = "OFF";
                     else if (json.getInt("flag") == 1) tmp = "ON";
                     else if (json.getInt("flag") == -1) tmp = "OPEN";

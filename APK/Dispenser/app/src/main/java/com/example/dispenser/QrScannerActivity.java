@@ -1,47 +1,58 @@
 package com.example.dispenser;
-
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.SparseArray;
-import android.widget.Toast;
+import android.view.View;
 import com.google.android.gms.vision.barcode.Barcode;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import java.util.List;
+import java.util.Objects;
+
 import info.androidhive.barcode.BarcodeReader;
 
 public class QrScannerActivity extends AppCompatActivity implements BarcodeReader.BarcodeReaderListener {
 
-    private BarcodeReader barcodeReader;
-    private String idDispenser;
+    private BarcodeReader barcodeReader = (BarcodeReader) getSupportFragmentManager().findFragmentById(R.id.barcode_scanner);
+    private String idDispensers;
     private String login;
     private boolean user;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+        {
+            Objects.requireNonNull(getSupportActionBar()).hide();
+        }
         setContentView(R.layout.activity_qr_scanner);
 
-        barcodeReader = (BarcodeReader) getSupportFragmentManager().findFragmentById(R.id.barcode_scanner);
-
-        //Odczytywanie informacji o dispenserze
+        //Reafing information about dispensers
         Bundle b= getIntent().getExtras();
         if(b!=null)
         {
-            idDispenser = b.getString("idDispenser");
+            idDispensers = b.getString("idDispenser");
             login = b.getString("login");
             user = b.getBoolean("user");
         }
 
+//        //To jest jedynie do testowania
+//        Intent intent = new Intent(this,AddDispenserActivity.class);
+//        intent.putExtra("QrScan","12345");
+//        intent.putExtra("login",login);
+//        intent.putExtra("idDispenser",idDispenser);
+//        startActivity(intent);
+    }
+
+    //Adding new dispenser from button
+    public void fAddDispenserButton(View v)
+    {
+        finish();
         Intent intent = new Intent(this,AddDispenserActivity.class);
-        intent.putExtra("QrScan","12345");
-        intent.putExtra("login",login);
-        intent.putExtra("idDispenser",idDispenser);
-        intent.putExtra("user",true);
+        intent.putExtra("QrScan",0).putExtra("login",login).putExtra("idDispenser",idDispensers);
         startActivity(intent);
     }
 
@@ -50,34 +61,29 @@ public class QrScannerActivity extends AppCompatActivity implements BarcodeReade
     {
         barcodeReader.playBeep();
         Vibrator vibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
-        vibrator.vibrate(1000);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+        {
+            Objects.requireNonNull(vibrator).vibrate(1000);
+        }
 
-        //Sprawdzanie czy zapamiętany użytkownik posiada już ten dispenser.
-        if(idDispenser!=null)
+        //Checking dispensers in user list
+        if(idDispensers!=null)
         {
             try
             {
-                JSONArray JsonArray = new JSONArray(idDispenser);
+                JSONArray JsonArray = new JSONArray(idDispensers);
                 for(int i=0;i<JsonArray.length();i++)
                 {
-                    JSONObject json = JsonArray.getJSONObject(i);
-                    int tmp = json.getInt("idDispenser");
+                    int tmp = JsonArray.getJSONObject(i).getInt("idDispenser");
+                    //If this dispenser is list
                     if(tmp == Integer.parseInt(barcode.displayValue))
                     {
-                        //jeśli jest to user
-                        if(user=true)
-                        {
-                            Toast toast = Toast.makeText(this, R.string.dispenser_belongs, Toast.LENGTH_LONG);
-                            toast.show();
-                        }
-                        //jeśli jest to lekarz
-                        else
-                        {
-                            finish();
-                            Intent intent = new Intent(this,MainMenuDoctorActivity.class);
-                            intent.putExtra("idDispenser",tmp);
-                            startActivity(intent);
-                        }
+                        finish();
+                        Intent intent;
+                        if(user) intent = new Intent(this,CalendarActivity.class);
+                        else intent = new Intent(this,MainMenuDoctorActivity.class);
+                        intent.putExtra("idDispenser",tmp);
+                        startActivity(intent);
                     }
                 }
             }
@@ -86,37 +92,22 @@ public class QrScannerActivity extends AppCompatActivity implements BarcodeReade
                 e.printStackTrace();
             }
         }
-        //jeśli jest to nowy dispenser dla użytkownika
+        //If is new dispenser for thi user
         else
         {
-            //jeszcze się zastanów
             finish();
-
             Intent intent = new Intent(this,AddDispenserActivity.class);
-            intent.putExtra("QrScan",barcode.displayValue);
-            intent.putExtra("idDispenser",idDispenser);
-            intent.putExtra("login",login);
-            intent.putExtra("user",user);
+            intent.putExtra("QrScan",barcode.displayValue).putExtra("idDispenser",idDispensers).putExtra("login",login);
             startActivity(intent);
         }
     }
 
     @Override
-    public void onScannedMultiple(List<Barcode> barcodes)
-    {
-
-    }
+    public void onScannedMultiple(List<Barcode> barcodes) {}
     @Override
-    public void onBitmapScanned(SparseArray<Barcode> sparseArray) {
-
-    }
+    public void onBitmapScanned(SparseArray<Barcode> sparseArray) {}
     @Override
-    public void onScanError(String errorMessage) {
-
-    }
+    public void onScanError(String errorMessage) {}
     @Override
-    public void onCameraPermissionDenied()
-    {
-        finish();
-    }
+    public void onCameraPermissionDenied() { finish(); }
 }

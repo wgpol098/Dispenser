@@ -1,12 +1,8 @@
 package com.example.dispenser;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
-
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,23 +11,25 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 public class SignInActivity extends AppCompatActivity
 {
-    Boolean email_flag=false;
-    Boolean password_flag=false;
-    Boolean cpassword_flag=false;
+    Boolean email_flag=false, password_flag=false, cpassword_flag=false;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+        {
+            Objects.requireNonNull(getSupportActionBar()).hide();
+        }
         setContentView(R.layout.activity_sign_in);
 
-        //Sprawdzanie czy wpisane hasła są takie same
+        //Checking passwords
         final EditText confirm_password = findViewById(R.id.confirmPasswordTextBox);
         confirm_password.addTextChangedListener(new TextWatcher()
         {
@@ -40,28 +38,17 @@ public class SignInActivity extends AppCompatActivity
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
-                boolean same=false;
-
                 EditText password = findViewById(R.id.PasswordTextBox);
-                if(confirm_password.getText().toString().equals(password.getText().toString())) same=true;
-
+                if(confirm_password.getText().toString().equals(password.getText().toString())) cpassword_flag=true;
                 TextView tv = findViewById(R.id.wrongPasswordLabel2);
-                if(same==true)
-                {
-                    tv.setVisibility(View.INVISIBLE);
-                    cpassword_flag=true;
-                }
-                else
-                {
-                    tv.setVisibility(View.VISIBLE);
-                    cpassword_flag=false;
-                }
+                if(cpassword_flag) tv.setVisibility(View.INVISIBLE);
+                else tv.setVisibility(View.VISIBLE);
             }
             @Override
             public void afterTextChanged(Editable s) {}
         });
-        //Sprawdzanie poprawności danych w haśle
-        //Musi być co najmniej jedna cyfra,duża mała litera i znak specjalny
+        //Checking password
+        //1 digit, 1 small letter, 1 big letter and 1 special
         final EditText password = findViewById(R.id.PasswordTextBox);
         password.addTextChangedListener(new TextWatcher()
         {
@@ -70,30 +57,24 @@ public class SignInActivity extends AppCompatActivity
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
-                boolean number=false;
-                boolean Uletter=false;
-                boolean Lletter=false;
-                boolean Special=false;
-                boolean quantity=false;
+                boolean Number=false, Uletter=false, Letter=false, Special=false;
 
                 if(s.length()>7)
                 {
-                    quantity = true;
                     for(int i=0;i<s.length();i++)
                     {
                         if(!Character.isLetterOrDigit(s.charAt(i))) Special=true;
                         else
                         {
                             if(Character.isUpperCase(s.charAt(i))) Uletter = true;
-                            if(Character.isDigit(s.charAt(i))) number = true;
-                            if(Character.isLowerCase(s.charAt(i))) Lletter = true;
+                            if(Character.isDigit(s.charAt(i))) Number = true;
+                            if(Character.isLowerCase(s.charAt(i))) Letter = true;
                         }
                     }
                 }
 
-
                 TextView tv = findViewById(R.id.wrongPasswordLabel);
-                if(!Uletter || !number || !Lletter || !Special || !quantity)
+                if(!Uletter || !Number || !Letter || !Special)
                 {
                     tv.setVisibility(View.VISIBLE);
                     password_flag=false;
@@ -115,7 +96,7 @@ public class SignInActivity extends AppCompatActivity
             @Override
             public void afterTextChanged(Editable s) {}
         });
-        //Sprwadzanie poprawności danych w emailu
+        //Checking email properties
         final EditText email = findViewById(R.id.EmailTextBox);
         email.addTextChangedListener(new TextWatcher()
         {
@@ -124,8 +105,7 @@ public class SignInActivity extends AppCompatActivity
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
-                Boolean real=false;
-                Boolean dot=false;
+                boolean real=false, dot=false;
                 for(int i=0;i<s.length();i++)
                 {
                     if(s.charAt(i)=='@') real = true;
@@ -133,7 +113,7 @@ public class SignInActivity extends AppCompatActivity
                 }
 
                 TextView tv = findViewById(R.id.wrongEmailLabel);
-                if(!real && !dot)
+                if(!real || !dot)
                 {
                     tv.setVisibility(View.VISIBLE);
                     email.setTextColor(Color.RED);
@@ -142,7 +122,7 @@ public class SignInActivity extends AppCompatActivity
                 if(real && dot)
                 {
                     tv.setVisibility(View.INVISIBLE);
-                    email.setTextColor(Color.WHITE);
+                    email.setTextColor(Color.BLACK);
                     email_flag=true;
                 }
             }
@@ -151,7 +131,7 @@ public class SignInActivity extends AppCompatActivity
         });
     }
 
-    //Kliknięcie signinbuttona
+    //SingInButton Click
     public void fSignInButton(View v)
     {
         EditText userName = findViewById(R.id.EmailTextBox);
@@ -160,10 +140,10 @@ public class SignInActivity extends AppCompatActivity
         EditText name = findViewById(R.id.NameTextBox);
         CheckBox doctor = findViewById(R.id.DoctorCheckbox);
 
-        //Sprawdzanie czy użytkownik w ogóle wpisał jakieś dane
+        //If controls is empty
         if(userName.getText().toString().isEmpty() || password.getText().toString().isEmpty() || confirmpassword.getText().toString().isEmpty() )
         {
-            //Wyświetlanie labeli jeśli klikneło się guzik a okna są puste
+            //Showing ERROR labels
             if(userName.getText().toString().isEmpty())
             {
                 TextView tv = findViewById(R.id.wrongEmailLabel);
@@ -175,33 +155,30 @@ public class SignInActivity extends AppCompatActivity
                 tv.setVisibility(View.VISIBLE);
             }
 
-            DialogFragment dialog = new MyDialog("Bład","Coś jest nie tak");
+            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),getResources().getString(R.string.something_went_wrong));
             dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
         }
+        //If controls isn't empty
         else
         {
-            //Sprawdzenie czy wprowadzone dane są prawidłowe
+            //Checking given data
             if(!email_flag || !password_flag || !cpassword_flag)
             {
-                DialogFragment dialog = new MyDialog("Bład","Podałeś zły email!");
+                DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),getResources().getString(R.string.wrong_email));
                 dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
             }
             else
             {
-                //Generowanie jsona do wysyłania danych na serwer
+                //Creating json to sending to server
                 JSONObject json = new JSONObject();
                 try
                 {
-                    json.put("login",userName.getText().toString());
-                    json.put("password",password.getText().toString());
-
-                    //Sprawdzanie czy name istnieje
+                    //Checking name
                     String Sname="";
-                    if(name.getText().toString().isEmpty()) Sname="";
-                    else Sname = name.getText().toString();
-                    json.put("name",Sname);
+                    if(!name.getText().toString().isEmpty()) Sname = name.getText().toString();
+                    json.put("login",userName.getText().toString()).put("password",password.getText().toString()).put("name",Sname);
 
-                    //Sprawdzanie czy konto jest lekarzem
+                    //Checking typeAccount (doctor or user)
                     if(doctor.isChecked()) json.put("typeAccount",1);
                     else json.put("typeAccount",0);
                 }
@@ -210,11 +187,10 @@ public class SignInActivity extends AppCompatActivity
                     e.printStackTrace();
                 }
 
-                //Wysyłanie zapytania na serwer z rejestracją użytkownika POST
+                //Sending request to server with register user info
                 Connections connection = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Account/register","POST",json,false);
                 connection.Connect();
 
-                //Jeśli wszystko git to dodano użytkownika
                 if(connection.getResponseCode()==200)
                 {
                     Toast toast = Toast.makeText(this,R.string.sign_in_success,Toast.LENGTH_LONG);
@@ -223,7 +199,7 @@ public class SignInActivity extends AppCompatActivity
                 }
                 else
                 {
-                    DialogFragment dialog = new MyDialog("Error","Podany użytkownik już istnieje w bazie danych");
+                    DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),getResources().getString(R.string.user_already_exists));
                     dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
                 }
             }

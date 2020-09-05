@@ -1,11 +1,11 @@
 package com.example.dispenser;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,49 +19,82 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Objects;
+
 public class DispenserMenuDoctorActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
-    private String idDispenser;
+    private String idDispensers;
     private String login;
-    private Context context;
+    private Context context = this;
+    private boolean doctor = false;
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) 
+        {
+            Objects.requireNonNull(getSupportActionBar()).hide();
+        }
         setContentView(R.layout.activity_dispenser_menu_doctor);
-        context = this;
-
-        //Musisz sprawdzać czy jest w SharedPreferences też
 
         //Czytanie przekazanych danych
         Bundle b = getIntent().getExtras();
         if(b!=null)
         {
-            idDispenser = b.getString("IdDispenser");
+            idDispensers = b.getString("IdDispensers");
             login = b.getString("login");
         }
 
-
-        //Tworzenie listy dispenserów dla lekarza
-
-        final LinearLayout linearLayout = findViewById(R.id.linearLayout);
-//        ScrollView scroll = findViewById(R.id.scrollView);
-//        scroll.setBackgroundResource(R.drawable.bg_gradient);
-
-        JSONArray JsonArray=null;
+        //Wysyłanie zapytania czy dana osoba jest lekarzem, czy nie
+        JSONObject json = new JSONObject();
         try
         {
-            JsonArray = new JSONArray(idDispenser);
+            json.put("login",login);
         }
         catch (JSONException e)
         {
             e.printStackTrace();
         }
 
-        //Tworzenie całej listy dispenserów dla lekarza
-        for(int i=0;i<JsonArray.length();i++)
+        //Sending request to server
+        Connections connection = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Account/check","POST",json,true);
+        connection.Connect();
+
+        //If error, i won't read answer from server
+        if(connection.getResponseCode()!=200)
         {
-            JSONObject json;
+            DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connection.Error());
+            dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
+        }
+        //If all is done, i read answer
+        else
+        {
+            //Reading user typeAccount (doctor or user)
+            json = connection.JsonAnswer();
+            try
+            {
+                if(json.getInt("typeAccount") > 0) doctor = true;
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        //Creating dispensers list
+        final LinearLayout linearLayout = findViewById(R.id.linearLayout);
+        JSONArray JsonArray=null;
+        try
+        {
+            JsonArray = new JSONArray(idDispensers);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
+        //Creating list of all dispensers
+        for(int i = 0; i< (JsonArray != null ? JsonArray.length() : 0); i++)
+        {
             int iddispenser=0;
             String DispenserName="";
             try
@@ -75,7 +108,7 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
                 e.printStackTrace();
             }
 
-            //jeśli w jsonie są jakieś dane
+            //if json have any data
             if(iddispenser!=-1)
             {
                 Button button = new Button(this);
@@ -86,18 +119,18 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
                 button.setOnLongClickListener(this);
                 button.setBackgroundResource(R.drawable.bg_rounded_control);
 
-                //Tworzenie layouta
+                //Creating layoutparams
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 layoutParams.setMargins(30, 20, 30, 0);
                 linearLayout.addView(button,layoutParams);
 
-                //Wyświetlanie nazwy dispensera
+                //Showing dispenser name
                 if(!DispenserName.isEmpty()) button.setText(DispenserName);
-                if(DispenserName=="null") button.setText(String.valueOf(iddispenser));
+                if(DispenserName.equals("null")) button.setText(String.valueOf(iddispenser));
             }
         }
 
-        //Wyszukiwanie dispenserów
+        //Looking for dispenser
         final EditText find = findViewById(R.id.FindEditBox);
         find.addTextChangedListener(new TextWatcher()
         {
@@ -106,22 +139,21 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count)
             {
-                //Sprawdzanie czy istnieje dispenser o danym id, bądź nazwie na liście
+                //Checking dispenser witch a given ip or name in list
                 try
                 {
                     linearLayout.removeAllViews();
-
-                    JSONArray JsonArray = new JSONArray(idDispenser);
+                    JSONArray JsonArray = new JSONArray(idDispensers);
                     String text = find.getText().toString();
-
+                    JSONObject json;
                     for(int i=0;i<JsonArray.length();i++)
                     {
-                        JSONObject json = JsonArray.getJSONObject(i);
+                        json = JsonArray.getJSONObject(i);
                         String tmp = String.valueOf(json.getInt("idDispenser"));
                         int id = json.getInt("idDispenser");
                         String DispenserName = json.getString("name");
 
-                        //Sprawdzanie tylko na małych literach
+                        //Only checking on small letter
                         if(DispenserName.toLowerCase().contains(text.toLowerCase()) || tmp.contains(text))
                         {
                             Button button = new Button(context);
@@ -135,9 +167,9 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
                             layoutParams.setMargins(30, 20, 30, 0);
                             linearLayout.addView(button,layoutParams);
 
-                            //Wyświetlanie nazwy dispensera
+                            //Showing dispenser name
                             if(!DispenserName.isEmpty()) button.setText(DispenserName);
-                            if(DispenserName=="null") button.setText(String.valueOf(id));
+                            if(DispenserName.equals("null")) button.setText(String.valueOf(id));
                         }
                     }
                 }
@@ -149,14 +181,23 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
             @Override
             public void afterTextChanged(Editable s) {}
         });
+
+        if(linearLayout.getChildCount()==0)
+        {
+            TextView tv = new TextView(this);
+            tv.setText(R.string.no_dispenser);
+            tv.setTextSize(20);
+            tv.setTextColor(Color.BLACK);
+            tv.setPadding(0,20,0,20);
+            tv.setGravity(Gravity.CENTER_HORIZONTAL);
+            linearLayout.addView(tv);
+        }
     }
 
     public void fQRButton(View v)
     {
         Intent intent = new Intent(this,QrScannerActivity.class);
-        intent.putExtra("idDispenser",idDispenser);
-        intent.putExtra("login",login);
-        intent.putExtra("user",false);
+        intent.putExtra("idDispenser",idDispensers).putExtra("login",login).putExtra("user",!doctor);
         startActivity(intent);
     }
 
@@ -164,11 +205,7 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
     {
         SharedPreferences sharedpref = this.getSharedPreferences("LoginPreferences",Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedpref.edit();
-        editor.putString("login",null);
-        editor.putString("password",null);
-        editor.putString("IdDispenser",null);
-        editor.commit();
-
+        editor.putString("login",null).putString("password",null).apply();
         finish();
         Intent intent = new Intent(this,MainActivity.class);
         startActivity(intent);
@@ -178,7 +215,9 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
     public void onClick(View v)
     {
         Button btn = (Button)v;
-        Intent intent = new Intent(this,MainMenuDoctorActivity.class);
+        Intent intent;
+        if (!doctor) intent = new Intent(this,CalendarActivity.class);
+        else intent = new Intent(this,MainMenuDoctorActivity.class);
         intent.putExtra("idDispenser",btn.getId());
         startActivity(intent);
     }
@@ -186,12 +225,11 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
     @Override
     public boolean onLongClick(View v)
     {
-        //Tworzenie jsona do wysłania na serwer, żeby usunąć dane w bazie danych
+        //Creating json to sending for server, to deleting data in database
         JSONObject json = new JSONObject();
         try
         {
-            json.put("login",login);
-            json.put("idDispenser",v.getId());
+            json.put("login",login).put("idDispenser",v.getId());
         }
         catch (JSONException e)
         {
@@ -222,7 +260,7 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
                 TextView tv = new TextView(this);
                 tv.setText(R.string.no_dispenser);
                 tv.setTextSize(20);
-                tv.setTextColor(Color.WHITE);
+                tv.setTextColor(Color.BLACK);
                 tv.setPadding(0,20,0,20);
                 tv.setGravity(Gravity.CENTER_HORIZONTAL);
                 linearLayout.addView(tv);
@@ -231,15 +269,14 @@ public class DispenserMenuDoctorActivity extends AppCompatActivity implements Vi
             //Usuwanie dispensera z listy dispenerów
             try
             {
-                JSONArray jsonArray = new JSONArray(idDispenser);
+                JSONArray jsonArray = new JSONArray(idDispensers);
                 JSONArray jsonArray1 = new JSONArray();
                 for(int i=0;i<jsonArray.length();i++)
                 {
-                    JSONObject json1 = jsonArray.getJSONObject(i);
-                    int id = json1.getInt("idDispenser");
-                    if(id != v.getId()) jsonArray1.put(json1);
+                    json = jsonArray.getJSONObject(i);
+                    if(json.getInt("idDispenser") != v.getId()) jsonArray1.put(json);
                 }
-                idDispenser = jsonArray1.toString();
+                idDispensers = jsonArray1.toString();
             }
             catch (JSONException e)
             {

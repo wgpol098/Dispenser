@@ -12,29 +12,21 @@ public class ValidationCodeGenerator
 
     public void Generate()
     {
-        //Obliczanie sumy kontrolnej.
-        String qrCode = String.valueOf(idDispenser);
-        int sum=0;
-        int control=124;
-        char[] digits=qrCode.toCharArray();
+        //Counting checksum
+        int sum=0, control=124;
+        char[] digits = String.valueOf(idDispenser).toCharArray();
 
-        for(int i=0;i<qrCode.length();i++)
+        for(int i=0;i<digits.length;i++)
         {
             int number = Character.getNumericValue(digits[i]);
             number *= control*(i+1);
-            if(number>999) number=number%1000;
-            sum+=number;
-
+            number = number%1000;
+            sum += number;
             control+=9;
         }
         if(sum<1000) sum*=control;
         sum = sum % 1000;
-        if(sum==0)
-        {
-            sum=control* qrCode.length() * (qrCode.length() % 10 + 10);
-            sum = sum % 1000;
-        }
-
+        if(sum==0) sum = (control* digits.length * (digits.length % 10 + 10)) % 1000;
         validationcode=sum;
     }
 

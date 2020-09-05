@@ -1,55 +1,55 @@
 package com.example.dispenser;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
-import android.bluetooth.le.AdvertisingSetParameters;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
+import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Calendar;
+import java.util.Objects;
 
 public class ChangeHourActivity extends AppCompatActivity {
 
-    int IdRecord;
+    int IdRecord = -1;
     int IdDispenser;
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+        {
+            Objects.requireNonNull(getSupportActionBar()).hide();
+        }
         setContentView(R.layout.activity_change_hour);
 
         Bundle b = getIntent().getExtras();
-        if(b!=null) IdRecord = b.getInt("idRecord");
-        if(b!=null) IdDispenser = b.getInt("IdDispenser");
+        if(b!=null)
+        {
+            IdRecord = b.getInt("idRecord");
+            IdDispenser = b.getInt("IdDispenser");
+        }
         int hour=0;
         int minutes=0;
-        String description="";
-        int count=0;
-        int periodicity=0;
-        int days=0;
 
-        JSONObject json = new JSONObject();
+        final EditText h = findViewById(R.id.HoursTextBox);
+        final EditText m = findViewById(R.id.MinutesTextBox);
+        EditText c = findViewById(R.id.CountTextBox);
+        EditText p = findViewById(R.id.PeriodicityTextBox);
+        EditText d = findViewById(R.id.DescriptionTextBox);
+        EditText de = findViewById(R.id.DaysTextBox);
+
+        //If is change activity
         if(IdRecord > 0)
         {
-            //Dane, które wysyłam na serwer
+            //Request data
             JSONObject zap = new JSONObject();
             try
             {
@@ -60,41 +60,35 @@ public class ChangeHourActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            //Wysyłanie zapytania na serwer
+            //Get existing data
             Connections connection = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Android/GetPlanRecord","POST",zap,true);
             connection.Connect();
 
-            //Jeśli błąd to nie czytam odpowiedzi od serwera
             if(connection.getResponseCode()!=200)
             {
                 DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),connection.Error());
                 dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
                 finish();
             }
-            //Jeśli wszystko poszło i serwer działa to trzeba odczytać odpowiedź
             else
             {
-                json = connection.JsonAnswer();
+                JSONObject json = connection.JsonAnswer();
+                try
+                {
+                    hour = json.getInt("hour");
+                    minutes = json.getInt("minutes");
+                    c.setText(Integer.toString(json.getInt("count")));
+                    p.setText(Integer.toString(json.getInt("periodicity")));
+                    d.setText(json.getString("description"));
+                    de.setText(Integer.toString(json.getInt("days")));
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
             }
         }
-        //Wyciąganie danych z Jsona jesli jest to update
-        if(IdRecord>0)
-        {
-            try
-            {
-                hour = json.getInt("hour");
-                minutes = json.getInt("minutes");
-                description = json.getString("description");
-                count = json.getInt("count");
-                periodicity = json.getInt("periodicity");
-                days = json.getInt("days");
-            }
-            catch (JSONException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        //Jesli jest to dodawanie danych
+        //If is adding data
         else
         {
             Calendar rightNow = Calendar.getInstance();
@@ -102,19 +96,9 @@ public class ChangeHourActivity extends AppCompatActivity {
             minutes = rightNow.get(Calendar.MINUTE);
         }
 
-        //Wpisywanie danych wyciągniętych z jsona do kontrolek
-        final EditText h = findViewById(R.id.HoursTextBox);
-        final EditText m = findViewById(R.id.MinutesTextBox);
-        EditText c = findViewById(R.id.CountTextBox);
-        EditText p = findViewById(R.id.PeriodicityTextBox);
-        EditText d = findViewById(R.id.DescriptionTextBox);
-        EditText de = findViewById(R.id.DaysTextBox);
+        //Writing data to controls
         h.setText(Integer.toString(hour));
         m.setText(Integer.toString(minutes));
-        c.setText(Integer.toString(count));
-        p.setText(Integer.toString(periodicity));
-        d.setText(description);
-        de.setText(Integer.toString(days));
 
         h.addTextChangedListener(new TextWatcher() {
             @Override
@@ -124,11 +108,9 @@ public class ChangeHourActivity extends AppCompatActivity {
             {
                 int hour=0;
                 if(s.length()>0) hour = Integer.parseInt(s.toString());
-                if(hour>23 || s.length()>2)
+                if(hour>23 || s.length() > 2)
                 {
-                    StringBuilder tmp = new StringBuilder();
-                    for(int i=0;i<s.length()-1;i++) tmp.append(s.charAt(i));
-                    h.setText(tmp.toString());
+                    h.setText(s.toString().substring(0,s.length()-1));
                     h.setSelection(s.length()-1);
                 }
             }
@@ -145,9 +127,7 @@ public class ChangeHourActivity extends AppCompatActivity {
                 if(s.length()>0) minutes = Integer.parseInt(s.toString());
                 if(minutes>59 || s.length()>2)
                 {
-                    StringBuilder tmp = new StringBuilder();
-                    for(int i=0;i<s.length()-1;i++) tmp.append(s.charAt(i));
-                    m.setText(tmp.toString());
+                    m.setText(s.toString().substring(0,s.length()-1));
                     m.setSelection(s.length()-1);
                 }
             }
@@ -165,7 +145,7 @@ public class ChangeHourActivity extends AppCompatActivity {
         EditText p = findViewById(R.id.PeriodicityTextBox);
         EditText de = findViewById(R.id.DaysTextBox);
 
-        //Sprawdzanie czy są podane jakieś dane
+        //Checking if they are not empty
         if(h.getText().toString().isEmpty() || m.getText().toString().isEmpty() || d.getText().toString().isEmpty() || c.getText().toString().isEmpty() || p.getText().toString().isEmpty())
         {
             DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),"connect.Error()");
@@ -173,23 +153,11 @@ public class ChangeHourActivity extends AppCompatActivity {
         }
         else
         {
-            int tmphour = Integer.parseInt(h.getText().toString());
-            int tmpminutes = Integer.parseInt(m.getText().toString());
-            String tmpdescription = d.getText().toString();
-            int tmpcount = Integer.parseInt(c.getText().toString());
-            int tmpperiodicity = Integer.parseInt(p.getText().toString());
-            int tmpdays = Integer.parseInt(de.getText().toString());
-
-            //Tworzenie jsona do wysyłania danych
-            final JSONObject json = new JSONObject();
+            JSONObject json = new JSONObject();
             try
             {
-                json.put("hour",tmphour);
-                json.put("minutes",tmpminutes);
-                json.put("count",tmpcount);
-                json.put("periodicity",tmpperiodicity);
-                json.put("description",tmpdescription);
-                json.put("days",tmpdays);
+                json.put("hour",Integer.parseInt(h.getText().toString())).put("minutes",Integer.parseInt(m.getText().toString())).put("count",Integer.parseInt(c.getText().toString()));
+                json.put("periodicity",Integer.parseInt(p.getText().toString())).put("description",d.getText().toString()).put("days",Integer.parseInt(de.getText().toString()));
 
             }
             catch (JSONException e)
@@ -197,11 +165,10 @@ public class ChangeHourActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            //Updatowanie danych ---- Metoda PUT
-            //Wywala jak nic nie wpiszesz
+            //Updating data
             if(IdRecord>0)
             {
-                //Dodawanie idRecord do Jsona
+                //Addind idrecord to json
                 try
                 {
                     json.put("idRecord",IdRecord);
@@ -211,13 +178,9 @@ public class ChangeHourActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-//                DialogFragment dialog = new MyDialog(getResources().getString(R.string.error),json.toString());
-//                dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
-
                 Connections connect = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Android","PUT",json,false);
                 connect.Connect();
 
-                //Czytanie odpowiedzi połączenia
                 if(connect.getResponseCode()==200)
                 {
                     Toast toast = Toast.makeText(this,R.string.update_hour,Toast.LENGTH_LONG);
@@ -230,8 +193,7 @@ public class ChangeHourActivity extends AppCompatActivity {
                     dialog.show(getSupportFragmentManager(), "MyDialogFragmentTag");
                 }
             }
-            //Dodawanie danych - METODA POST
-            //To już prawie elegancko zrobione jest ogarnij json i będzie giciorek
+            //Adding data
             else
             {
                 //Dodawanie idDispenser do Jsona
@@ -243,7 +205,6 @@ public class ChangeHourActivity extends AppCompatActivity {
                 {
                     e.printStackTrace();
                 }
-
 
                 //Wysyłanie zapytania do serwera
                 Connections connect = new Connections(this,"http://panda.fizyka.umk.pl:9092/api/Android","POST",json,false);

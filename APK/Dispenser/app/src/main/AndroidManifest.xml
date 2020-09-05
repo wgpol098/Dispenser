@@ -7,7 +7,8 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.ACCESS_CHECKIN_PROPERTIES" />
+    <uses-permission android:name="android.permission.ACCESS_CHECKIN_PROPERTIES"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:allowBackup="true"
@@ -20,10 +21,8 @@
         android:usesCleartextTraffic="true"
         tools:replace="android:appComponentFactory"
         tools:targetApi="p">
+        <activity android:name=".PresentationActivity" />
         <activity android:name=".CalendarActivity" />
-        <activity
-            android:name=".HistoryDoctorActivity"
-            android:screenOrientation="portrait" />
         <activity
             android:name=".MainMenuDoctorActivity"
             android:screenOrientation="portrait" />
@@ -34,12 +33,6 @@
             android:name=".AddDispenserActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".DispenserMenuActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".SettingActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".QrScannerActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -47,15 +40,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".SignInActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".HistoryActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".HoursActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".MainMenuActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
@@ -71,5 +55,4 @@
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode" />
     </application>
-
 </manifest>
