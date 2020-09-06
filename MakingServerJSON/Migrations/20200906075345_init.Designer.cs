@@ -10,7 +10,7 @@ using WebApplication1.API.Persistence.Contexts;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200521231915_init")]
+    [Migration("20200906075345_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -715,6 +715,83 @@ namespace WebApplication1.Migrations
                             Description = "Apap",
                             IdDispenser = 102,
                             NoWindow = 4
+                        });
+                });
+
+            modelBuilder.Entity("WebApplication1.API.Domain.Models.Presentation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Flag")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PresentationTable");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Flag = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Flag = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Flag = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Flag = -1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Flag = -1
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Flag = 1
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Flag = 1
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Flag = 1
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Flag = 0
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Flag = -1
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Flag = 0
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Flag = 0
                         });
                 });
 #pragma warning restore 612, 618

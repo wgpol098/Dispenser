@@ -1,26 +1,21 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Programowanie\\MakingServer\\ServerProject\\WebApplication1.csproj": {}
+    "C:\\Users\\Patryk\\Documents\\GitHub\\Dispenser\\MakingServerJSON\\WebApplication1.csproj": {}
   },
   "projects": {
-    "D:\\Programowanie\\MakingServer\\ServerProject\\WebApplication1.csproj": {
+    "C:\\Users\\Patryk\\Documents\\GitHub\\Dispenser\\MakingServerJSON\\WebApplication1.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Programowanie\\MakingServer\\ServerProject\\WebApplication1.csproj",
+        "projectUniqueName": "C:\\Users\\Patryk\\Documents\\GitHub\\Dispenser\\MakingServerJSON\\WebApplication1.csproj",
         "projectName": "WebApplication1",
-        "projectPath": "D:\\Programowanie\\MakingServer\\ServerProject\\WebApplication1.csproj",
-        "packagesPath": "C:\\Users\\Dorthion\\.nuget\\packages\\",
-        "outputPath": "D:\\Programowanie\\MakingServer\\ServerProject\\obj\\",
+        "projectPath": "C:\\Users\\Patryk\\Documents\\GitHub\\Dispenser\\MakingServerJSON\\WebApplication1.csproj",
+        "packagesPath": "C:\\Users\\Patryk\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Patryk\\Documents\\GitHub\\Dispenser\\MakingServerJSON\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Microsoft\\Xamarin\\NuGet\\",
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Dorthion\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\Patryk\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
