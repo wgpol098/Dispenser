@@ -12,9 +12,7 @@ namespace WebApplication1.API.Persistence.Repositories
 {
     public class DispRepository : BaseRepository, IDispRepository
     {
-        public DispRepository(AppDbContext context) : base(context)
-        {
-        }
+        public DispRepository(AppDbContext context) : base(context) {}
 
         public async Task AddHistoryAsync(Historia hist)
         {
@@ -33,6 +31,7 @@ namespace WebApplication1.API.Persistence.Repositories
                     Description = plans.FirstOrDefault(q => q.NoWindow == hist.NoWindow).Description
                 };
             }
+            //Jeśli do usunięcia to go usuń
             catch (Exception) //Catch tymczasowy, później do usunięcia
             {
                 historia = new Historia()
@@ -51,8 +50,7 @@ namespace WebApplication1.API.Persistence.Repositories
 
                 foreach(var q in plans)
                 {
-                    if(q.DateAndTime < DateTime.Now)
-                        _context.Plans.Remove(q);
+                    if(q.DateAndTime < DateTime.Now) _context.Plans.Remove(q);
                 }
 
                 await UpdateCounter(hist.IdDispenser);
@@ -85,6 +83,7 @@ namespace WebApplication1.API.Persistence.Repositories
         }
 
         //Powtórzenie metody z AndroidRep - najwyżej później usunąć
+        //No to usuń jak nie używana
         public async Task<bool> UpdateCounter(int androidSendIdDispenser)
         {
             try
@@ -93,7 +92,6 @@ namespace WebApplication1.API.Persistence.Repositories
                 disp.NoUpdate++;
 
                 await _context.SaveChangesAsync();
-
                 return true;
             }
             catch (Exception)

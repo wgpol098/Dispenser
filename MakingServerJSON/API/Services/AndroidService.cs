@@ -76,7 +76,6 @@ namespace WebApplication1.API.Services
             {
                 await _androidRepository.AddAsync(dispenser);
                 await _unitOfWork.CompleteAsync();
-
                 return new AndroidResponse(dispenser);
             }
             catch (Exception ex)
@@ -90,16 +89,10 @@ namespace WebApplication1.API.Services
             try
             {
                 int? iddispenser = _androidRepository.GetIdDispenserByIdRecord(resource.IdRecord);
-
-                if (iddispenser == null)
-                {
-                    return false;
-                }
-
+                if (iddispenser == null) return false;
                 var result = await _androidRepository.Update(resource);
                 await _androidRepository.UpdateCounterFindByIdDisp((int)iddispenser);
                 await _unitOfWork.CompleteAsync();
-
                 return true;
             }
             catch (Exception)
@@ -112,15 +105,13 @@ namespace WebApplication1.API.Services
         {
             var existingDispenser = await _androidRepository.FindDispenserAsync(id);
 
-            if (existingDispenser == null)
-                return new DispenserResponse("Can't find dispenser with that id.");
+            if (existingDispenser == null) return new DispenserResponse("Can't find dispenser with that id.");
 
             try
             {
                 existingDispenser.NoWindow = v;
                 _androidRepository.UpdateOkienka(existingDispenser);
                 await _unitOfWork.CompleteAsync();
-
                 return new DispenserResponse(existingDispenser);
             }
             catch (Exception ex)
@@ -133,9 +124,7 @@ namespace WebApplication1.API.Services
         {
             try
             {
-                var result = await _androidRepository.UpdateCounter(idDispenser, increment);
-
-                return result;
+                return await _androidRepository.UpdateCounter(idDispenser, increment);
             }
             catch (Exception)
             {

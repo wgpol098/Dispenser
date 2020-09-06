@@ -24,48 +24,31 @@ namespace WebApplication1.API.Controllers
         [HttpGet]
         public async Task<IEnumerable<ServResourcesToDisp>> GetAllDatesFromPlan([FromBody] DispSendToServerGET dispSendToServer)
         {
-            var disp = await _dispService.ListDatesAsync(dispSendToServer);
-            var resources = _mapper.Map<IEnumerable<Plan>, IEnumerable<ServResourcesToDisp>>(disp);
-
-            return resources;
+            return _mapper.Map<IEnumerable<Plan>, IEnumerable<ServResourcesToDisp>>(await _dispService.ListDatesAsync(dispSendToServer));
         }
 
         [HttpPost]
         public async Task<IActionResult> PostToHistory([FromBody] DispSendToServerPOST dispSendToServer)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState.GetErrorMessages());
-
-            var recordInHistory = _mapper.Map<DispSendToServerPOST, Historia>(dispSendToServer);
-
-            var result = await _dispService.SaveHistoryRecordAsync(recordInHistory);
-
-            if (!result.Success)
-                return BadRequest(result.Message);
-
+            if (!ModelState.IsValid) return BadRequest(ModelState.GetErrorMessages());
+            var result = await _dispService.SaveHistoryRecordAsync(_mapper.Map<DispSendToServerPOST, Historia>(dispSendToServer));
+            if (!result.Success) return BadRequest(result.Message);
             return Ok();
         }
 
         [HttpPost("PresentationPost")]
         public async Task<IActionResult> PrezentationPost ([FromBody] DispSendPres dispSendPres)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState.GetErrorMessages());
-
+            if (!ModelState.IsValid) return BadRequest(ModelState.GetErrorMessages());
             var result = await _dispService.ChangeRecordInPresentationTable(dispSendPres);
-
-            if (!result.Success)
-                return BadRequest(result.Message);
-
+            if (!result.Success) return BadRequest(result.Message);
             return Ok();
         }
 
         [HttpGet("PresentationGet")]
         public async Task<IEnumerable<Presentation>> PresentationGet()
         {
-            var records = await _dispService.ListPresentationGet();
-
-            return records;
+            return await _dispService.ListPresentationGet();
         }
     }
 }

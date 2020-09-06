@@ -24,84 +24,69 @@ namespace WebApplication1.API.Controllers
         }
 
         [HttpPost("GetPlan")]
-        public async Task<IEnumerable<AndroidSendToAppByIdDisp>> GetByIdDispenser([FromBody] AndroidSendIdDispenser androidSendIdDispenser){
-            var disp = await _androidService.ListPlansAsync(androidSendIdDispenser.IdDispenser);
-            return disp;
+        public async Task<IEnumerable<AndroidSendToAppByIdDisp>> GetByIdDispenser([FromBody] AndroidSendIdDispenser androidSendIdDispenser)
+        {
+            return await _androidService.ListPlansAsync(androidSendIdDispenser.IdDispenser);
         }
 
         [HttpPost("GetPlanRecord")]
         public async Task<AndroidSendToAppByIdRecord> GetByIdRecord([FromBody] AndroidSendIdRecord androidSendIdRecord)
         {
-            var disp = await _androidService.ListPlansByRecAsync(androidSendIdRecord.IdRecord);
-            return disp;
+            return await _androidService.ListPlansByRecAsync(androidSendIdRecord.IdRecord);
         }
 
         [HttpPost("GetHistory")]
         public async Task<IEnumerable<AndroidSendToAppByIdDispHistory>> GetByIdDispenserHistory([FromBody] AndroidSendIdDispenser androidSendIdDispenser)
         {
-            var disp = await _androidService.ListHistoryAsync(androidSendIdDispenser.IdDispenser);
-            return disp;
+            return await _androidService.ListHistoryAsync(androidSendIdDispenser.IdDispenser);
         }
 
         [HttpPost("GetDoctorHistory")]
         public async Task<IEnumerable<AndroidSendToAppByIdDispDoctorHistory>> GetByIdDispenserHistoryPlan([FromBody] AndroidSendIdDispenser androidSendIdDispenser)
         {
-            var disp = await _androidService.ListHistoryPlanAsync(androidSendIdDispenser.IdDispenser);
-            return disp;
+            return await _androidService.ListHistoryPlanAsync(androidSendIdDispenser.IdDispenser);
         }
 
         [HttpPost("GetDoctorPlan")]
         public async Task<IEnumerable<AndroidSendToAppByIdDispDoctorPlan>> GetByIdDispenserDoctorPlan([FromBody] AndroidSendIdDispenser androidSendIdDispenser)
         {
-            var disp = await _androidService.ListDoctorPlanAsync(androidSendIdDispenser.IdDispenser);
-            return disp;
+            return await _androidService.ListDoctorPlanAsync(androidSendIdDispenser.IdDispenser);
         }
 
         [HttpPost("GetWindows")]
         public async Task<AndroidSendToAppByDispWindows> GetByIdDispenserWindows([FromBody] AndroidSendIdDispenser androidSendIdDispenser)
         {
-            var disp = await _androidService.ListWindows(androidSendIdDispenser.IdDispenser);
-            return disp;
+            return await _androidService.ListWindows(androidSendIdDispenser.IdDispenser);
         }
 
         [HttpPost("GetDayInfo")]
         public async Task<IEnumerable<AndroidSendToAppGetDayInfo>> GetDayInfo([FromBody] AndroidSendGetDayInfo androidSendGetDayInfo)
         {
-            var disp = await _androidService.ListDayInfo(androidSendGetDayInfo);
-            return disp;
+            return await _androidService.ListDayInfo(androidSendGetDayInfo);
         }
 
         [HttpPost("GetCallendarInfo")]
         public async Task<IEnumerable<AndroidSendToAppCallendarInfo>> GetCallendarInfo([FromBody] AndroidSendCallendarInfo androidSendCallendarInfo)
         {
-            var disp = await _androidService.ListCallendarInfo(androidSendCallendarInfo);
-            return disp;
+            return await _androidService.ListCallendarInfo(androidSendCallendarInfo);
         }
 
         [HttpPost("UpdateCounter")]
         public async Task<DispenserUpdateCounter> UpdateCounterAsync([FromBody] AndroidSendIdDispenser androidSendIdDispenser)
         {
-            if (!ModelState.IsValid)
-                return new DispenserUpdateCounter() { NoUpdate = -1 };
-
-            var result = await _androidService.IncCounterAsync(androidSendIdDispenser.IdDispenser, false);
-
-            return result;
+            if (!ModelState.IsValid) return new DispenserUpdateCounter() { NoUpdate = -1 };
+            return await _androidService.IncCounterAsync(androidSendIdDispenser.IdDispenser, false);
         }
 
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] AndroidSendPost androidSendPost)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState.GetErrorMessages());
+            if (!ModelState.IsValid) return BadRequest(ModelState.GetErrorMessages());
 
             DateTime dateAndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
-                androidSendPost.Hour, androidSendPost.Minutes, 0);
+                androidSendPost.Hour, androidSendPost.Minutes, 0).AddDays(androidSendPost.Days);
 
-            dateAndTime = dateAndTime.AddDays(androidSendPost.Days);
-
-            if (androidSendPost.Hour < DateTime.Now.Hour)
-                dateAndTime = dateAndTime.AddDays(1);
+            if (androidSendPost.Hour < DateTime.Now.Hour) dateAndTime = dateAndTime.AddDays(1);
 
             Dispenser FindDispenserOkienka = await _androidService.FindOkienka(androidSendPost.IdDispenser);
 
@@ -165,28 +150,16 @@ namespace WebApplication1.API.Controllers
         [HttpPut]
         public async Task<IActionResult> PutAsync([FromBody] AndroidSendPostUpdate resource)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState.GetErrorMessages());
-
-            var result = await _androidService.UpdateAsync(resource);
-
-            if (!result)
-                return BadRequest();
-
+            if (!ModelState.IsValid) return BadRequest(ModelState.GetErrorMessages());
+            if (!(await _androidService.UpdateAsync(resource))) return BadRequest();
             return Ok();
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync([FromBody] AndroidSendIdRecord androidSendIdRecord)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState.GetErrorMessages());
-
-            var result = await _androidService.DeleteAsync(androidSendIdRecord);
-
-            if (!result)
-                return BadRequest();
-
+            if (!ModelState.IsValid) return BadRequest(ModelState.GetErrorMessages());
+            if (!(await _androidService.DeleteAsync(androidSendIdRecord))) return BadRequest();
             return Ok();
         }
     }

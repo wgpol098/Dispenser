@@ -23,25 +23,15 @@ namespace WebApplication1.API.Controllers
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] DispenserResource resource)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState.GetErrorMessages());
-
-            var result = await _DispenserService.SaveAsync(resource);
-
-            if (result == null)
-                return BadRequest();
-
+            if (!ModelState.IsValid) return BadRequest(ModelState.GetErrorMessages());
+            if ((await _DispenserService.SaveAsync(resource)) == null) return BadRequest();
             return Ok();
         }
 
         [HttpDelete]
         public async Task<IActionResult> DeleteAsync([FromBody] DispenserResource resource)
         {
-            var result = await _DispenserService.DeleteAsync(resource);
-
-            if (!result)
-                return BadRequest();
-
+            if (!(await _DispenserService.DeleteAsync(resource))) return BadRequest();
             return Ok();
         }
     }

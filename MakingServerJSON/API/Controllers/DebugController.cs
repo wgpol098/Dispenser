@@ -19,36 +19,31 @@ namespace WebApplication1.API.Controllers
         [HttpGet("plans")]
         public async Task<IEnumerable<Plan>> GetAllRecordsFromPlans()
         {
-            var plan = await _debugService.ListAllRecordsFromPlans();
-            return plan;
+            return await _debugService.ListAllRecordsFromPlans();
         }
 
         [HttpGet("history")]
         public async Task<IEnumerable<Historia>> GetAllRecordsFromHistory()
         {
-            var hist = await _debugService.ListAllRecordsFromHistory();
-            return hist;
+            return await _debugService.ListAllRecordsFromHistory();
         }
 
         [HttpGet("dispensers")]
         public async Task<IEnumerable<Dispenser>> GetAllRecordsFromDispensers()
         {
-            var disp = await _debugService.ListAllRecordsFromDispensers();
-            return disp;
+            return await _debugService.ListAllRecordsFromDispensers();
         }
 
         [HttpGet("accounts")]
         public async Task<IEnumerable<Account>> GetAllRecordsFromAccounts()
         {
-            var acc = await _debugService.ListAllRecordsFromAccounts();
-            return acc;
+            return await _debugService.ListAllRecordsFromAccounts();
         }
 
         [HttpGet("listofdispensers")]
         public async Task<IEnumerable<ListOfDispenser>> GetAllRecordsFromListOfDispensers()
         {
-            var list = await _debugService.ListAllRecordsFromListOfDispensers();
-            return list;
+            return await _debugService.ListAllRecordsFromListOfDispensers();
         }
     }
 }

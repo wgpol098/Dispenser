@@ -10,13 +10,10 @@ namespace WebApplication1.API.Persistence.Repositories
 {
     public class DispenserRepository : BaseRepository, IDispenserRepository
     {
-        public DispenserRepository(AppDbContext context) : base(context)
-        {
-        }
+        public DispenserRepository(AppDbContext context) : base(context) {}
 
         public async Task<ListOfDispenser> AddAsync(DispenserResource dispenser)
         {
-            var temp = await _context.Dispensers.FirstOrDefaultAsync(q => q.IdDispenser == dispenser.IdDispenser);
             var acc = await _context.Accounts.FirstOrDefaultAsync(q => q.Login == dispenser.Login);
 
             ListOfDispenser listOfDispenser = new ListOfDispenser()
@@ -28,7 +25,7 @@ namespace WebApplication1.API.Persistence.Repositories
 
             _context.ListOfDispensers.Add(listOfDispenser);
 
-            if (temp == null)
+            if (await _context.Dispensers.FirstOrDefaultAsync(q => q.IdDispenser == dispenser.IdDispenser) == null)
             {
                 Dispenser disp = new Dispenser()
                 {
@@ -36,29 +33,23 @@ namespace WebApplication1.API.Persistence.Repositories
                     NoWindow = "0000000",
                     NoUpdate = 0
                 };
-
                 await _context.Dispensers.AddAsync(disp);
-
                 return listOfDispenser;
             } 
-            else 
-                return listOfDispenser;
+            return listOfDispenser;
         }
 
         public async Task<ListOfDispenser> FindByLoginAndIdAsync(DispenserResource dispenserResource)
         {
             var acc = await _context.Accounts.FirstOrDefaultAsync(q => q.Login == dispenserResource.Login);
-            var temp = await _context.ListOfDispensers.FirstOrDefaultAsync(q => q.IdDispenser == dispenserResource.IdDispenser && q.IdAccount == acc.Id);
-            return temp;
+            return await _context.ListOfDispensers.FirstOrDefaultAsync(q => q.IdDispenser == dispenserResource.IdDispenser && q.IdAccount == acc.Id);
         }
 
         public async Task<bool> Remove(ListOfDispenser dispenser)
         {
-            if (dispenser == null)
-                return false;
+            if (dispenser == null) return false;
 
             _context.ListOfDispensers.Remove(dispenser);
-
             try
             {
                 await _context.SaveChangesAsync();

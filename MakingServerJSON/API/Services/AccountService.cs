@@ -22,12 +22,7 @@ namespace WebApplication1.API.Services
         public async Task<Account> CheckAccountByPass(string login)
         {
             var temp = await _accountRepository.GetTypeOfAccount(login);
-            if(temp == null)
-            {
-                var tempacc = new Account()
-                { TypeAccount = -1 };
-                return tempacc;
-            }
+            if(temp == null) return new Account(){ TypeAccount = -1 };
             return temp;
         }
 
@@ -35,8 +30,7 @@ namespace WebApplication1.API.Services
         {
             var existingAccount = await _accountRepository.FindByAccountAsync(sentAccount);
 
-            if (existingAccount == null)
-                return new AccountResponse("Can't find acount with that login and password.");
+            if (existingAccount == null) return new AccountResponse("Can't find acount with that login and password.");
 
             try
             {
@@ -60,14 +54,9 @@ namespace WebApplication1.API.Services
         {
             try
             {
-                var check = await _accountRepository.CheckIfAccountIsInDatabase(account);
-
-                if (check == true)
-                    return new AccountResponse($"1");
-                
+                if ((await _accountRepository.CheckIfAccountIsInDatabase(account)) == true) return new AccountResponse($"1");
                 await _accountRepository.AddAsync(account);
                 await _unitOfWork.CompleteAsync();
-
                 return new AccountResponse(account);
             }
             catch (Exception ex)

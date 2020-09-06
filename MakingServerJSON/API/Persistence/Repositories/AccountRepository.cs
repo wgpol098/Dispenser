@@ -24,27 +24,22 @@ namespace WebApplication1.API.Persistence.Repositories
         public async Task<bool> CheckIfAccountIsInDatabase(Account account)
         {
             var acc = await _context.Accounts.FirstOrDefaultAsync(q => q.Login == account.Login);
-            if (acc == null)
-                return false;
-            else return true;
+            if (acc == null) return false;
+            return true;
         }
 
         public async Task<Account> FindByAccountAsync(SentAccount sentAccount)
         {
-            return await _context.Accounts.FirstOrDefaultAsync(q => q.Login == sentAccount.Login 
-                && q.Password == sentAccount.Password);
+            return await _context.Accounts.FirstOrDefaultAsync(q => q.Login == sentAccount.Login && q.Password == sentAccount.Password);
         }
 
         public async Task<bool> Remove(Account account)
         {
             var temp = await _context.ListOfDispensers.FirstOrDefaultAsync(q => q.IdAccount == account.Id);
 
-            if (account == null)
-                return false;
+            if (account == null) return false;
 
-            if (temp != null)
-                _context.ListOfDispensers.Remove(temp);
-
+            if (temp != null) _context.ListOfDispensers.Remove(temp);
             _context.Accounts.Remove(account);
 
             try
@@ -62,13 +57,7 @@ namespace WebApplication1.API.Persistence.Repositories
         {
             Account acc = await _context.Accounts.FirstOrDefaultAsync(q => q.Login == login);
 
-            if (acc == null || acc.Password != password)
-            {
-                List<ListOfDispenser> temp = new List<ListOfDispenser>()
-                    { new ListOfDispenser(){ Id = -1, IdDispenser = -1, IdAccount = -1 } };
-                return temp; 
-            }
-
+            if (acc == null || acc.Password != password) return new List<ListOfDispenser>() { new ListOfDispenser(){ Id = -1, IdDispenser = -1, IdAccount = -1 } };
             return await _context.ListOfDispensers.Where(q => q.IdAccount == acc.Id).ToListAsync();
         }
 

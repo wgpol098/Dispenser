@@ -9,15 +9,13 @@ namespace WebApplication1.API.Domain.Services.Communication
         /// </summary>
         /// <param name="dispenser">Saved dispenser.</param>
         /// <returns>Response.</returns>
-        public DispenserResponse(Dispenser dispenser) : base(dispenser)
-        { }
+        public DispenserResponse(Dispenser dispenser) : base(dispenser) {}
 
         /// <summary>
         /// Creates am error response.
         /// </summary>
         /// <param name="message">Error message.</param>
         /// <returns>Response.</returns>
-        public DispenserResponse(string message) : base(message)
-        { }
+        public DispenserResponse(string message) : base(message) {}
     }
 }

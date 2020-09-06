@@ -23,17 +23,13 @@ namespace WebApplication1.API.Services
         public async Task<PresentationResponse> ChangeRecordInPresentationTable(DispSendPres dispSendPres)
         {
             var existingRecord = await _dispRepository.FindPrezRecordByNoWindowAsync(dispSendPres.NumberWindow);
-
-            if (existingRecord == null)
-                return new PresentationResponse("PresentationRecord not found.");
-
+            if (existingRecord == null) return new PresentationResponse("PresentationRecord not found.");
             existingRecord.Flag = dispSendPres.WindowFlag;
 
             try
             {
                 _dispRepository.ChangeRecordInPresentationTableAsync(existingRecord);
                 await _unitOfWork.CompleteAsync();
-
                 return new PresentationResponse(existingRecord);
             }
             catch (Exception ex)
@@ -72,7 +68,6 @@ namespace WebApplication1.API.Services
             {
                 await _dispRepository.AddHistoryAsync(historia);
                 await _unitOfWork.CompleteAsync();
-
                 return new DispResponse(historia);
             }
             catch (Exception ex)
