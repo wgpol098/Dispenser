@@ -79,7 +79,6 @@ namespace WebApplication1.API.Persistence.Repositories
             }
 
             int Period = 0;
-            DateTime dateTime;
             List<ListOfDate> temp = new List<ListOfDate>();
 
             foreach (var q in ListOfUniqueDescription)
@@ -87,17 +86,15 @@ namespace WebApplication1.API.Persistence.Repositories
                 temp.Clear();
                 foreach (var p in TempListFromDatabaseHistory)
                 {
-                    if (p.Description.Equals(q) && p.Flag <= 0)
+                    if (p.Description == q && p.Flag <= 0)
                     {
                         ListOfDate listOfDate = new ListOfDate()
                         {
                             Date = p.DateAndTime.Year.ToString() + "-" + p.DateAndTime.Month.ToString() + "-" + p.DateAndTime.Day.ToString() + "-" +
-                                p.DateAndTime.Hour.ToString() + "-" + p.DateAndTime.Minute.ToString()
+                                p.DateAndTime.Hour.ToString() + "-" + p.DateAndTime.Minute.ToString(),
+                            Flag = p.Flag
                         };
                         temp.Add(listOfDate);
-                        dateTime = p.DateAndTime;
-
-                        if (temp.Count == 2) Period = (p.DateAndTime - dateTime).Days * 24 + (p.DateAndTime - dateTime).Hours;
                     }
                 }
 
@@ -112,15 +109,17 @@ namespace WebApplication1.API.Persistence.Repositories
                 {
                     Description = q,
                     Start = TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Year + "-" +
-                        TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Month + "-" +
-                        TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Day,
+                            TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Month + "-" +
+                            TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Day,
                     TabDidnttake = new List<ListOfDate>(temp),
                     FirstHour = (TempListFromDatabasePlans.Where(p => p.Description == q).FirstOrDefault().DateAndTime.Hour + "-"
-                        + TempListFromDatabasePlans.Where(p => p.Description == q).FirstOrDefault().DateAndTime.Minute).ToString(),
+                               + TempListFromDatabasePlans.Where(p => p.Description == q).FirstOrDefault().DateAndTime.Minute).ToString(),
                     Periodicity = Period,
-                    DaysLeft = TempListFromDatabasePlans.LastOrDefault().DateAndTime.Day - TempListFromDatabasePlans.FirstOrDefault().DateAndTime.Day,
+                    DaysLeft = TempListFromDatabasePlans.Where(p => p.Description == q).LastOrDefault().DateAndTime.Day - 
+                               TempListFromDatabasePlans.Where(p => p.Description == q).FirstOrDefault().DateAndTime.Day,
                     IdRecord = TempList.ElementAt(counter).Id
                 };
+
                 counter++;
                 ReturnList.Add(temp2);
             }
@@ -158,7 +157,6 @@ namespace WebApplication1.API.Persistence.Repositories
             }
 
             int Period = 0;
-            DateTime dateTime;
             List<ListOfDate> temp = new List<ListOfDate>();
 
             foreach (var q in ListOfUniqueDescription)
@@ -166,18 +164,23 @@ namespace WebApplication1.API.Persistence.Repositories
                 temp.Clear();
                 foreach(var p in TempListFromDatabase)
                 {
-                    if (p.Description == q && p.Flag <= 0)
+                    if (p.Description.Equals(q) && p.Flag <= 0)
                     {
                         ListOfDate listOfDate = new ListOfDate()
                         {
                             Date = p.DateAndTime.Year.ToString() + "-" + p.DateAndTime.Month.ToString() + "-" + p.DateAndTime.Day.ToString() + "-" +
-                            p.DateAndTime.Hour.ToString() + "-" + p.DateAndTime.Minute.ToString()
+                            p.DateAndTime.Hour.ToString() + "-" + p.DateAndTime.Minute.ToString(),
+                            Flag = p.Flag
                         };
                         temp.Add(listOfDate);
-                        dateTime = p.DateAndTime;
-
-                        if(temp.Count == 2) Period = (p.DateAndTime - dateTime).Days * 24 + (p.DateAndTime - dateTime).Hours;
                     }
+                }
+
+                if (TempListFromDatabase.Where(p => p.Description == q).Count() >= 2)
+                {
+                    var RoznicaCzasu = TempListFromDatabase.Where(p => p.Description == q).ElementAt(1).DateAndTime -
+                        TempListFromDatabase.Where(p => p.Description == q).ElementAt(0).DateAndTime;
+                    Period = RoznicaCzasu.Days * 24 + RoznicaCzasu.Hours;
                 }
 
                 string start = "", end = "";
