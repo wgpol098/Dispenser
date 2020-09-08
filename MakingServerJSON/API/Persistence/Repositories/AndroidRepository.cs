@@ -91,8 +91,8 @@ namespace WebApplication1.API.Persistence.Repositories
                         ListOfDate listOfDate = new ListOfDate()
                         {
                             Date = p.DateAndTime.Year.ToString() + "-" + p.DateAndTime.Month.ToString() + "-" + p.DateAndTime.Day.ToString() + "-" +
-                                p.DateAndTime.Hour.ToString() + "-" + p.DateAndTime.Minute.ToString(),
-                            Flag = p.Flag
+                                p.DateAndTime.Hour.ToString() + "-" + p.DateAndTime.Minute.ToString()//,
+                            //Flag = p.Flag
                         };
                         temp.Add(listOfDate);
                     }
@@ -169,8 +169,8 @@ namespace WebApplication1.API.Persistence.Repositories
                         ListOfDate listOfDate = new ListOfDate()
                         {
                             Date = p.DateAndTime.Year.ToString() + "-" + p.DateAndTime.Month.ToString() + "-" + p.DateAndTime.Day.ToString() + "-" +
-                            p.DateAndTime.Hour.ToString() + "-" + p.DateAndTime.Minute.ToString(),
-                            Flag = p.Flag
+                            p.DateAndTime.Hour.ToString() + "-" + p.DateAndTime.Minute.ToString()//,
+                            //Flag = p.Flag
                         };
                         temp.Add(listOfDate);
                     }
