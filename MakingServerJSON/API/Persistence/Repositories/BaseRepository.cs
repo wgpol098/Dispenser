@@ -6,9 +6,6 @@ namespace WebApplication1.API.Persistence.Repositories
     {
         protected readonly AppDbContext _context;
 
-        public BaseRepository(AppDbContext context)
-        {
-            _context = context;
-        }
+        public BaseRepository(AppDbContext context) { _context = context; }
     }
 }

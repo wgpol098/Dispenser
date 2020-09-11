@@ -85,7 +85,7 @@ public class PresentationActivity extends AppCompatActivity
             StringBuilder answer = new StringBuilder();
             String tmp = null;
             JSONObject json;
-            for (int i = 0; i < JsonArrayAnswer.length(); i++)
+            for (int i = 1; i < JsonArrayAnswer.length(); i++)
             {
                 try
                 {

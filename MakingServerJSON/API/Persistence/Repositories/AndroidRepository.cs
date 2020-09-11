@@ -14,9 +14,7 @@ namespace WebApplication1.API.Persistence.Repositories
 {
     public class AndroidRepository : BaseRepository, IAndroidRepository
     {
-        public AndroidRepository(AppDbContext context) : base(context)
-        {
-        }
+        public AndroidRepository(AppDbContext context) : base(context){}
 
         public async Task AddAsync(Plan dispenser)
         {
@@ -34,10 +32,10 @@ namespace WebApplication1.API.Persistence.Repositories
             var TempListFromDatabase = await _context.Plans.Where(q => q.IdDispenser == androidSendIdDispenser).ToListAsync();
             TempListFromDatabase.Sort((q,p) => q.DateAndTime.CompareTo(p.DateAndTime));
 
-            bool jakisbool = false;
+            bool flag;
             foreach (var q in TempListFromDatabase)
             {
-                jakisbool = false;
+                flag = false;
                 var temp2 = new AndroidSendToAppByIdDisp()
                 {
                     Description = q.Description,
@@ -47,13 +45,10 @@ namespace WebApplication1.API.Persistence.Repositories
                 };
                 foreach(var p in ReturnList)
                 {
-                    if (temp2.Description == p.Description || (temp2.Hour == p.Hour && temp2.Minutes == p.Minutes))
-                        jakisbool = true;
+                    if (temp2.Description == p.Description || (temp2.Hour == p.Hour && temp2.Minutes == p.Minutes)) flag = true;
                 }
-                if(!jakisbool)
-                    ReturnList.Add(temp2);
-            }
-            
+                if(!flag) ReturnList.Add(temp2);
+            }           
             return ReturnList;
         }
 
@@ -62,11 +57,10 @@ namespace WebApplication1.API.Persistence.Repositories
             List<AndroidSendToAppByIdDispDoctorPlan> ReturnList = new List<AndroidSendToAppByIdDispDoctorPlan>();
             List<Plan> TempList = new List<Plan>();
             List<string> ListOfUniqueDescription = new List<string>();
-
+            int counter = 0;
+            bool flag = false;
             var TempListFromDatabaseHistory = await _context.History.Where(q => q.IdDispenser == idDispenser).ToListAsync();
             var TempListFromDatabasePlans = await _context.Plans.Where(q => q.IdDispenser == idDispenser).ToListAsync();
-            int counter = 0;
-            bool jakisbool = false;
 
             TempListFromDatabaseHistory.Sort((q, p) => q.DateAndTime.CompareTo(p.DateAndTime));
             TempListFromDatabasePlans.Sort((q, p) => q.DateAndTime.CompareTo(p.DateAndTime));
@@ -76,26 +70,20 @@ namespace WebApplication1.API.Persistence.Repositories
                 if (!ListOfUniqueDescription.Contains(q.Description))
                 {
                     ListOfUniqueDescription.Add(q.Description);
-
                     foreach (var p in TempList)
                     {
-                        if (q.Description == p.Description || (q.DateAndTime.Hour == p.DateAndTime.Hour && q.DateAndTime.Minute == p.DateAndTime.Minute))
-                            jakisbool = true;
+                        if (q.Description == p.Description || (q.DateAndTime.Hour == p.DateAndTime.Hour && q.DateAndTime.Minute == p.DateAndTime.Minute)) flag = true;
                     }
-                    if (!jakisbool)
-                        TempList.Add(q);
-
+                    if (!flag) TempList.Add(q);
                 }
             }
 
             int Period = 0;
-            DateTime dateTime;
             List<ListOfDate> temp = new List<ListOfDate>();
 
             foreach (var q in ListOfUniqueDescription)
             {
                 temp.Clear();
-
                 foreach (var p in TempListFromDatabaseHistory)
                 {
                     if (p.Description == q && p.Flag <= 0)
@@ -103,16 +91,10 @@ namespace WebApplication1.API.Persistence.Repositories
                         ListOfDate listOfDate = new ListOfDate()
                         {
                             Date = p.DateAndTime.Year.ToString() + "-" + p.DateAndTime.Month.ToString() + "-" + p.DateAndTime.Day.ToString() + "-" +
-                            p.DateAndTime.Hour.ToString() + "-" + p.DateAndTime.Minute.ToString()
+                                p.DateAndTime.Hour.ToString() + "-" + p.DateAndTime.Minute.ToString()//,
+                            //Flag = p.Flag
                         };
                         temp.Add(listOfDate);
-                        dateTime = p.DateAndTime;
-
-                        if (temp.Count == 2)
-                        {
-                            var RoznicaCzasu = p.DateAndTime - dateTime;
-                            Period = RoznicaCzasu.Days * 24 + RoznicaCzasu.Hours;
-                        }
                     }
                 }
 
@@ -123,36 +105,31 @@ namespace WebApplication1.API.Persistence.Repositories
                     Period = RoznicaCzasu.Days * 24 + RoznicaCzasu.Hours;
                 }
 
-                string start = TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Year + "-" +
-                        TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Month + "-" +
-                        TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Day;
-                string fh = (TempListFromDatabasePlans.Where(p => p.Description == q).FirstOrDefault().DateAndTime.Hour + "-" 
-                    + TempListFromDatabasePlans.Where(p => p.Description == q).FirstOrDefault().DateAndTime.Minute).ToString();
-
-                int end = TempListFromDatabasePlans.LastOrDefault().DateAndTime.Day - TempListFromDatabasePlans.FirstOrDefault().DateAndTime.Day;
-
                 var temp2 = new AndroidSendToAppByIdDispDoctorPlan()
                 {
                     Description = q,
-                    Start = start,
+                    Start = TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Year + "-" +
+                            TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Month + "-" +
+                            TempListFromDatabasePlans.FirstOrDefault(p => p.Description == q).DateAndTime.Day,
                     TabDidnttake = new List<ListOfDate>(temp),
-                    FirstHour = fh,
+                    FirstHour = (TempListFromDatabasePlans.Where(p => p.Description == q).FirstOrDefault().DateAndTime.Hour + "-"
+                               + TempListFromDatabasePlans.Where(p => p.Description == q).FirstOrDefault().DateAndTime.Minute).ToString(),
                     Periodicity = Period,
-                    DaysLeft = end,
+                    DaysLeft = TempListFromDatabasePlans.Where(p => p.Description == q).LastOrDefault().DateAndTime.Day - 
+                               TempListFromDatabasePlans.Where(p => p.Description == q).FirstOrDefault().DateAndTime.Day,
                     IdRecord = TempList.ElementAt(counter).Id
                 };
+
                 counter++;
                 ReturnList.Add(temp2);
             }
-
             return ReturnList;
         }
 
         public async Task<IEnumerable<AndroidSendToAppByIdDispHistory>> ListAllRecordsInHistoryAsync(int androidSendIdDispenser)
         {
             List<AndroidSendToAppByIdDispHistory> ReturnList = new List<AndroidSendToAppByIdDispHistory>();
-            var TempListFromDatabase = await _context.History.Where(q => q.IdDispenser == androidSendIdDispenser).ToListAsync();
-            foreach (var q in TempListFromDatabase)
+            foreach (var q in await _context.History.Where(q => q.IdDispenser == androidSendIdDispenser).ToListAsync())
             {
                 var temp = new AndroidSendToAppByIdDispHistory()
                 {
@@ -176,12 +153,10 @@ namespace WebApplication1.API.Persistence.Repositories
 
             foreach (var q in TempListFromDatabase)
             {
-                if (!ListOfUniqueDescription.Contains(q.Description)) 
-                    ListOfUniqueDescription.Add(q.Description);
+                if (!ListOfUniqueDescription.Contains(q.Description)) ListOfUniqueDescription.Add(q.Description);
             }
 
             int Period = 0;
-            DateTime dateTime;
             List<ListOfDate> temp = new List<ListOfDate>();
 
             foreach (var q in ListOfUniqueDescription)
@@ -189,22 +164,23 @@ namespace WebApplication1.API.Persistence.Repositories
                 temp.Clear();
                 foreach(var p in TempListFromDatabase)
                 {
-                    if (p.Description == q && p.Flag <= 0)
+                    if (p.Description.Equals(q) && p.Flag <= 0)
                     {
                         ListOfDate listOfDate = new ListOfDate()
                         {
                             Date = p.DateAndTime.Year.ToString() + "-" + p.DateAndTime.Month.ToString() + "-" + p.DateAndTime.Day.ToString() + "-" +
-                            p.DateAndTime.Hour.ToString() + "-" + p.DateAndTime.Minute.ToString()
+                            p.DateAndTime.Hour.ToString() + "-" + p.DateAndTime.Minute.ToString()//,
+                            //Flag = p.Flag
                         };
                         temp.Add(listOfDate);
-                        dateTime = p.DateAndTime;
-
-                        if(temp.Count == 2)
-                        {
-                            var RoznicaCzasu = p.DateAndTime - dateTime;
-                            Period = RoznicaCzasu.Days * 24 + RoznicaCzasu.Hours;
-                        }
                     }
+                }
+
+                if (TempListFromDatabase.Where(p => p.Description == q).Count() >= 2)
+                {
+                    var RoznicaCzasu = TempListFromDatabase.Where(p => p.Description == q).ElementAt(1).DateAndTime -
+                        TempListFromDatabase.Where(p => p.Description == q).ElementAt(0).DateAndTime;
+                    Period = RoznicaCzasu.Days * 24 + RoznicaCzasu.Hours;
                 }
 
                 string start = "", end = "";
@@ -234,30 +210,21 @@ namespace WebApplication1.API.Persistence.Repositories
 
                 ReturnList.Add(temp2);
             }
-
             return ReturnList;
         }
 
         public async Task<AndroidSendToAppByIdRecord> ListAllRecordsInPlansByIdRecordAsync(int androidSendIdDispenser)
         {
-            //Wyciaganie IdDispensera
-            int IdDispenser = _context.Plans.FirstOrDefault(q => q.Id == androidSendIdDispenser).IdDispenser;
-            string Opis = _context.Plans.FirstOrDefault(q => q.Id == androidSendIdDispenser).Description;
-
-            //Przygotowanie danych
-            List<Plan> lista = await _context.Plans.Where(q => q.IdDispenser == IdDispenser).ToListAsync();
-            lista = lista.Where(q => q.Description == Opis).ToList();
+            //wyciąganie danych dispensera Przygotowanie danych
+            List<Plan> lista = await _context.Plans.Where(q => q.IdDispenser == _context.Plans.FirstOrDefault(q => q.Id == androidSendIdDispenser).IdDispenser).ToListAsync();
+            lista = lista.Where(q => q.Description == _context.Plans.FirstOrDefault(q => q.Id == androidSendIdDispenser).Description).ToList();
             lista = lista.OrderBy(q => q.DateAndTime).ToList();
 
             int Period = 0;
             var temp = lista.FirstOrDefault(q => q.Id == androidSendIdDispenser);
 
             //Obliczanie danych
-            if (lista.Count > 1)
-            {
-                var RoznicaCzasu = lista.ElementAt(1).DateAndTime - lista.ElementAt(0).DateAndTime;
-                Period = RoznicaCzasu.Days * 24 + RoznicaCzasu.Hours;
-            }
+            if (lista.Count > 1) Period = (lista.ElementAt(1).DateAndTime - lista.ElementAt(0).DateAndTime).Days * 24 + (lista.ElementAt(1).DateAndTime - lista.ElementAt(0).DateAndTime).Hours;
 
             //Pakowanie danych
             var temp2 = new AndroidSendToAppByIdRecord()
@@ -269,8 +236,6 @@ namespace WebApplication1.API.Persistence.Repositories
                 Count = lista.Count,
                 Periodicity = Period
             };
-
-            //Wysłanie danych
             return temp2;
         }
 
@@ -279,13 +244,10 @@ namespace WebApplication1.API.Persistence.Repositories
             List<AndroidSendToAppByDispWindows> ReturnList = new List<AndroidSendToAppByDispWindows>();
             var TempListFromDatabase = await _context.Dispensers.Where(q => q.IdDispenser == idDispenser).ToListAsync();
 
-            var Free = TempListFromDatabase.FirstOrDefault().NoWindow.Count(x => x == '0');
-            var Occupied = TempListFromDatabase.FirstOrDefault().NoWindow.Count(x => x == '1');
-
             return new AndroidSendToAppByDispWindows()
             {
-                FreeWindows = Free,
-                OccupiedWindows = Occupied
+                FreeWindows = TempListFromDatabase.FirstOrDefault().NoWindow.Count(x => x == '0'),
+                OccupiedWindows = TempListFromDatabase.FirstOrDefault().NoWindow.Count(x => x == '1')
             };
         }
 
@@ -303,21 +265,19 @@ namespace WebApplication1.API.Persistence.Repositories
                 System.Text.StringBuilder temp = new System.Text.StringBuilder(FindDispenserOkienka.NoWindow);
                 foreach (var q in FoundPlans)
                 {
-                    if (q.NoWindow != -1)
-                        temp[q.NoWindow - 1] = '0';
+                    if (q.NoWindow != -1) temp[q.NoWindow - 1] = '0';
                 }
-                string str = temp.ToString();
-                FindDispenserOkienka.NoWindow = str;
 
+                FindDispenserOkienka.NoWindow = temp.ToString();
                 foreach (var q in FoundPlans)
                 {
                     _context.Plans.Remove(q);
                 }
 
                 await UpdateCounter(plan.IdDispenser, true); //Nie pewny
+                //To się upewnij
                 await _context.SaveChangesAsync();
                 UpdateOkienka(FindDispenserOkienka);
-
                 return true;
             }
             catch (Exception)
@@ -334,18 +294,14 @@ namespace WebApplication1.API.Persistence.Repositories
         public async Task<bool> Update(AndroidSendPostUpdate existingPlan)
         {
             DateTime dateAndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day,
-                existingPlan.Hour, existingPlan.Minutes, 0);
+                existingPlan.Hour, existingPlan.Minutes, 0).AddDays(existingPlan.Days);
 
-            dateAndTime = dateAndTime.AddDays(existingPlan.Days);
-
-            if (existingPlan.Hour < DateTime.Now.Hour)
-                dateAndTime = dateAndTime.AddDays(1);
+            if (existingPlan.Hour < DateTime.Now.Hour) dateAndTime = dateAndTime.AddDays(1);
 
             var FindPlan = await _context.Plans.FirstOrDefaultAsync(q => q.Id == existingPlan.IdRecord);
 
             //Nowy lub update
-            Dispenser FindDispenserOkienka = 
-                await _context.Dispensers.FirstOrDefaultAsync(q => q.IdDispenser == FindPlan.IdDispenser);
+            Dispenser FindDispenserOkienka = await _context.Dispensers.FirstOrDefaultAsync(q => q.IdDispenser == FindPlan.IdDispenser);
 
             //Próba wykasowania
             try
@@ -401,10 +357,8 @@ namespace WebApplication1.API.Persistence.Repositories
                         };
 
                         await AddAsync(plan);
-
                         dateAndTime = dateAndTime.AddHours(existingPlan.Periodicity);
                     }
-
                     SprawdzCzyWolne = false;
                 }
 
@@ -434,7 +388,6 @@ namespace WebApplication1.API.Persistence.Repositories
                     disp.NoUpdate++;
                     await _context.SaveChangesAsync();
                 }
-
                 return new DispenserUpdateCounter() { NoUpdate = disp.NoUpdate };
             }
             catch (Exception)
@@ -516,7 +469,6 @@ namespace WebApplication1.API.Persistence.Repositories
                 };
                 lista.Add(temp);
             }
-
             return lista;
         }
 
@@ -525,10 +477,10 @@ namespace WebApplication1.API.Persistence.Repositories
             List<AndroidSendToAppCallendarInfo> lista = new List<AndroidSendToAppCallendarInfo>();
 
             List<Plan> plans = await _context.Plans.Where(q => q.IdDispenser == androidSendCallendarInfo.IdDispenser && 
-            q.DateAndTime.Month == androidSendCallendarInfo.Month && q.DateAndTime.Year == androidSendCallendarInfo.Year).ToListAsync();
+                q.DateAndTime.Month == androidSendCallendarInfo.Month && q.DateAndTime.Year == androidSendCallendarInfo.Year).ToListAsync();
 
             List<Historia> historias = await _context.History.Where(q => q.IdDispenser == androidSendCallendarInfo.IdDispenser &&
-            q.DateAndTime.Month == androidSendCallendarInfo.Month && q.DateAndTime.Year == androidSendCallendarInfo.Year).ToListAsync();
+                q.DateAndTime.Month == androidSendCallendarInfo.Month && q.DateAndTime.Year == androidSendCallendarInfo.Year).ToListAsync();
 
             foreach (var q in plans)
             {
@@ -549,7 +501,6 @@ namespace WebApplication1.API.Persistence.Repositories
                 };
                 lista.Add(temp);
             }
-
             return lista;
         }
 

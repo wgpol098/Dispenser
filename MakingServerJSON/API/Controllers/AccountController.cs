@@ -25,46 +25,27 @@ namespace WebApplication1.API.Controllers
         {
             var list = await _accountService.GetDispensersByLoginAndPassword(sentAccount.Login, sentAccount.Password);
             var resources = _mapper.Map<IEnumerable<ListOfDispenser>, IEnumerable<DispenserResources>>(list);
-
             return resources;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAccountAsync([FromBody] AccountSendRegister accountSendRegister)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState.GetErrorMessages());
-
-            var accRegister = _mapper.Map<AccountSendRegister, Account>(accountSendRegister);
-
-            var result = await _accountService.SaveAsync(accRegister);
-
-            if (!result.Success)
-                return Ok(result.Message);
-
+            if (!ModelState.IsValid) return BadRequest(ModelState.GetErrorMessages());
+            var result = await _accountService.SaveAsync(_mapper.Map<AccountSendRegister, Account>(accountSendRegister));
+            if (!result.Success) return Ok(result.Message);
             return Ok("0");
         }
 
         [HttpPost("check")]
-        public async Task<AccountCheck> GetTypeOfAccountAsync([FromBody] AccountSendLogin accountSendLogin)
-        {
-            var acc = await _accountService.CheckAccountByPass(accountSendLogin.Login);
-            var resources = _mapper.Map<Account, AccountCheck>(acc);
-
-            return resources;
-        }
+        public async Task<AccountCheck> GetTypeOfAccountAsync([FromBody] AccountSendLogin accountSendLogin) => _mapper.Map<Account, AccountCheck>(await _accountService.CheckAccountByPass(accountSendLogin.Login));
 
         [HttpDelete]
         public async Task<IActionResult> RemoveAccount([FromBody] SentAccount sentAccount)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState.GetErrorMessages());
-
+            if (!ModelState.IsValid) return BadRequest(ModelState.GetErrorMessages());
             var result = await _accountService.DeleteAsync(sentAccount);
-
-            if (!result.Success)
-                return BadRequest(result.Message);
-
+            if (!result.Success) return BadRequest(result.Message);
             return Ok();
         }
     }

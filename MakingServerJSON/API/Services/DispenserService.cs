@@ -37,14 +37,12 @@ namespace WebApplication1.API.Services
         {
             var existingDispenser = await _dispenserRepository.FindByLoginAndIdAsync(dispenserResource);
 
-            if (existingDispenser == null)
-                return false;
+            if (existingDispenser == null) return false;
 
             try
             {
                 await _dispenserRepository.Remove(existingDispenser);
                 await _unitOfWork.CompleteAsync();
-
                 return true;
             }
             catch (Exception)

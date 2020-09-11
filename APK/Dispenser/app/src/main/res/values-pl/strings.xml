@@ -25,7 +25,7 @@
     <string name="undefinied_error">Niezidentyfikowany błąd!</string>
     <string name="update_hour">Godzina zaktualizowana pomyślnie!</string>
     <string name="delete_hour">Godzina usunięta pomyślnie!</string>
-    <string name="Name_hint">Imię i nazwisko (opcjonalnie)</string>
+    <string name="Name_hint">Nazwa (opcjonalnie)</string>
     <string name="yes">Tak</string>
     <string name="cancel">Anuluj</string>
     <string name="doctor_account">Czy jest to konto doktora?</string>

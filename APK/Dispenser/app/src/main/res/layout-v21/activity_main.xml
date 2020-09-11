@@ -43,16 +43,16 @@
 
     <EditText
         android:id="@+id/LoginTextBox"
-        android:layout_width="320dp"
+        android:layout_width="0dp"
         android:layout_height="57dp"
         android:layout_marginStart="45dp"
         android:layout_marginLeft="45dp"
         android:layout_marginEnd="45dp"
         android:layout_marginRight="45dp"
-        android:layout_marginBottom="6dp"
         android:background="@drawable/bg_upper_radius"
         android:ems="10"
         android:hint="@string/login"
+        android:importantForAutofill="no"
         android:inputType="textPersonName"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
@@ -63,11 +63,11 @@
         app:layout_constraintBottom_toTopOf="@+id/PasswordTextBox"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Title" />
+        app:layout_constraintTop_toBottomOf="@+id/SignInButton" />
 
     <EditText
         android:id="@+id/PasswordTextBox"
-        android:layout_width="320dp"
+        android:layout_width="0dp"
         android:layout_height="57dp"
         android:layout_marginStart="45dp"
         android:layout_marginLeft="45dp"
@@ -77,6 +77,7 @@
         android:background="@drawable/bg_bottop_radius"
         android:ems="10"
         android:hint="@string/password"
+        android:importantForAutofill="no"
         android:inputType="textPassword"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
@@ -86,6 +87,7 @@
         android:textColorHint="@color/whitehint"
         app:layout_constraintBottom_toTopOf="@+id/RememberCheckBox"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/LoginTextBox" />
 
@@ -110,7 +112,7 @@
         android:fontFamily="sans-serif-smallcaps"
         android:text="@string/dispenserapp"
         android:textColor="#000"
-        android:textSize="40dp"
+        android:textSize="40sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/LoginTextBox"
         app:layout_constraintEnd_toEndOf="parent"

@@ -9,9 +9,7 @@ namespace WebApplication1.API.Persistence.Repositories
 {
     public class DebugRepository: BaseRepository, IDebugRepository
     {
-        public DebugRepository(AppDbContext context) : base(context)
-        {
-        }
+        public DebugRepository(AppDbContext context) : base(context) {}
 
         public async Task<IEnumerable<Plan>> FindAllRecordsInPlans()
         {
