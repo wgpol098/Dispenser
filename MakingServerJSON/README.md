@@ -1,10 +1,10 @@
 # DispenserJSON - API
 
-DispenserJSON jest to część projektu z pracowni programowania zespołowego. W tutejszym `READ.ME` znajdziesz poszczególne opisy controllerów, posiadane metody oraz treści znajdujące się w bazie danych.
+DispenserJSON jest to część projektu z pracowni programowania zespołowego. W tutejszym `README.MD` znajdziesz poszczególne opisy controllerów, posiadane metody oraz treści znajdujące się w bazie danych.
 
 ## Configuration
 
-Zanim server zacznie działać, wymagane jest utworzenie bazy danych w danym systemie operacyjnym. Najprostrzym sposobem utworzenia bazy danych oraz utworzenia jej migracji jest:
+Zanim serwer zacznie działać, wymagane jest utworzenie bazy danych. Najprostrzym sposobem utworzenia bazy danych oraz utworzenia jej migracji jest:
 1. Uruchomienie projektu w Visual Studio
 2. Uruchomienie terminala *Package Manager Console*
 3. Wpisanie poniższych komend w terminalu *Package Manager Console*
@@ -28,114 +28,144 @@ Znajdują się w nim metody routingowe, które odpowiadają o np. rozkazach pobr
 ### List of avalible methods of controllers
 
 #### Account
-POST("login") - 
-* Send:
-* Receive:
+POST("login") - sprawdza przesłane dane i przyznaje dostęp do konta dispensera
+* Send: "idDispenser" - *int*, "name" - *string*
+* Receive: "login" - *string*, "password" - *string*
 
-POST("register") - 
-* Send:
+POST("register") - metoda rejestrująca dispenser
+* Send: "login" - *string*, "password" - *string*, "name" - *string*, "typeAccount" - *int*
 * Receive: *ActionResult*
  
-POST("check") - 
-* Send:
-* Receive:
+POST("check") - metoda sprawdzająca typ konta
+* Send: "login" - *string*
+* Receive: "typeAccount" - *int*
 
-DELETE - 
-* Send:
+DELETE - metoda usuwająca konto dispensera
+* Send: "login" - *string*, "password" - *string*
 * Receive: *ActionResult*
 
 #### Android
-POST - 
-* Send:
+POST("GetPlan") - metoda pobierająca listę zaplanowanych leków, danego dispensera z tabeli *Plans*, dla opiekuna
+* Send: "idDispenser" - *int*
+* Receive: List("hour" - *int*, "minutes" - *int*, "description" - *string*, idRecord - *int*)
+
+POST("GetPlanRecord") - metoda pobierająca dane pojedyńczego rekordu z tabeli *Plans*
+* Send: "idRecord" - *int*
+* Receive: "hour" - List(*int*, "minutes" - *int*, "days" - *int*, "description" - *string*, "count" - *int*, "periodicity" - *int*)
+
+POST("GetHistory") - metoda pobierająca listę wziętych leków, danego dispensera z tabeli *History*, dla opiekuna
+* Send: "idDispenser" - *int*
+* Receive: "idDispenser" - *int*, "dateAndTime" - *Date*, "noWindow" - *int*, "description" - *string*, "flag" - *int*
+
+POST("GetDoctorHistory") - metoda pobierająca listę wziętych leków, danego dispensera z tabeli *History*, dla lekarza
+* Send: "idDispenser" - *int*
+* Receive: List("description" - *string*, "start" - *string*, "end" - *string*, "tabDidnttake" - List("date" - *string*), "firstHour" - *string*, "periodicity" - *int*, "count" - *int*)
+
+POST("GetDoctorPlan") - metoda pobierająca listę zaplanowanych leków, danego dispensera z tabeli *Plans*, dla lekarza
+* Send: "idDispenser" - *int*
+* Receive: List("description" - *string*, "start" - *string*, "daysLeft" - *int*, "firstHour" - *string*, "periodicity" - *int*, "tabDidnttake" - List("date" - *string*), "idRecord" - *int*)
+
+POST("GetWindows") - metoda pobierająca informację o wolnych miejscach w dispenserze
+* Send: "idDispenser" - *int*
+* Receive: "freeWindows" - *int*, "occupiedWindows" - *int*
+
+POST("GetDayInfo") - metoda pobierająca dane z danego dnia
+* Send: "idDispenser" - *int*, "dateAndTime" - *string*
+* Receive: List("hours" - *int*, "minutes" - *int*, "description" - *string*, "idRecord" - *int*, "noWindow" - *int*, "flag" - *int*, "tableFlag" - *int*)
+
+POST("GetCallendarInfo") - metoda pobierająca dane z danego miesiąca
+* Send: "idDispenser" - *int*, "month" - *int*, "year" - *int*
+* Receive: List("dateAndTime" - *Date*, "flag" - *int*)
+
+POST("UpdateCounter") - metoda sprawdzająca licznik wykonanych czynności, danego dispensera
+* Send: "idDispenser" - *int*
+* Receive: "noUpdate" - *int*
+
+POST - dodanie leku do danego dispensera
+* Send: "hour" - *int*, "minutes" - *int*, "count" - *int*, "days" - *int*, "periodicity" - *int*, description - *string*, "idDispenser" - *int*
 * Receive: *ActionResult*
 
-POST("GetPlan") - 
-* Send:
-* Receive:
-
-POST("GetPlanRecord") - 
-* Send:
-* Receive:
-
-POST("GetHistory") - 
-* Send:
-* Receive:
-
-POST("GetDoctorHistory") - 
-* Send:
-* Receive:
-
-POST("GetDoctorPlan") - 
-* Send:
-* Receive:
-
-POST("GetWindows") - 
-* Send:
-* Receive:
-
-POST("UpdateCounter") - 
-* Send:
-* Receive:
-
-PUT - 
-* Send:
+PUT - zmiana wartości leku danego rekordu
+* Send: "hour" - *int*, "minutes" - *int*, "count" - *int*, "days" - *int*, "periodicity" - *int*, description - *string*, "idRecord" - *int*
 * Receive: *ActionResult*
 
-DELETE - 
-* Send:
+DELETE - usunięcie danego rekordu (leku)
+* Send: "idRecord" - *int*
 * Receive: *ActionResult*
+
+#### Debug
+GET("plans") - wyświetla zawartość rekordów w tabeli *Plans*
+* Send: *No parameters*
+* Receive: List("id" - *int*, "idDispenser" - *int*, "dateAndTime" - *DateTime*, "noWindow" - *int*, "description" - *string*)
+
+GET("history") - wyświetla zawartość rekordów w tabeli *History*
+* Send: *No parameters*
+* Receive: List("id" - *int*, "idDispenser" - *int*, "dateAndTime" - *DateTime*, "noWindow" - *int*, "description" - *string*, "flag" - *int*)
+
+GET("dispensers") - wyświetla zawartość rekordów w tabeli *Dispensers*
+* Send: *No parameters*
+* Receive: List("id" - *int*, "idDispenser" - *int*, "noWindow" - *string*, "noUpdate" - *int*)
+
+GET("accounts") - wyświetla zawartość rekordów w tabeli *Accounts*
+* Send: *No parameters*
+* Receive: List("id" - *int*, "login" - *string*, "password" - *string*, "name" - *string*, "typeAccount" - *int*)
+
+GET("listofdispensers") - wyświetla zawartość rekordów w tabeli *ListOfDispensers*
+* Send: *No parameters*
+* Receive: List("id" - *int*, "idAccount" - *int*, "idDispenser" - *int*, "name" - *string*)
 
 #### Disp
 GET - wysyła listę rekordów z tabeli *Plans* 
 * Send: "idDispenser" - *string*
 * Receive: List("DateAndTime" - *DateTime*, "NoWindow" - *int*)
 
-POST - tworzenie rekordów do tabeli History, usunięcie starych rekordów w tabeli Plans
+POST - tworzenie rekordów do tabeli *History*, usunięcie starych rekordów w tabeli *Plans*
 * Send: "idDispenser" - *int*, "dateAndTime" - *DateTime*, "noWindow" - *int*, "flag" - *int*
 * Receive: *ActionResult*
 
+POST("PresentationPost") - uruchomienie diody dispensera na żądanie 
+* Send: "numberWindow" - *int*, "windowFlag" - *int*
+* Receive: *ActionResult*
+
+GET("PresentationGet") - pobieranie informacji o zapalonej diodzie na żądanie
+* Send: *No parameters*
+* Receive: List("id" - *int*, "flag" - *int*)
+
 #### Dispenser
-GET - 
-* Send: 
+POST - stworzenie danych dla nowo zarejestrowanego dispensera
+* Send: "login" - *string*, "idDispenser" - *int*, "name" - *string*
 * Receive: *ActionResult*
 
-POST - 
-* Send: 
+DELETE - usunięcie danych istniejącego dispensera
+* Send: "login" - *string*, "idDispenser" - *int*, "name" - *string*
 * Receive: *ActionResult*
 
-#### Debug
-GET("plans") - dodaje nowy dispenser
-* Send: *No parameters*
-* Receive: List("id" - *int*, "idDispenser" - *int*, "dateAndTime" - *DateTime*, "noWindow" - *int*, "description" - *string*)
+## Server Datatables
 
-GET("history") - dodaje nowy dispenser
-* Send: *No parameters*
-* Receive: List("id" - *int*, "idDispenser" - *int*, "dateAndTime" - *DateTime*, "noWindow" - *int*, "description" - *string*, "flag" - *int*)
+#### Plans
+id | idDispenser | dateAndTime | noWindow | description
+---|-------------|-------------|----------|------------
+int | int | Date | int | string
 
-GET("dispensers") - dodaje nowy dispenser
-* Send: *No parameters*
-* Receive: List("id" - *int*, "idDispenser" - *int*, "noWindow" - *string*, "noUpdate" - *int*)
+#### History
+id | idDispenser | dateAndTime | noWindow | description | flag
+---|-------------|-------------|----------|-------------|-----
+int | int | Date | int | string | int
 
-GET("accounts") - dodaje nowy dispenser
-* Send: *No parameters*
-* Receive: List("id" - *int*, "login" - *string*, "password" - *string*, "name" - *string*, "typeAccount" - *int*)
+#### Dispensers
+id | idDispenser | noWindow | noUpdate
+---|-------------|-------------|----------
+int | int | Date | int 
 
-GET("listofdispensers") - dodaje nowy dispenser
-* Send: *No parameters*
-* Receive: List("id" - *int*, "idAccount" - *int*, "idDispenser" - *int*, "name" - *string*)
+#### Accounts
+id | login | password | name | typeAccount
+---|-------------|-------------|----------|-------------
+int | string | string | string | string | int
 
-### Server Datatables
-
-Możemy tutaj ustalać różne modele danych do bazy danych. Posiadamy aktualnie 2 modele danych, jeden od konta użytkownika, a drugie od dispenserów.
-
-##### *Miejsce na tabele*
-
-### Server Models
-
-##### *Miejsce na modele*
+#### ListOfDispensers
+id | idAccount | idDispenser | name 
+---|-------------|-------------|----------
+int | int | int | string
 
 ### Todos
-
  - *Zrobić tłumaczenie readme na język angielski*
- - *Rozpisać readme dla controllerów Dispenser, Account, Android*
- - *Dopisać rodzaje tabel oraz modele w readme*
